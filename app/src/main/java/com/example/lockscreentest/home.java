@@ -1,11 +1,14 @@
 package com.example.lockscreentest;
 
+import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -18,8 +21,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.SlidingDrawer;
 
+import static android.R.attr.id;
+
 public class home extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, TodayFragment.OnFragmentInteractionListener,YesterdayFragment.OnFragmentInteractionListener {
     boolean mDrawerItemClicked = false;
     short clicked = 0;
     @Override
@@ -29,6 +34,17 @@ public class home extends AppCompatActivity
         setContentView(R.layout.activity_home);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        android.support.v4.app.Fragment fragment = null;
+        Class fragmentClass = null;
+        fragmentClass = TodayFragment.class;
+        try {
+            fragment = (android.support.v4.app.Fragment) fragmentClass.newInstance();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
         SharedPreferences sharedPreferences = getSharedPreferences("SWITCH", Context.MODE_PRIVATE);
         if(sharedPreferences.getBoolean("SWITCH",true)) {
             Log.v("INSIDE","home.java");
@@ -54,11 +70,40 @@ public class home extends AppCompatActivity
 
             @Override
             public void onDrawerClosed(View drawerView) {
+
                 if(mDrawerItemClicked) {
-                    if (clicked == 1)
+                    android.support.v4.app.Fragment fragment = null;
+                    Class fragmentClass = null;
+                    if (clicked == 8)
                         startActivity(new Intent(home.this, Settings.class));
-                    mDrawerItemClicked = false;
+
+                    else if (clicked == 1) {
+                        fragmentClass = TodayFragment.class;
+                        try {
+                            fragment = (android.support.v4.app.Fragment) fragmentClass.newInstance();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        FragmentManager fragmentManager = getSupportFragmentManager();
+
+                        fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left).replace(R.id.flContent, fragment).commit();
+                    }
+
+                    else if (clicked == 2){
+                        fragmentClass = YesterdayFragment.class;
+                        try {
+                            fragment = (android.support.v4.app.Fragment) fragmentClass.newInstance();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        FragmentManager fragmentManager = getSupportFragmentManager();
+                        fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left).replace(R.id.flContent, fragment).commit();
+                    }
+
                     clicked = 0;
+                    mDrawerItemClicked = false;
+
+
                 }
 
             }
@@ -69,6 +114,7 @@ public class home extends AppCompatActivity
             }
         });
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.getMenu().findItem(R.id.nav_camera).setChecked(true);
         navigationView.setNavigationItemSelectedListener(this);
     }
 
@@ -81,40 +127,47 @@ public class home extends AppCompatActivity
             super.onBackPressed();
         }
     }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.home, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
+//workaround because opening settings does some weird stuff to today tab
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        NavigationView mNavigationView = (NavigationView) findViewById(R.id.nav_view);
+//        boolean isNoneChecked = true;
+//        int size = mNavigationView.getMenu().size();
+//        for (int i = 0; i < size; i++) {
+//            if(mNavigationView.getMenu().getItem(i).isChecked()){
+//                isNoneChecked = false;
+//                break;
+//            }
+//
+//        }
+//
+//        if(isNoneChecked)
+//            mNavigationView.getMenu().findItem(R.id.nav_camera).setChecked(true);
+//
+//    }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
+
+        //workaround for bug with selecting item 1 at default in navigationview
+//        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+//        if(navigationView.getMenu().findItem(R.id.nav_camera).isChecked() && clicked!=1){
+//            navigationView.getMenu().findItem(R.id.nav_camera).setChecked(false);
+//
+//        }
+//        // Handle navigation view item clicks here.
         int id = item.getItemId();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-        if (id == R.id.nav_camera) {
 
-            // Handle the camera action
+        if (id == R.id.nav_camera) {
+            clicked = 1;
+            //part of the work around
+//            navigationView.getMenu().findItem(R.id.nav_camera).setChecked(true);
         } else if (id == R.id.nav_gallery) {
+            clicked = 2;
 
 
         } else if (id == R.id.nav_slideshow) {
@@ -124,7 +177,7 @@ public class home extends AppCompatActivity
 
 
         } else if (id == R.id.nav_settings) {
-            clicked = 1;
+            clicked = 8;
         }
         mDrawerItemClicked = true;
         drawer.closeDrawer(GravityCompat.START);
@@ -132,4 +185,8 @@ public class home extends AppCompatActivity
         return true;
     }
 
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
+    }
 }
