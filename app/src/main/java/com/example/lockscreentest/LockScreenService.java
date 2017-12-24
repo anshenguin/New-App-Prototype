@@ -53,6 +53,8 @@ public class LockScreenService  extends Service {
             receiver = new LockScreenReceiver();
             registerReceiver(receiver, filter);
         }
+
+
         super.onCreate();
     }
 

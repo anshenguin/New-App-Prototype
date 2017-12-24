@@ -9,11 +9,14 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 
-import com.example.lockscreentest.LockScreenService;
 import com.example.lockscreentest.R;
+import com.example.lockscreentest.EnterValueActivity;
 
 public class MainActivity extends Activity {
+
+    private Button spentMoney;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,17 +24,33 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         //Set up our Lockscreen
+//        spentMoney.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+////                finish();
+////                startActivity(new Intent(MainActivity.this,EnterValueActivity.class));
+//            }
+//        });
         SharedPreferences sharedPreferences = getSharedPreferences("SWITCH", Context.MODE_PRIVATE);
         SharedPreferences canCallNow = getSharedPreferences("CALL", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = canCallNow.edit();
+        Log.v("INSIDE", String.valueOf(sharedPreferences.getBoolean("SWITCH",true))+" and "+String.valueOf(canCallNow.getBoolean("CALL",true)));
         if(sharedPreferences.getBoolean("SWITCH",true)&&canCallNow.getBoolean("CALL",true)) {
             Log.v("INSIDE","MainActivity.java if statement");
             makeFullScreen();
             editor.putBoolean("CALL",false);
             editor.commit();
 //            startService(new Intent(this, LockScreenService.class));
-
             setContentView(R.layout.activity_main);
+//            spentMoney = findViewById(R.id.spent_money);
+//            spentMoney.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                startActivity(new Intent(MainActivity.this,EnterValueActivity.class));
+//                    finish();
+//
+//                }
+//            });
         }
 
         else{
@@ -68,4 +87,13 @@ public class MainActivity extends Activity {
         editor.commit();
         android.os.Process.killProcess(android.os.Process.myPid());
     }
+
+    public void openEditor(View view){
+        startActivity(new Intent(MainActivity.this,EnterValueActivity.class));
+        finish();
+    }
+
+
+
+
 }
