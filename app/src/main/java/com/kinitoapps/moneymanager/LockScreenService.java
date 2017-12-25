@@ -1,6 +1,5 @@
-package com.example.lockscreentest;
+package com.kinitoapps.moneymanager;
 
-import android.app.KeyguardManager;
 import android.app.Service;
 
 import android.content.BroadcastReceiver;

@@ -1,4 +1,4 @@
-package com.example.lockscreentest;
+package com.kinitoapps.moneymanager;
 
 import org.junit.Test;
 

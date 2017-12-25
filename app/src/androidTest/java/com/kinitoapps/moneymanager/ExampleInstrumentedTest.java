@@ -1,4 +1,4 @@
-package com.example.lockscreentest;
+package com.kinitoapps.moneymanager;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

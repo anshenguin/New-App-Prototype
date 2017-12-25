@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.lockscreentest">
+    package="com.kinitoapps.moneymanager">
 
     <uses-sdk android:minSdkVersion="8" />
 
@@ -20,14 +20,14 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name="com.kinitoapps.moneymanager.MainActivity"
             android:excludeFromRecents="true"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"/>
 
-        <service android:name=".LockScreenService" />
+        <service android:name="com.kinitoapps.moneymanager.LockScreenService" />
 
         <receiver
-            android:name=".LockScreenReceiver"
+            android:name="com.kinitoapps.moneymanager.LockScreenReceiver"
             android:enabled="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -35,7 +35,7 @@
         </receiver>
 
         <activity
-            android:name=".home"
+            android:name="com.kinitoapps.moneymanager.home"
             android:excludeFromRecents="true"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
@@ -46,11 +46,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Settings">
+        <activity android:name="com.kinitoapps.moneymanager.Settings">
 
         </activity>
 
-        <activity android:name=".EnterValueActivity"/>
+        <activity android:name="com.kinitoapps.moneymanager.EnterValueActivity"/>
     </application>
 
 </manifest>

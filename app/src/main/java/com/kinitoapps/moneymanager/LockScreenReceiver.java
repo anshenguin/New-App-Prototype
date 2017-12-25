@@ -1,4 +1,4 @@
-package com.example.lockscreentest;
+package com.kinitoapps.moneymanager;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -20,7 +20,7 @@ public class LockScreenReceiver extends BroadcastReceiver {
 //        if(action.equals(Intent.ACTION_SCREEN_OFF) || action.equals(Intent.ACTION_BOOT_COMPLETED))
 //        {
             Log.v("INSIDE","onReceive.java IF STATEMENT");
-            Intent i = new Intent(context, com.example.lockscreentest.MainActivity.class);
+            Intent i = new Intent(context, com.kinitoapps.moneymanager.MainActivity.class);
             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(i);
 //        }

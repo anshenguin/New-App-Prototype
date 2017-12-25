@@ -1,4 +1,4 @@
-package com.example.lockscreentest;
+package com.kinitoapps.moneymanager;
 
 import android.app.Activity;
 import android.content.Context;
@@ -10,9 +10,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
-
-import com.example.lockscreentest.R;
-import com.example.lockscreentest.EnterValueActivity;
 
 public class MainActivity extends Activity {
 
