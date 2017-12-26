@@ -3,6 +3,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -27,6 +28,7 @@ import java.util.Locale;
 public class EnterValueActivity extends AppCompatActivity {
 
     private EditText mDescEditText;
+    private Uri mCurrentPetUri;
 
     /** EditText field to enter the pet's breed */
     /** EditText field to enter the pet's weight */
@@ -137,5 +139,4 @@ public class EnterValueActivity extends AppCompatActivity {
         editor.putBoolean("CALL",true);
         editor.commit();
     }
-
 }

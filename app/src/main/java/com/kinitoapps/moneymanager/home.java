@@ -1,5 +1,8 @@
 package com.kinitoapps.moneymanager;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -38,10 +41,10 @@ public class home extends AppCompatActivity
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
-        SharedPreferences sharedPreferences = getSharedPreferences("SWITCH", Context.MODE_PRIVATE);
-        if(sharedPreferences.getBoolean("SWITCH",true)) {
-            Log.v("INSIDE","home.java");
-            startService(new Intent(this, LockScreenService.class));
+//        SharedPreferences sharedPreferences = getSharedPreferences("SWITCH_NOTIFICATION", Context.MODE_PRIVATE);
+        SharedPreferences firstRun = getSharedPreferences("com.example.lockscreentest",Context.MODE_PRIVATE);
+        if(firstRun.getBoolean("firstrun",true)) {
+            createNotification();
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
@@ -180,6 +183,28 @@ public class home extends AppCompatActivity
 
     @Override
     public void onFragmentInteraction(Uri uri) {
+
+    }
+
+    public void createNotification() {
+        // Prepare intent which is triggered if the
+        // notification is selected
+        Intent intent = new Intent(this, EnterValueActivity.class);
+        PendingIntent pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, 0);
+
+        // Build notification
+        // Actions are just fake
+        Notification noti = new Notification.Builder(this)
+                .setContentTitle("Money Manager notification is on")
+                .setContentText("Click to add an entry").setSmallIcon(R.mipmap.ic_launcher)
+                .setContentIntent(pIntent)
+                .setOngoing(true)
+                .build();
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        // hide the notification after its selected
+        noti.flags |= Notification.FLAG_NO_CLEAR;
+
+        notificationManager.notify(0, noti);
 
     }
 }

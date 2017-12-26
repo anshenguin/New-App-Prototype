@@ -1,5 +1,8 @@
 package com.kinitoapps.moneymanager;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -21,39 +24,48 @@ public class Settings extends AppCompatActivity {
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
         final Switch switch_unlock = (Switch) findViewById(R.id.switch_unlock);
-        SharedPreferences sharedPreferences = getSharedPreferences("SWITCH", Context.MODE_PRIVATE);
+        final Switch switch_notification = (Switch) findViewById(R.id.switch_notification);
+        SharedPreferences sharedPreferences = getSharedPreferences("SWITCH_NOTIFICATION", Context.MODE_PRIVATE);
         SharedPreferences firstRun = getSharedPreferences("com.example.lockscreentest",Context.MODE_PRIVATE);
 
         switch_unlock.setChecked(sharedPreferences.getBoolean("SWITCH",true));
         if(firstRun.getBoolean("firstrun",true)){
-
-            Log.v("INSIDE","if statement of switch using firstrun");
-
             switch_unlock.setChecked(true);
+            switch_notification.setChecked(true);
             firstRun.edit().putBoolean("firstrun",false).commit();
-
         }
         final SharedPreferences.Editor editor = sharedPreferences.edit();
-        final Context mContext = this;
-        switch_unlock.setOnClickListener(new View.OnClickListener() {
+        switch_notification.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(switch_unlock.isChecked()) {
-                    Log.v("switch","on");
-                    editor.putBoolean("SWITCH", true);
-                    editor.commit();
-                    startService(new Intent(mContext, LockScreenService.class));
+                if(switch_notification.isChecked()){
+                    editor.putBoolean("switch notification",true);
+                    Intent intent = new Intent(getApplicationContext(), EnterValueActivity.class);
+                    PendingIntent pIntent = PendingIntent.getActivity(getApplicationContext(), (int) System.currentTimeMillis(), intent, 0);
 
-                }
-                else {
-                    Log.v("switch","off");
-                    editor.putBoolean("SWITCH", false);
-                    editor.commit();
-                    stopService(new Intent(mContext, LockScreenService.class));
+                    // Build notification
+                    // Actions are just fake
+                    Notification noti = new Notification.Builder(getApplicationContext())
+                            .setContentTitle("Money Manager notification is on")
+                            .setContentText("Click to add an entry").setSmallIcon(R.mipmap.ic_launcher)
+                            .setContentIntent(pIntent)
+                            .setOngoing(true)
+                            .build();
+                    NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                    // hide the notification after its selected
+                    noti.flags |= Notification.FLAG_NO_CLEAR;
+
+                    notificationManager.notify(0, noti);
                 }
 
+                else{
+                    editor.putBoolean("switch notification",false);
+                    NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+                    notificationManager.cancel(0);
+                }
             }
         });
+
 //
 //        setSupportActionBar(toolbar);
         ab.setHomeButtonEnabled(true);
