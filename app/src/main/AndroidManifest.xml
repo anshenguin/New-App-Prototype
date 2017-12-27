@@ -1,16 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.lockscreentest">
+    package="com.kinitoapps.moneymanager">
 
-    <uses-sdk android:minSdkVersion="8" />
+    <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
 
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -20,35 +13,26 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
-            android:excludeFromRecents="true"
-            android:screenOrientation="portrait"></activity>
-
-        <service android:name=".LockScreenService" />
-
-        <receiver
-            android:name=".LockScreenReceiver"
-            android:enabled="true">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-            </intent-filter>
-        </receiver>
+            android:name="com.kinitoapps.moneymanager.MainActivity" />
 
         <activity
-            android:name=".home"
-            android:excludeFromRecents="true"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait"
+            android:name="com.kinitoapps.moneymanager.home"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Settings">
+        <activity android:name="com.kinitoapps.moneymanager.Settings">
 
         </activity>
+
+        <activity android:name="com.kinitoapps.moneymanager.EnterValueActivity"
+            android:exported="true"/>
+        <provider
+            android:authorities="com.kinitoapps.moneymanager"
+            android:name=".data.MoneyProvider"
+            android:exported="false"/>
     </application>
 
 </manifest>
