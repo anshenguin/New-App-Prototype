@@ -35,7 +35,18 @@ public class Settings extends AppCompatActivity {
 //            switch_unlock.setChecked(true);
             switch_notification.setChecked(true);
             firstRun.edit().putBoolean("firstrun",false).commit();
+            sharedPreferences.edit().putBoolean("SWITCH_NOTIFICATION",true).commit();
+
         }
+
+        switch_notification.setChecked(sharedPreferences.getBoolean("SWITCH_NOTIFICATION",true));
+
+//        else{
+//            if(sharedPreferences.getBoolean("switch notification",true) || sharedPreferences.)
+//                switch_notification.setChecked(true);
+//            else
+//                switch_notification.setChecked(false);
+//        }
         final SharedPreferences.Editor editor = sharedPreferences.edit();
 
         createShortcut.setOnClickListener(new View.OnClickListener() {
@@ -48,7 +59,8 @@ public class Settings extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(switch_notification.isChecked()){
-                    editor.putBoolean("switch notification",true);
+                    editor.putBoolean("SWITCH_NOTIFICATION",true);
+                    editor.commit();
                     Intent intent = new Intent(getApplicationContext(), EnterValueActivity.class);
                     PendingIntent pIntent = PendingIntent.getActivity(getApplicationContext(), (int) System.currentTimeMillis(), intent, 0);
 
@@ -68,7 +80,8 @@ public class Settings extends AppCompatActivity {
                 }
 
                 else{
-                    editor.putBoolean("switch notification",false);
+                    editor.putBoolean("SWITCH_NOTIFICATION",false);
+                    editor.commit();
                     NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
                     notificationManager.cancel(0);
                 }
