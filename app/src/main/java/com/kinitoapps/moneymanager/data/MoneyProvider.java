@@ -104,8 +104,6 @@ public class MoneyProvider extends ContentProvider {
                 throw new IllegalArgumentException("Cannot query unknown URI " + uri);
         }
         cursor.setNotificationUri(getContext().getContentResolver(), uri);
-
-        // Return the cursor
         return cursor;
     }
 

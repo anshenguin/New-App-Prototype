@@ -23,6 +23,7 @@ public class home extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, TodayFragment.OnFragmentInteractionListener,YesterdayFragment.OnFragmentInteractionListener {
     boolean mDrawerItemClicked = false;
     short clicked = 0;
+    short selected = 1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,6 +75,7 @@ public class home extends AppCompatActivity
                         startActivity(new Intent(home.this, Settings.class));
 
                     else if (clicked == 1) {
+                        selected = 1;
                         fragmentClass = TodayFragment.class;
                         try {
                             fragment = (android.support.v4.app.Fragment) fragmentClass.newInstance();
@@ -86,6 +88,7 @@ public class home extends AppCompatActivity
                     }
 
                     else if (clicked == 2){
+                        selected = 2;
                         fragmentClass = YesterdayFragment.class;
                         try {
                             fragment = (android.support.v4.app.Fragment) fragmentClass.newInstance();
@@ -199,13 +202,65 @@ public class home extends AppCompatActivity
                 .setContentText("Click to add an entry").setSmallIcon(R.mipmap.ic_launcher)
                 .setContentIntent(pIntent)
                 .setOngoing(true)
-                .setPriority(Notification.PRIORITY_MIN)
                 .build();
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         // hide the notification after its selected
         noti.flags = Notification.FLAG_NO_CLEAR|Notification.FLAG_ONGOING_EVENT;
 
         notificationManager.notify(0, noti);
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        android.support.v4.app.Fragment fragment = null;
+        Class fragmentClass = null;
+//        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+//        drawer.addDrawerListener(new DrawerLayout.DrawerListener() {
+//            @Override
+//            public void onDrawerSlide(View drawerView, float slideOffset) {
+//
+//            }
+//
+//            @Override
+//            public void onDrawerOpened(View drawerView) {
+//
+//            }
+//
+//            @Override
+//            public void onDrawerClosed(View drawerView) {
+//
+//            }
+//
+//            @Override
+//            public void onDrawerStateChanged(int newState) {
+//
+//            }
+//        });
+
+        if(selected == 1){
+            fragmentClass = TodayFragment.class;
+            try {
+                fragment = (android.support.v4.app.Fragment) fragmentClass.newInstance();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            FragmentManager fragmentManager = getSupportFragmentManager();
+
+            fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left).replace(R.id.flContent, fragment).commit();
+        }
+        else if(selected == 2){
+            fragmentClass = YesterdayFragment.class;
+            try {
+                fragment = (android.support.v4.app.Fragment) fragmentClass.newInstance();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left).replace(R.id.flContent, fragment).commit();
+        }
+
 
     }
 }

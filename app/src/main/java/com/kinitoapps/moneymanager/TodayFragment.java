@@ -13,6 +13,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.Toast;
+
 import com.kinitoapps.moneymanager.data.MoneyContract;
 import com.kinitoapps.moneymanager.data.MoneyDbHelper;
 
@@ -73,6 +75,99 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
 
     }
 
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//        // Inflate the layout for this fragment
+//        MoneyDbHelper mDbHelper = new MoneyDbHelper(getActivity());
+//
+//        // Create and/or open a database to read from it
+//
+//        // Perform this raw SQL query "SELECT * FROM pets"
+//        // to get a Cursor that contains all rows from the pets table.
+////        Cursor cursor = db.rawQuery("SELECT * FROM " + MoneyContract.MoneyEntry.TABLE_NAME, null);
+//
+////        String[] projection = {
+////                MoneyContract.MoneyEntry._ID,
+////                MoneyContract.MoneyEntry.COLUMN_MONEY_VALUE,
+////                MoneyContract.MoneyEntry.COLUMN_MONEY_DESC,
+////                MoneyContract.MoneyEntry.COLUMN_MONEY_DATE,
+////                MoneyContract.MoneyEntry.COLUMN_MONEY_TIME,
+////                MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS
+////        };
+////
+////        Cursor cursor = db.query(
+////                MoneyContract.MoneyEntry.TABLE_NAME,
+////                projection,
+////                null,
+////                null,
+////                null,
+////                null,
+////                null
+////        );
+//        Toast.makeText(getActivity(),"onResume",Toast.LENGTH_LONG).show();
+//        ListView moneyListView = getView().findViewById(R.id.list);
+//        View emptyView = getView().findViewById(R.id.empty_view);
+//        moneyListView.setEmptyView(emptyView);
+////        MoneyCursorAdapter adapter = new MoneyCursorAdapter(getActivity(), cursor);
+////        moneyListView.setAdapter(adapter);
+//////        TextView displayView = root.findViewById(R.id.root);
+//////
+//////        try {
+//////            // Create a header in the Text View that looks like this:
+//////            //
+//////            // The pets table contains <number of rows in Cursor> pets.
+//////            // _id - name - breed - gender - weight
+//////            //
+//////            // In the while loop below, iterate through the rows of the cursor and display
+//////            // the information from each column in this order.
+//////            displayView.setText("The pets table contains " + cursor.getCount() + " pets.\n\n");
+//////            displayView.append(MoneyContract.MoneyEntry._ID + " - " +
+//////                                        MoneyContract.MoneyEntry.COLUMN_MONEY_VALUE + " - " +
+//////                                        MoneyContract.MoneyEntry.COLUMN_MONEY_DESC + " - " +
+//////                                        MoneyContract.MoneyEntry.COLUMN_MONEY_DATE + " - " +
+//////                                        MoneyContract.MoneyEntry.COLUMN_MONEY_TIME + " - " +
+//////                                        MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS + "\n");
+//////
+//////            // Figure out the index of each column
+//////            int idColumnIndex = cursor.getColumnIndex(MoneyContract.MoneyEntry._ID);
+//////                        int valueColumnIndex = cursor.getColumnIndex(MoneyContract.MoneyEntry.COLUMN_MONEY_VALUE);
+//////                        int descColumnIndex = cursor.getColumnIndex(MoneyContract.MoneyEntry.COLUMN_MONEY_DESC);
+//////                        int dateColumnIndex = cursor.getColumnIndex(MoneyContract.MoneyEntry.COLUMN_MONEY_DATE);
+//////                        int timeColumnIndex = cursor.getColumnIndex(MoneyContract.MoneyEntry.COLUMN_MONEY_TIME);
+//////                        int statusColumnIndex = cursor.getColumnIndex(MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS);
+//////
+//////
+//////            // Iterate through all the returned rows in the cursor
+//////            while (cursor.moveToNext()) {
+//////                                // Use that index to extract the String or Int value of the word
+//////                               // at the current row the cursor is on.
+//////                               int currentID = cursor.getInt(idColumnIndex);
+//////                                int currentValue = cursor.getInt(valueColumnIndex);
+//////                                String currentDesc = cursor.getString(descColumnIndex);
+//////                                String currentDate = cursor.getString(dateColumnIndex);
+//////                                String currentTime = cursor.getString(timeColumnIndex);
+//////                                String currentStatus = cursor.getString(statusColumnIndex);
+//////
+//////                // Display the values from each column of the current row in the cursor in the TextView
+//////                                displayView.append(("\n" + currentID + " - " +
+//////                              currentValue + " - " +
+//////                                        currentDesc + " - " +
+//////                                        currentDate + " - " +
+//////                                        currentTime + " - " +
+//////                                        currentStatus));
+//////                            }
+//////        } finally {
+//////            // Always close the cursor when you're done reading from it. This releases all its
+//////            // resources and makes it invalid.0
+//////            cursor.close();
+//////        }
+//        mCursorAdapter = new MoneyCursorAdapter(getActivity(),null);
+//        moneyListView.setAdapter(mCursorAdapter);
+//        getLoaderManager().initLoader(MONEY_LOADER,null,this);
+//
+//    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -81,7 +176,6 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
         MoneyDbHelper mDbHelper = new MoneyDbHelper(getActivity());
 
         // Create and/or open a database to read from it
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
         // Perform this raw SQL query "SELECT * FROM pets"
         // to get a Cursor that contains all rows from the pets table.
@@ -200,7 +294,10 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
         String[] projection = {
                 MoneyContract.MoneyEntry._ID,
                 MoneyContract.MoneyEntry.COLUMN_MONEY_VALUE,
-                MoneyContract.MoneyEntry.COLUMN_MONEY_DESC
+                MoneyContract.MoneyEntry.COLUMN_MONEY_DESC,
+                MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS,
+                MoneyContract.MoneyEntry.COLUMN_MONEY_TIME,
+                MoneyContract.MoneyEntry.COLUMN_MONEY_DATE
         };
 
         return new CursorLoader(getActivity(),

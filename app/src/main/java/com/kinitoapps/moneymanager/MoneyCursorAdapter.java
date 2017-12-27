@@ -71,19 +71,31 @@ public class MoneyCursorAdapter extends CursorAdapter {
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
         // Find individual views that we want to modify in the list item layout
-        TextView nameTextView = (TextView) view.findViewById(R.id.value);
-        TextView summaryTextView = (TextView) view.findViewById(R.id.desc);
+        TextView nameTextView = view.findViewById(R.id.value);
+        TextView summaryTextView = view.findViewById(R.id.desc);
+        TextView statusTextView = view.findViewById(R.id.status);
+        TextView timeTextView = view.findViewById(R.id.time);
+        TextView dateTextView = view.findViewById(R.id.date);
 
         // Find the columns of pet attributes that we're interested in
         int valueColumnIndex = cursor.getColumnIndex(MoneyEntry.COLUMN_MONEY_VALUE);
         int descColumnIndex = cursor.getColumnIndex(MoneyEntry.COLUMN_MONEY_DESC);
+        int statusColumnIndex = cursor.getColumnIndex(MoneyEntry.COLUMN_MONEY_STATUS);
+        int timeColumnIndex = cursor.getColumnIndex(MoneyEntry.COLUMN_MONEY_TIME);
+        int dateColumnIndex = cursor.getColumnIndex(MoneyEntry.COLUMN_MONEY_DATE);
 
         // Read the pet attributes from the Cursor for the current pet
         int value = cursor.getInt(valueColumnIndex);
         String desc = cursor.getString(descColumnIndex);
+        int status = cursor.getInt(statusColumnIndex);
+        String time = cursor.getString(timeColumnIndex);
+        String date = cursor.getString(dateColumnIndex);
 
         // Update the TextViews with the attributes for the current pet
         nameTextView.setText(Integer.toString(value));
         summaryTextView.setText(desc);
+        statusTextView.setText((status==1)?"Spent":"Received");
+        timeTextView.setText(time);
+        dateTextView.setText(date);
     }
 }
