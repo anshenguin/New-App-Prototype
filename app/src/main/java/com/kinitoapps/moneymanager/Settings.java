@@ -23,14 +23,15 @@ public class Settings extends AppCompatActivity {
         setContentView(R.layout.activity_settings);
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
-        final Switch switch_unlock = (Switch) findViewById(R.id.switch_unlock);
+//        final Switch switch_unlock = (Switch) findViewById(R.id
+//                .switch_unlock);
         final Switch switch_notification = (Switch) findViewById(R.id.switch_notification);
         SharedPreferences sharedPreferences = getSharedPreferences("SWITCH_NOTIFICATION", Context.MODE_PRIVATE);
         SharedPreferences firstRun = getSharedPreferences("com.example.lockscreentest",Context.MODE_PRIVATE);
 
-        switch_unlock.setChecked(sharedPreferences.getBoolean("SWITCH",true));
+//        switch_unlock.setChecked(sharedPreferences.getBoolean("SWITCH",true));
         if(firstRun.getBoolean("firstrun",true)){
-            switch_unlock.setChecked(true);
+//            switch_unlock.setChecked(true);
             switch_notification.setChecked(true);
             firstRun.edit().putBoolean("firstrun",false).commit();
         }
@@ -50,10 +51,11 @@ public class Settings extends AppCompatActivity {
                             .setContentText("Click to add an entry").setSmallIcon(R.mipmap.ic_launcher)
                             .setContentIntent(pIntent)
                             .setOngoing(true)
+                            .setPriority(Notification.PRIORITY_MIN)
                             .build();
                     NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                     // hide the notification after its selected
-                    noti.flags |= Notification.FLAG_NO_CLEAR;
+                    noti.flags = Notification.FLAG_NO_CLEAR|Notification.FLAG_ONGOING_EVENT;
 
                     notificationManager.notify(0, noti);
                 }

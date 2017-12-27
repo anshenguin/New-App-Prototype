@@ -199,10 +199,11 @@ public class home extends AppCompatActivity
                 .setContentText("Click to add an entry").setSmallIcon(R.mipmap.ic_launcher)
                 .setContentIntent(pIntent)
                 .setOngoing(true)
+                .setPriority(Notification.PRIORITY_MIN)
                 .build();
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         // hide the notification after its selected
-        noti.flags |= Notification.FLAG_NO_CLEAR;
+        noti.flags = Notification.FLAG_NO_CLEAR|Notification.FLAG_ONGOING_EVENT;
 
         notificationManager.notify(0, noti);
 
