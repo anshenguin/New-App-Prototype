@@ -13,7 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import com.kinitoapps.moneymanager.data.MoneyContract;
 import com.kinitoapps.moneymanager.data.MoneyDbHelper;
@@ -201,6 +201,11 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
 //        );
 
         ListView moneyListView = root.findViewById(R.id.list);
+        TextView sum_spent = root.findViewById(R.id.sum_spent);
+        sum_spent.setText(getSumSpent());
+        TextView sum_received = root.findViewById(R.id.sum_received);
+        sum_received.setText(getSumReceived());
+
         View emptyView = root.findViewById(R.id.empty_view);
         moneyListView.setEmptyView(emptyView);
 //        MoneyCursorAdapter adapter = new MoneyCursorAdapter(getActivity(), cursor);
@@ -319,6 +324,8 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
         mCursorAdapter.swapCursor(null);
     }
 
+
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -334,4 +341,29 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
         void onFragmentInteraction(Uri uri);
     }
 
+    public String getSumSpent(){
+        MoneyDbHelper mDbHelper = new MoneyDbHelper(getActivity());
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        String str = "";
+        Cursor cur = db.rawQuery("SELECT SUM(value) FROM today WHERE status = 1", null);
+        if(cur.moveToFirst())
+        {
+            str = String.valueOf(cur.getInt(0));
+            cur.close();
+        }
+        return str;
+    }
+
+    public String getSumReceived() {
+        String sumReceived = "";
+        MoneyDbHelper mDbHelper = new MoneyDbHelper(getActivity());
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        Cursor cur = db.rawQuery("SELECT SUM(value) FROM today WHERE status = 2", null);
+        if(cur.moveToFirst())
+        {
+            sumReceived = String.valueOf(cur.getInt(0));
+            cur.close();
+        }
+        return sumReceived;
+    }
 }
