@@ -1,5 +1,6 @@
 package com.kinitoapps.moneymanager;
 
+import android.graphics.Color;
 import android.support.v4.app.LoaderManager;
 import android.content.Context;
 import android.support.v4.content.CursorLoader;
@@ -12,11 +13,15 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.ListView;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import com.kinitoapps.moneymanager.data.MoneyContract;
 import com.kinitoapps.moneymanager.data.MoneyDbHelper;
+import com.kinitoapps.moneymanager.piechart.PieGraph;
+import com.kinitoapps.moneymanager.piechart.PieSlice;
 
 
 /**
@@ -200,7 +205,33 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
 //                null
 //        );
 
+        PieGraph pg = root.findViewById(R.id.graph);
+        pg.setInnerCircleRatio(140);
+        boolean purpleValueGreater = false;
+        PieSlice slice = new PieSlice();
+        slice = new PieSlice();
+        slice.setColor(Color.parseColor("#FFBB33"));
+
+        slice.setValue(Integer.parseInt(getSumReceived())>Integer.parseInt(getSumSpent())?Integer.parseInt(getSumReceived())+Integer.parseInt(getSumSpent()):0);
+        if(slice.getValue()==0)
+            purpleValueGreater = true;
+        slice.setGoalValue(Integer.parseInt(getSumSpent()));
+        pg.addSlice(slice);
+        slice = new PieSlice();
+        slice.setColor(Color.parseColor("#AA66CC"));
+        slice.setValue(purpleValueGreater?Integer.parseInt(getSumReceived())+Integer.parseInt(getSumSpent()):0);
+        slice.setGoalValue(Integer.parseInt(getSumReceived()));
+        pg.addSlice(slice);
+//        pg.setInterpolator(new DecelerateInterpolator());
+        pg.setDuration(1000);//default if unspecified is 300 ms
+        pg.animateToGoalValues();
         ListView moneyListView = root.findViewById(R.id.list);
+        TextView sum_spent = root.findViewById(R.id.sum_spent);
+        sum_spent.setText(getSumSpent());
+        TextView sum_received = root.findViewById(R.id.sum_received);
+        sum_received.setText(getSumReceived());
+        TextView sum_total = root.findViewById(R.id.total);
+        sum_total.setText(String.valueOf(Integer.parseInt(getSumSpent())+Integer.parseInt(getSumReceived())));
         View emptyView = root.findViewById(R.id.empty_view);
         moneyListView.setEmptyView(emptyView);
 //        MoneyCursorAdapter adapter = new MoneyCursorAdapter(getActivity(), cursor);
@@ -319,6 +350,8 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
         mCursorAdapter.swapCursor(null);
     }
 
+
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -333,5 +366,32 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
+    public String getSumSpent(){
+        MoneyDbHelper mDbHelper = new MoneyDbHelper(getActivity());
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        String str = "";
+        Cursor cur = db.rawQuery("SELECT SUM(value) FROM today WHERE status = 1", null);
+        if(cur.moveToFirst())
+        {
+            str = String.valueOf(cur.getInt(0));
+            cur.close();
+        }
+        return str;
+    }
+
+    public String getSumReceived() {
+        String sumReceived = "";
+        MoneyDbHelper mDbHelper = new MoneyDbHelper(getActivity());
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        Cursor cur = db.rawQuery("SELECT SUM(value) FROM today WHERE status = 2", null);
+        if(cur.moveToFirst())
+        {
+            sumReceived = String.valueOf(cur.getInt(0));
+            cur.close();
+        }
+        return sumReceived;
+    }
+
 
 }
