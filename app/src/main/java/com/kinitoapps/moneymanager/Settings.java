@@ -8,9 +8,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.AttributeSet;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.Switch;
 
 public class Settings extends AppCompatActivity {
@@ -124,4 +127,10 @@ public class Settings extends AppCompatActivity {
         addIntent.putExtra("duplicate", false);  //may it's already there so don't duplicate
         getApplicationContext().sendBroadcast(addIntent);
     }
+
+    /**
+     * Created by HP INDIA on 04-Jan-18.
+     */
+
+
 }

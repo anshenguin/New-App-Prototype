@@ -1,6 +1,9 @@
 package com.kinitoapps.moneymanager;
 
+import android.animation.ValueAnimator;
+import android.database.DatabaseUtils;
 import android.graphics.Color;
+import android.opengl.Visibility;
 import android.support.v4.app.LoaderManager;
 import android.content.Context;
 import android.support.v4.content.CursorLoader;
@@ -10,13 +13,17 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.kinitoapps.moneymanager.data.MoneyContract;
 import com.kinitoapps.moneymanager.data.MoneyDbHelper;
@@ -70,6 +77,7 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
@@ -80,10 +88,42 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
 
     }
 
+//
 //    @Override
 //    public void onResume() {
 //        super.onResume();
-//        // Inflate the layout for this fragment
+//        Toast.makeText(getActivity(),"onResume",Toast.LENGTH_LONG).show();
+//
+//    }
+//
+//    @Override
+//    public void onPause() {
+//        super.onPause();
+//        Toast.makeText(getActivity(),"onPause",Toast.LENGTH_LONG).show();
+//
+//    }
+//    @Override
+//    public void onStart(){
+//        super.onStart();
+//        Toast.makeText(getActivity(),"onStart",Toast.LENGTH_LONG).show();
+//
+//    }
+//
+//    @Override
+//    public void onStop(){
+//        super.onStop();
+//        Toast.makeText(getActivity(),"onStop",Toast.LENGTH_LONG).show();
+//    }
+//
+//    @Override
+//    public void onDestroyView(){
+//        super.onDestroyView();
+//        Toast.makeText(getActivity(),"onDestroyView",Toast.LENGTH_LONG).show();
+//
+//    }
+
+
+    //        // Inflate the layout for this fragment
 //        MoneyDbHelper mDbHelper = new MoneyDbHelper(getActivity());
 //
 //        // Create and/or open a database to read from it
@@ -178,8 +218,6 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_today, container, false);
         // Inflate the layout for this fragment
-        MoneyDbHelper mDbHelper = new MoneyDbHelper(getActivity());
-
         // Create and/or open a database to read from it
 
         // Perform this raw SQL query "SELECT * FROM pets"
@@ -225,15 +263,51 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
 //        pg.setInterpolator(new DecelerateInterpolator());
         pg.setDuration(1000);//default if unspecified is 300 ms
         pg.animateToGoalValues();
-        ListView moneyListView = root.findViewById(R.id.list);
-        TextView sum_spent = root.findViewById(R.id.sum_spent);
-        sum_spent.setText(getSumSpent());
-        TextView sum_received = root.findViewById(R.id.sum_received);
-        sum_received.setText(getSumReceived());
-        TextView sum_total = root.findViewById(R.id.total);
-        sum_total.setText(String.valueOf(Integer.parseInt(getSumSpent())+Integer.parseInt(getSumReceived())));
+        NonScrollListView moneyListView = root.findViewById(R.id.list);
+        final TextView sum_spent = root.findViewById(R.id.sum_spent);
+        sum_spent.setText("0");
+        ValueAnimator valueAnimator = ValueAnimator.ofInt(0, Integer.parseInt(getSumSpent()));
+        valueAnimator.setDuration(1000);
+        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                sum_spent.setText(valueAnimator.getAnimatedValue().toString());
+            }
+        });
+        valueAnimator.start();
+        final TextView sum_received = root.findViewById(R.id.sum_received);
+        sum_received.setText("0");
+        ValueAnimator valueAnimator_two = ValueAnimator.ofInt(0, Integer.parseInt(getSumReceived()));
+        valueAnimator_two.setDuration(1000);
+        valueAnimator_two.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                sum_received.setText(valueAnimator.getAnimatedValue().toString());
+            }
+        });
+
+        valueAnimator_two.start();
+        final TextView sum_total = root.findViewById(R.id.total);
+        sum_total.setText("0");
+        ValueAnimator valueAnimator_three = ValueAnimator.ofInt(0,
+                Integer.parseInt(getSumSpent())+Integer.parseInt(getSumReceived()));
+        valueAnimator_three.setDuration(1000);
+        valueAnimator_three.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                sum_total.setText(valueAnimator.getAnimatedValue().toString());
+            }
+        });
+        valueAnimator_three.start();
         View emptyView = root.findViewById(R.id.empty_view);
         moneyListView.setEmptyView(emptyView);
+        LinearLayout pieChart = root.findViewById(R.id.pie_chart);
+        if(noEntriesExist())
+            pieChart.setVisibility(View.GONE);
+        else
+            pieChart.setVisibility(View.VISIBLE);
+
+
 //        MoneyCursorAdapter adapter = new MoneyCursorAdapter(getActivity(), cursor);
 //        moneyListView.setAdapter(adapter);
 ////        TextView displayView = root.findViewById(R.id.root);
@@ -289,6 +363,7 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
 ////        }
         mCursorAdapter = new MoneyCursorAdapter(getActivity(),null);
         moneyListView.setAdapter(mCursorAdapter);
+//        setListViewHeightBasedOnChildren(moneyListView);
         getLoaderManager().initLoader(MONEY_LOADER,null,this);
         return root;
 
@@ -393,5 +468,12 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
         return sumReceived;
     }
 
-
+    public boolean noEntriesExist(){
+        MoneyDbHelper mDbHelper = new MoneyDbHelper(getActivity());
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        int numRows = (int)DatabaseUtils.queryNumEntries(db, "today");
+        if(numRows == 0)
+        return true;
+        else return false;
+    }
 }
