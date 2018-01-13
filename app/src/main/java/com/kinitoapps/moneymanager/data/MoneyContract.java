@@ -17,7 +17,7 @@ public final class MoneyContract{
     private MoneyContract() {}
     public static final String CONTENT_AUTHORITY = "com.kinitoapps.moneymanager";
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
-    public static final String PATH_MONEY = "today";
+    public static final String PATH_MONEY = "money_table";
     /**
      * Inner class that defines constant values for the pets database table.
      * Each entry in the table represents a single pet.
@@ -32,7 +32,7 @@ public final class MoneyContract{
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_MONEY;
 
         /** Name of database table for pets */
-        public final static String TABLE_NAME = "today";
+        public final static String TABLE_NAME = "money_table";
 
         /**
          * Unique ID number for the pet (only for use in the database table).

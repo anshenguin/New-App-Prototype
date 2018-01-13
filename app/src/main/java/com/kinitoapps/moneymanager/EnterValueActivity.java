@@ -1,7 +1,12 @@
 package com.kinitoapps.moneymanager;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
@@ -30,10 +35,12 @@ public class EnterValueActivity extends AppCompatActivity {
     private EditText mDescEditText;
     private Uri mCurrentPetUri;
 
+    private String currentDate;
+
     /** EditText field to enter the pet's breed */
     /** EditText field to enter the pet's weight */
     private EditText mValueEditText;
-
+    private SharedPreferences sharedPreferences;
     /** EditText field to enter the pet's gender */
     private Spinner mStatusSpinner;
     private Button mSaveButton;
@@ -47,6 +54,7 @@ public class EnterValueActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_enter_value);
+        sharedPreferences = getSharedPreferences("LIMIT", Context.MODE_PRIVATE);
         SharedPreferences canCallNow = getSharedPreferences("CALL", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = canCallNow.edit();
         editor.putBoolean("CALL",false);
@@ -60,6 +68,7 @@ public class EnterValueActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 insertValue();
+                checkForLimit();
                 finish();
             }
         });
@@ -131,6 +140,26 @@ public class EnterValueActivity extends AppCompatActivity {
 
     }
 
+    private void checkForLimit(){
+        //TODO: DONT CHECK FOR LIMIT IF ALREADY CHECKED TODAY
+        //TODO: MAKE A SIMILAR METHOD FOR MONTHLY LIMIT
+        Long limit = sharedPreferences.getLong("limit_today",0);
+        if(limit<=getSumSpent()&&limit>0){
+            // Build notification
+            // Actions are just fake
+            Notification noti = new Notification.Builder(this)
+                    .setContentTitle("DAILY LIMIT WARNING")
+                    .setContentText("You have exceeded your daily limit").setSmallIcon(R.mipmap.ic_launcher)
+                    .setPriority(Notification.PRIORITY_HIGH)
+                    .setDefaults(Notification.DEFAULT_VIBRATE)
+                    .build();
+            NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            // hide the notification after its selected
+            notificationManager.notify(1, noti);
+        }
+
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -138,5 +167,30 @@ public class EnterValueActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = canCallNow.edit();
         editor.putBoolean("CALL",true);
         editor.commit();
+    }
+
+    public long getSumSpent(){
+        currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
+        String SELECTION = MoneyContract.MoneyEntry.COLUMN_MONEY_DATE+" =? AND "+ MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS+" =?";
+
+        String[] ARGS = {currentDate,"1"};
+        MoneyDbHelper mDbHelper = new MoneyDbHelper(this);
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        long sumSpent = 0;
+        String[] PROJECTION = {
+                "SUM(value)"
+        };
+        Cursor cur = db.query(MoneyContract.MoneyEntry.TABLE_NAME,
+                PROJECTION,
+                SELECTION,
+                ARGS,
+                null,null,null);
+//        Cursor cur = db.rawQuery("SELECT SUM(value) FROM today WHERE status = 1 AND date = "+currentDate, null);
+        if(cur.moveToFirst())
+        {
+            sumSpent = cur.getInt(0);
+            cur.close();
+        }
+        return sumSpent;
     }
 }

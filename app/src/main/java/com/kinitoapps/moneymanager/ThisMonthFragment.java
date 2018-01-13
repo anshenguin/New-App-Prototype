@@ -44,7 +44,7 @@ import java.util.Locale;
  * Use the {@link TodayFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class YesterdayFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
+public class ThisMonthFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
     // TODO: Rename parameter arguments, choose names that match
     private static final int MONEY_LOADER = 0;
     MoneyCursorAdapter mCursorAdapter;
@@ -59,7 +59,7 @@ public class YesterdayFragment extends Fragment implements LoaderManager.LoaderC
 
     private OnFragmentInteractionListener mListener;
 
-    public YesterdayFragment() {
+    public ThisMonthFragment() {
         // Required empty public constructor
     }
 
@@ -222,14 +222,14 @@ public class YesterdayFragment extends Fragment implements LoaderManager.LoaderC
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_yesterday, container, false);
+        View root = inflater.inflate(R.layout.fragment_this_month, container, false);
         // Inflate the layout for this fragment
         // Create and/or open a database to read from it
 
         // Perform this raw SQL query "SELECT * FROM pets"
         // to get a Cursor that contains all rows from the pets table.
 //        Cursor cursor = db.rawQuery("SELECT * FROM " + MoneyContract.MoneyEntry.TABLE_NAME, null);
-//
+
 //        String[] projection = {
 //                MoneyContract.MoneyEntry._ID,
 //                MoneyContract.MoneyEntry.COLUMN_MONEY_VALUE,
@@ -403,13 +403,13 @@ public class YesterdayFragment extends Fragment implements LoaderManager.LoaderC
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
-        String date = String.valueOf(Integer.parseInt(currentDate.substring(0,2))-1);
+//        String date = String.valueOf(Integer.parseInt(currentDate.substring(0,2))-1);
         String monthAndYear = currentDate.substring(2);
-        String yesterdayDate = date+monthAndYear;
-        String SELECTION = MoneyContract.MoneyEntry.COLUMN_MONEY_DATE+" =?";
-        String[] ARGS = {yesterdayDate};
+
+        String SELECTION = MoneyContract.MoneyEntry.COLUMN_MONEY_DATE+" LIKE?";
+        String[] ARGS = {"%"+monthAndYear};
         Log.v("date",MoneyContract.MoneyEntry.COLUMN_MONEY_DATE);
-        Log.v("date",yesterdayDate);
+        Log.v("date",monthAndYear);
         String[] projection = {
                 MoneyContract.MoneyEntry._ID,
                 MoneyContract.MoneyEntry.COLUMN_MONEY_VALUE,
@@ -457,23 +457,22 @@ public class YesterdayFragment extends Fragment implements LoaderManager.LoaderC
 
     public String getSumSpent(){
         currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
-        String date = String.valueOf(Integer.parseInt(currentDate.substring(0,2))-1);
+//        String date = String.valueOf(Integer.parseInt(currentDate.substring(0,2))-1);
         String monthAndYear = currentDate.substring(2);
-        String yesterdayDate = date+monthAndYear;
+        String SELECTION = MoneyContract.MoneyEntry.COLUMN_MONEY_DATE+" LIKE? AND "+ MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS+" =?";
+        String[] ARGS = {"%"+monthAndYear,"1"};
         String str = "";
         MoneyDbHelper mDbHelper = new MoneyDbHelper(getActivity());
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         String[] PROJECTION = {
                 "SUM(value)"
         };
-        String[] ARGS = {yesterdayDate,"1"};
-
-        String SELECTION = MoneyContract.MoneyEntry.COLUMN_MONEY_DATE+" =? AND "+ MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS+" =?";
         Cursor cur = db.query(MoneyContract.MoneyEntry.TABLE_NAME,
                 PROJECTION,
                 SELECTION,
                 ARGS,
                 null,null,null);
+//        Cursor cur = db.rawQuery("SELECT SUM(value) FROM today WHERE status = 1 AND date LIKE %"+monthAndYear, null);
         if(cur.moveToFirst())
         {
             str = String.valueOf(cur.getInt(0));
@@ -484,23 +483,22 @@ public class YesterdayFragment extends Fragment implements LoaderManager.LoaderC
 
     public String getSumReceived() {
         currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
-        String date = String.valueOf(Integer.parseInt(currentDate.substring(0,2))-1);
+//        String date = String.valueOf(Integer.parseInt(currentDate.substring(0,2))-1);
         String monthAndYear = currentDate.substring(2);
-        String yesterdayDate = date+monthAndYear;
+        String SELECTION = MoneyContract.MoneyEntry.COLUMN_MONEY_DATE+" LIKE? AND "+ MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS+" =?";
+        String[] ARGS = {"%"+monthAndYear,"2"};
         String sumReceived = "";
         MoneyDbHelper mDbHelper = new MoneyDbHelper(getActivity());
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         String[] PROJECTION = {
                 "SUM(value)"
         };
-        String[] ARGS = {yesterdayDate,"2"};
-
-        String SELECTION = MoneyContract.MoneyEntry.COLUMN_MONEY_DATE+" =? AND "+ MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS+" =?";
         Cursor cur = db.query(MoneyContract.MoneyEntry.TABLE_NAME,
                 PROJECTION,
                 SELECTION,
                 ARGS,
                 null,null,null);
+//        Cursor cur = db.rawQuery("SELECT SUM(value) FROM today WHERE status = 2 AND date LIKE %"+monthAndYear, null);
         if(cur.moveToFirst())
         {
             sumReceived = String.valueOf(cur.getInt(0));
@@ -511,11 +509,10 @@ public class YesterdayFragment extends Fragment implements LoaderManager.LoaderC
 
     public boolean noEntriesExist(){
         currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
-        String date = String.valueOf(Integer.parseInt(currentDate.substring(0,2))-1);
+//        String date = String.valueOf(Integer.parseInt(currentDate.substring(0,2))-1);
         String monthAndYear = currentDate.substring(2);
-        String yesterdayDate = date+monthAndYear;
-        String SELECTION = MoneyContract.MoneyEntry.COLUMN_MONEY_DATE+" =?";
-        String[] ARGS = {yesterdayDate};
+        String SELECTION = MoneyContract.MoneyEntry.COLUMN_MONEY_DATE+" LIKE?";
+        String[] ARGS = {"%"+monthAndYear};
         MoneyDbHelper mDbHelper = new MoneyDbHelper(getActivity());
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         int numRows = (int)DatabaseUtils.queryNumEntries(db, MoneyContract.MoneyEntry.TABLE_NAME,SELECTION,ARGS);

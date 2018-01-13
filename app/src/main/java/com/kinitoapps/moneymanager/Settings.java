@@ -30,7 +30,9 @@ public class Settings extends AppCompatActivity {
 //                .switch_unlock);
         final Switch switch_notification = (Switch) findViewById(R.id.switch_notification);
         LinearLayout createShortcut = (LinearLayout) findViewById(R.id.create_shortcut);
+        LinearLayout setLimit = (LinearLayout) findViewById(R.id.set_limit);
         SharedPreferences sharedPreferences = getSharedPreferences("SWITCH_NOTIFICATION", Context.MODE_PRIVATE);
+        SharedPreferences sh = getSharedPreferences("LIMIT",Context.MODE_PRIVATE);
         SharedPreferences firstRun = getSharedPreferences("com.example.lockscreentest",Context.MODE_PRIVATE);
 
 //        switch_unlock.setChecked(sharedPreferences.getBoolean("SWITCH",true));
@@ -58,6 +60,15 @@ public class Settings extends AppCompatActivity {
                 createEnterValueActivityShortcut();
             }
         });
+
+        setLimit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(Settings.this,LimitActivity.class));
+            }
+        });
+
+
         switch_notification.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

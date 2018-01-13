@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +30,10 @@ import com.kinitoapps.moneymanager.data.MoneyContract;
 import com.kinitoapps.moneymanager.data.MoneyDbHelper;
 import com.kinitoapps.moneymanager.piechart.PieGraph;
 import com.kinitoapps.moneymanager.piechart.PieSlice;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 
 /**
@@ -50,6 +55,7 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private String currentDate;
 
     private OnFragmentInteractionListener mListener;
 
@@ -242,11 +248,10 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
 //                null,
 //                null
 //        );
-
         PieGraph pg = root.findViewById(R.id.graph);
         pg.setInnerCircleRatio(140);
         boolean purpleValueGreater = false;
-        PieSlice slice = new PieSlice();
+        PieSlice slice;
         slice = new PieSlice();
         slice.setColor(Color.parseColor("#FFBB33"));
 
@@ -290,7 +295,7 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
         final TextView sum_total = root.findViewById(R.id.total);
         sum_total.setText("0");
         ValueAnimator valueAnimator_three = ValueAnimator.ofInt(0,
-                Integer.parseInt(getSumSpent())+Integer.parseInt(getSumReceived()));
+                -Integer.parseInt(getSumSpent())+Integer.parseInt(getSumReceived()));
         valueAnimator_three.setDuration(1000);
         valueAnimator_three.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -397,6 +402,11 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
+        String SELECTION = MoneyContract.MoneyEntry.COLUMN_MONEY_DATE+" =?";
+        String[] ARGS = {currentDate};
+        Log.v("date",MoneyContract.MoneyEntry.COLUMN_MONEY_DATE);
+        Log.v("date",currentDate);
         String[] projection = {
                 MoneyContract.MoneyEntry._ID,
                 MoneyContract.MoneyEntry.COLUMN_MONEY_VALUE,
@@ -409,8 +419,8 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
         return new CursorLoader(getActivity(),
                 MoneyContract.MoneyEntry.CONTENT_URI,
                 projection,
-                null,
-                null,
+                SELECTION,
+                ARGS,
                 null);
     }
 
@@ -443,10 +453,22 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
     }
 
     public String getSumSpent(){
+        currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
+        String SELECTION = MoneyContract.MoneyEntry.COLUMN_MONEY_DATE+" =? AND "+ MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS+" =?";
+
+        String[] ARGS = {currentDate,"1"};
         MoneyDbHelper mDbHelper = new MoneyDbHelper(getActivity());
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         String str = "";
-        Cursor cur = db.rawQuery("SELECT SUM(value) FROM today WHERE status = 1", null);
+        String[] PROJECTION = {
+                "SUM(value)"
+        };
+        Cursor cur = db.query(MoneyContract.MoneyEntry.TABLE_NAME,
+                PROJECTION,
+                SELECTION,
+                ARGS,
+                null,null,null);
+//        Cursor cur = db.rawQuery("SELECT SUM(value) FROM today WHERE status = 1 AND date = "+currentDate, null);
         if(cur.moveToFirst())
         {
             str = String.valueOf(cur.getInt(0));
@@ -456,10 +478,22 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
     }
 
     public String getSumReceived() {
-        String sumReceived = "";
+        currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
+            String SELECTION = MoneyContract.MoneyEntry.COLUMN_MONEY_DATE+" =? AND "+ MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS+" =?";
+
+        String[] ARGS = {currentDate,"2"};
         MoneyDbHelper mDbHelper = new MoneyDbHelper(getActivity());
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
-        Cursor cur = db.rawQuery("SELECT SUM(value) FROM today WHERE status = 2", null);
+        String sumReceived = "";
+        String[] PROJECTION = {
+                "SUM(value)"
+        };
+        Cursor cur = db.query(MoneyContract.MoneyEntry.TABLE_NAME,
+                PROJECTION,
+                SELECTION,
+                ARGS,
+                null,null,null);
+//        Cursor cur = db.rawQuery("SELECT SUM(value) FROM today WHERE status = 2 AND date = "+currentDate, null);
         if(cur.moveToFirst())
         {
             sumReceived = String.valueOf(cur.getInt(0));
@@ -469,9 +503,12 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
     }
 
     public boolean noEntriesExist(){
+        currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
+        String SELECTION = MoneyContract.MoneyEntry.COLUMN_MONEY_DATE+" =?";
+        String[] ARGS = {currentDate};
         MoneyDbHelper mDbHelper = new MoneyDbHelper(getActivity());
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
-        int numRows = (int)DatabaseUtils.queryNumEntries(db, "today");
+        int numRows = (int)DatabaseUtils.queryNumEntries(db, MoneyContract.MoneyEntry.TABLE_NAME,SELECTION,ARGS);
         if(numRows == 0)
         return true;
         else return false;
