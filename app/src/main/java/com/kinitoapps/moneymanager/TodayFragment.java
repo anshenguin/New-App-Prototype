@@ -255,15 +255,15 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
         slice = new PieSlice();
         slice.setColor(Color.parseColor("#FFBB33"));
 
-        slice.setValue(Integer.parseInt(getSumReceived())>Integer.parseInt(getSumSpent())?Integer.parseInt(getSumReceived())+Integer.parseInt(getSumSpent()):0);
+        slice.setValue(Double.parseDouble(getSumReceived())>Double.parseDouble(getSumSpent())? (float) (Double.parseDouble(getSumReceived()) + Double.parseDouble(getSumSpent())) :0);
         if(slice.getValue()==0)
             purpleValueGreater = true;
-        slice.setGoalValue(Integer.parseInt(getSumSpent()));
+        slice.setGoalValue((float) Double.parseDouble(getSumSpent()));
         pg.addSlice(slice);
         slice = new PieSlice();
         slice.setColor(Color.parseColor("#AA66CC"));
-        slice.setValue(purpleValueGreater?Integer.parseInt(getSumReceived())+Integer.parseInt(getSumSpent()):0);
-        slice.setGoalValue(Integer.parseInt(getSumReceived()));
+        slice.setValue(purpleValueGreater? (float) (Double.parseDouble(getSumReceived()) + Double.parseDouble(getSumSpent())) :0);
+        slice.setGoalValue((float) Double.parseDouble(getSumReceived()));
         pg.addSlice(slice);
 //        pg.setInterpolator(new DecelerateInterpolator());
         pg.setDuration(1000);//default if unspecified is 300 ms
@@ -271,7 +271,7 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
         NonScrollListView moneyListView = root.findViewById(R.id.list);
         final TextView sum_spent = root.findViewById(R.id.sum_spent);
         sum_spent.setText("0");
-        ValueAnimator valueAnimator = ValueAnimator.ofInt(0, Integer.parseInt(getSumSpent()));
+        ValueAnimator valueAnimator = ValueAnimator.ofFloat(0, (float) Double.parseDouble(getSumSpent()));
         valueAnimator.setDuration(1000);
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -282,7 +282,7 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
         valueAnimator.start();
         final TextView sum_received = root.findViewById(R.id.sum_received);
         sum_received.setText("0");
-        ValueAnimator valueAnimator_two = ValueAnimator.ofInt(0, Integer.parseInt(getSumReceived()));
+        ValueAnimator valueAnimator_two = ValueAnimator.ofFloat(0, (float)Double.parseDouble(getSumReceived()));
         valueAnimator_two.setDuration(1000);
         valueAnimator_two.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -294,8 +294,8 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
         valueAnimator_two.start();
         final TextView sum_total = root.findViewById(R.id.total);
         sum_total.setText("0");
-        ValueAnimator valueAnimator_three = ValueAnimator.ofInt(0,
-                -Integer.parseInt(getSumSpent())+Integer.parseInt(getSumReceived()));
+        ValueAnimator valueAnimator_three = ValueAnimator.ofFloat(0,(float)
+                -Double.parseDouble(getSumSpent())+(float)Double.parseDouble(getSumReceived()));
         valueAnimator_three.setDuration(1000);
         valueAnimator_three.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -305,12 +305,16 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
         });
         valueAnimator_three.start();
         View emptyView = root.findViewById(R.id.empty_view);
-        moneyListView.setEmptyView(emptyView);
+//        moneyListView.setEmptyView(emptyView);
         LinearLayout pieChart = root.findViewById(R.id.pie_chart);
-        if(noEntriesExist())
+        if(noEntriesExist()) {
             pieChart.setVisibility(View.GONE);
-        else
+            emptyView.setVisibility(View.VISIBLE);
+        }
+        else {
             pieChart.setVisibility(View.VISIBLE);
+            emptyView.setVisibility(View.GONE);
+        }
 
 
 //        MoneyCursorAdapter adapter = new MoneyCursorAdapter(getActivity(), cursor);
@@ -471,7 +475,7 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
 //        Cursor cur = db.rawQuery("SELECT SUM(value) FROM today WHERE status = 1 AND date = "+currentDate, null);
         if(cur.moveToFirst())
         {
-            str = String.valueOf(cur.getInt(0));
+            str = String.valueOf(cur.getDouble(0));
             cur.close();
         }
         return str;
@@ -496,7 +500,7 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
 //        Cursor cur = db.rawQuery("SELECT SUM(value) FROM today WHERE status = 2 AND date = "+currentDate, null);
         if(cur.moveToFirst())
         {
-            sumReceived = String.valueOf(cur.getInt(0));
+            sumReceived = String.valueOf(cur.getDouble(0));
             cur.close();
         }
         return sumReceived;

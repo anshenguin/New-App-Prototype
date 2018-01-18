@@ -49,7 +49,7 @@ public class home extends AppCompatActivity
 
             firstRun.edit().putBoolean("firstrun",false).commit();
             sh.edit().putLong("limit_today",0).commit();
-
+            sh.edit().putLong("limit_month",0).commit();
             createNotification();
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

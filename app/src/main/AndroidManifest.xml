@@ -31,7 +31,6 @@
             android:authorities="com.kinitoapps.moneymanager"
             android:exported="false" />
 
-        <activity android:name=".LimitActivity"></activity>
     </application>
 
 </manifest>

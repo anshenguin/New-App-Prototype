@@ -1,10 +1,8 @@
 package com.kinitoapps.moneymanager;
 import android.app.Notification;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -116,7 +114,7 @@ public class EnterValueActivity extends AppCompatActivity {
         String date = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
         DateFormat df = new SimpleDateFormat("h:mm a",Locale.getDefault());
         String time = df.format(Calendar.getInstance().getTime());
-        int value = Integer.parseInt(mValueEditText.getText().toString().trim());
+        double value = Double.parseDouble(mValueEditText.getText().toString().trim());
 
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
@@ -136,15 +134,15 @@ public class EnterValueActivity extends AppCompatActivity {
         // this is set to "null", then the framework will not insert a row when
         // there are no values).
         // The third argument is the ContentValues object containing the info for Toto.
-        long newRowId = db.insert(MoneyContract.MoneyEntry.TABLE_NAME, null, values);
+       db.insert(MoneyContract.MoneyEntry.TABLE_NAME, null, values);
 
     }
 
     private void checkForLimit(){
         //TODO: DONT CHECK FOR LIMIT IF ALREADY CHECKED TODAY
-        //TODO: MAKE A SIMILAR METHOD FOR MONTHLY LIMIT
-        Long limit = sharedPreferences.getLong("limit_today",0);
-        if(limit<=getSumSpent()&&limit>0){
+        Long limit_today = sharedPreferences.getLong("limit_today",0);
+        Long limit_month = sharedPreferences.getLong("limit_month",0);
+        if(limit_today<= getDailySumSpent()&&limit_today>0){
             // Build notification
             // Actions are just fake
             Notification noti = new Notification.Builder(this)
@@ -158,6 +156,18 @@ public class EnterValueActivity extends AppCompatActivity {
             notificationManager.notify(1, noti);
         }
 
+        if(limit_month<=getMonthlySumSpent()&&limit_month>0){
+            Notification noti = new Notification.Builder(this)
+                    .setContentTitle("MONTHLY LIMIT WARNING")
+                    .setContentText("You have exceeded your monthly limit").setSmallIcon(R.mipmap.ic_launcher)
+                    .setPriority(Notification.PRIORITY_HIGH)
+                    .setDefaults(Notification.DEFAULT_VIBRATE)
+                    .build();
+            NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            // hide the notification after its selected
+            notificationManager.notify(2, noti);
+        }
+
     }
 
     @Override
@@ -169,14 +179,14 @@ public class EnterValueActivity extends AppCompatActivity {
         editor.commit();
     }
 
-    public long getSumSpent(){
+    public double getDailySumSpent(){
         currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
         String SELECTION = MoneyContract.MoneyEntry.COLUMN_MONEY_DATE+" =? AND "+ MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS+" =?";
 
         String[] ARGS = {currentDate,"1"};
         MoneyDbHelper mDbHelper = new MoneyDbHelper(this);
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
-        long sumSpent = 0;
+        double sumSpent = 0;
         String[] PROJECTION = {
                 "SUM(value)"
         };
@@ -188,9 +198,35 @@ public class EnterValueActivity extends AppCompatActivity {
 //        Cursor cur = db.rawQuery("SELECT SUM(value) FROM today WHERE status = 1 AND date = "+currentDate, null);
         if(cur.moveToFirst())
         {
-            sumSpent = cur.getInt(0);
+            sumSpent = cur.getDouble(0);
             cur.close();
         }
         return sumSpent;
+    }
+
+    public double getMonthlySumSpent(){
+        currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
+//        String date = String.valueOf(Integer.parseInt(currentDate.substring(0,2))-1);
+        String monthAndYear = currentDate.substring(2);
+        String SELECTION = MoneyContract.MoneyEntry.COLUMN_MONEY_DATE+" LIKE? AND "+ MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS+" =?";
+        String[] ARGS = {"%"+monthAndYear,"1"};
+        double sumspent = 0;
+        MoneyDbHelper mDbHelper = new MoneyDbHelper(this);
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        String[] PROJECTION = {
+                "SUM(value)"
+        };
+        Cursor cur = db.query(MoneyContract.MoneyEntry.TABLE_NAME,
+                PROJECTION,
+                SELECTION,
+                ARGS,
+                null,null,null);
+//        Cursor cur = db.rawQuery("SELECT SUM(value) FROM today WHERE status = 1 AND date LIKE %"+monthAndYear, null);
+        if(cur.moveToFirst())
+        {
+            sumspent = cur.getDouble(0);
+            cur.close();
+        }
+        return sumspent;
     }
 }

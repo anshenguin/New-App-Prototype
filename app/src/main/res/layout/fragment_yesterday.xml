@@ -1,146 +1,206 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:focusable="true"
+    android:layout_height="match_parent"
     android:background="#FAFAFA"
-    android:layout_height="match_parent">
-    <LinearLayout
+    android:focusable="true">
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:orientation="vertical"
-        android:descendantFocusability="blocksDescendants"
+
         android:layout_height="wrap_content">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:id="@+id/empty_view"
+            android:layout_height="match_parent">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:gravity="center"
+                android:layout_gravity="center">
+
+                <ImageView
+                    android:id="@+id/empty_shelter_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:src="@mipmap/ic_launcher_round"/>
+
+                <TextView
+                    android:id="@+id/empty_title_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/empty_shelter_image"
+                    android:layout_centerHorizontal="true"
+                    android:fontFamily="sans-serif-medium"
+                    android:paddingTop="16dp"
+                    android:text="@string/empty_view_title_text"
+                    android:textAppearance="?android:textAppearanceMedium"/>
+
+                <TextView
+                    android:id="@+id/empty_subtitle_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/empty_title_text"
+                    android:layout_centerHorizontal="true"
+                    android:fontFamily="sans-serif"
+                    android:paddingTop="8dp"
+                    android:text="@string/empty_view_subtitle_text"
+                    android:textAppearance="?android:textAppearanceSmall"
+                    android:textColor="#A2AAB0"/>
+            </RelativeLayout>
+
+        </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#E0E0E0"
-            android:id="@+id/pie_chart"
+            android:descendantFocusability="blocksDescendants"
             android:orientation="vertical">
 
-            <com.kinitoapps.moneymanager.piechart.PieGraph
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_marginTop="16dp"
-                android:id="@+id/graph"/>
-
             <LinearLayout
-                android:orientation="horizontal"
+                android:id="@+id/pie_chart"
                 android:layout_width="match_parent"
-                android:weightSum="12"
-                android:layout_height="60dp">
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_weight="3"
-                    android:orientation="vertical"
-                    android:padding="4dp"
-                    android:layout_height="match_parent">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:text="RECEIVED"
-                        android:textStyle="bold"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_height="wrap_content" />
-                    <TextView
-                        android:id="@+id/sum_received"
-                        android:text="10000"
-                        android:textColor="#AA66CC"
-                        android:textStyle="bold"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
-                </LinearLayout>
+                android:layout_height="wrap_content"
+                android:background="#E0E0E0"
+                android:orientation="vertical">
+
+                <com.kinitoapps.moneymanager.piechart.PieGraph
+                    android:id="@+id/graph"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:layout_marginTop="16dp" />
 
                 <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_weight="6"
-                    android:orientation="vertical"
-                    android:layout_height="match_parent">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:id="@+id/total"
-                        android:textStyle="bold"
-                        android:text="100000000"
-                        android:textColor="#D59180"
-                        android:textSize="24sp"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="20dp"
-                        android:layout_height="wrap_content"/>
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_weight="3"
-                    android:padding="4dp"
-                    android:orientation="vertical"
-                    android:layout_height="match_parent">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:text="SPENT"
-                        android:textStyle="bold"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_height="wrap_content" />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:id="@+id/sum_spent"
-                        android:text="10000"
-                        android:textStyle="bold"
-                        android:textColor="#FFBB33"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_height="wrap_content"/>
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:orientation="horizontal"
+                    android:weightSum="12">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="3"
+                        android:orientation="vertical"
+                        android:padding="4dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:text="RECEIVED"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/sum_received"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:text="10000"
+                            android:textColor="#AA66CC"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="6"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/total"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginTop="20dp"
+                            android:text="100000000"
+                            android:textColor="#D59180"
+                            android:textSize="24sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="3"
+                        android:orientation="vertical"
+                        android:padding="4dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:text="SPENT"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/sum_spent"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:text="10000"
+                            android:textColor="#FFBB33"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
                 </LinearLayout>
 
+
+                <com.kinitoapps.moneymanager.NonScrollListView
+                    android:id="@+id/list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#FAFAFA" />
             </LinearLayout>
 
+            <!--<RelativeLayout-->
+            <!--android:id="@+id/empty_view"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="center"-->
+            <!--android:layout_marginTop="40dp">-->
+
+            <!--<ImageView-->
+            <!--android:id="@+id/empty_shelter_image"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_centerHorizontal="true"-->
+            <!--android:src="@mipmap/ic_launcher_round" />-->
+
+            <!--<TextView-->
+            <!--android:id="@+id/empty_title_text"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_below="@+id/empty_shelter_image"-->
+            <!--android:layout_centerHorizontal="true"-->
+            <!--android:fontFamily="sans-serif-medium"-->
+            <!--android:paddingTop="16dp"-->
+            <!--android:text="@string/empty_view_title_text"-->
+            <!--android:textAppearance="?android:textAppearanceMedium" />-->
+
+            <!--<TextView-->
+            <!--android:id="@+id/empty_subtitle_text"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_below="@+id/empty_title_text"-->
+            <!--android:layout_centerHorizontal="true"-->
+            <!--android:fontFamily="sans-serif"-->
+            <!--android:paddingTop="8dp"-->
+            <!--android:text="@string/empty_view_subtitle_text"-->
+            <!--android:textAppearance="?android:textAppearanceSmall"-->
+            <!--android:textColor="#A2AAB0" />-->
+            <!--</RelativeLayout>-->
 
 
-
-            <com.kinitoapps.moneymanager.NonScrollListView
-                android:layout_width="match_parent"
-                android:id="@+id/list"
-                android:background="#FAFAFA"
-                android:layout_height="wrap_content"/>
         </LinearLayout>
 
-        <RelativeLayout
-            android:id="@+id/empty_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
-            android:layout_gravity="center">
-
-            <ImageView
-                android:id="@+id/empty_shelter_image"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:src="@mipmap/ic_launcher_round"/>
-
-            <TextView
-                android:id="@+id/empty_title_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/empty_shelter_image"
-                android:layout_centerHorizontal="true"
-                android:fontFamily="sans-serif-medium"
-                android:paddingTop="16dp"
-                android:text="@string/empty_view_title_text"
-                android:textAppearance="?android:textAppearanceMedium"/>
-
-            <TextView
-                android:id="@+id/empty_subtitle_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/empty_title_text"
-                android:layout_centerHorizontal="true"
-                android:fontFamily="sans-serif"
-                android:paddingTop="8dp"
-                android:text="@string/empty_view_subtitle_text"
-                android:textAppearance="?android:textAppearanceSmall"
-                android:textColor="#A2AAB0"/>
-        </RelativeLayout>
-
-
-    </LinearLayout>
+    </RelativeLayout>
     <!--</android.support.v4.widget.NestedScrollView>-->
 </ScrollView>
