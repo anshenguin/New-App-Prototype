@@ -1,9 +1,12 @@
 package com.kinitoapps.moneymanager;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.database.DatabaseUtils;
 import android.graphics.Color;
 import android.opengl.Visibility;
+import android.os.Handler;
 import android.support.v4.app.LoaderManager;
 import android.content.Context;
 import android.support.v4.content.CursorLoader;
@@ -19,6 +22,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
@@ -248,7 +252,8 @@ public class YesterdayFragment extends Fragment implements LoaderManager.LoaderC
 //                null,
 //                null
 //        );
-        PieGraph pg = root.findViewById(R.id.graph);
+        final NonScrollListView moneyListView = root.findViewById(R.id.list);
+        final PieGraph pg = root.findViewById(R.id.graph);
         pg.setInnerCircleRatio(140);
         boolean purpleValueGreater = false;
         PieSlice slice;
@@ -265,12 +270,32 @@ public class YesterdayFragment extends Fragment implements LoaderManager.LoaderC
         slice.setValue(purpleValueGreater? (float) (Double.parseDouble(getSumReceived()) + Double.parseDouble(getSumSpent())) :0);
         slice.setGoalValue((float) Double.parseDouble(getSumReceived()));
         pg.addSlice(slice);
-//        pg.setInterpolator(new DecelerateInterpolator());
-        pg.setDuration(1000);//default if unspecified is 300 ms
-        pg.animateToGoalValues();
-        NonScrollListView moneyListView = root.findViewById(R.id.list);
         final TextView sum_spent = root.findViewById(R.id.sum_spent);
         sum_spent.setText("0");
+        final TextView sum_received = root.findViewById(R.id.sum_received);
+        sum_received.setText("0");
+        final TextView sum_total = root.findViewById(R.id.total);
+        sum_total.setText("0");
+//        pg.setInterpolator(new DecelerateInterpolator());
+        pg.setDuration(1000);//default if unspecified is 300 ms
+        pg.setAnimationListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    public void run() {
+                        moneyListView.setVisibility(View.VISIBLE);
+                        moneyListView.startAnimation(AnimationUtils.loadAnimation(getActivity(),R.anim.enter_from_left));
+                    }
+                }, 50);
+
+            }
+
+
+        });
+
+        pg.animateToGoalValues();
         ValueAnimator valueAnimator = ValueAnimator.ofFloat(0, (float) Double.parseDouble(getSumSpent()));
         valueAnimator.setDuration(1000);
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -280,8 +305,6 @@ public class YesterdayFragment extends Fragment implements LoaderManager.LoaderC
             }
         });
         valueAnimator.start();
-        final TextView sum_received = root.findViewById(R.id.sum_received);
-        sum_received.setText("0");
         ValueAnimator valueAnimator_two = ValueAnimator.ofFloat(0, (float)Double.parseDouble(getSumReceived()));
         valueAnimator_two.setDuration(1000);
         valueAnimator_two.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -292,8 +315,6 @@ public class YesterdayFragment extends Fragment implements LoaderManager.LoaderC
         });
 
         valueAnimator_two.start();
-        final TextView sum_total = root.findViewById(R.id.total);
-        sum_total.setText("0");
         ValueAnimator valueAnimator_three = ValueAnimator.ofFloat(0,(float)
                 -Double.parseDouble(getSumSpent())+(float)Double.parseDouble(getSumReceived()));
         valueAnimator_three.setDuration(1000);

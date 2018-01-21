@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FAFAFA"
+    android:scrollbars="none"
     android:focusable="true">
 
     <RelativeLayout
@@ -68,8 +69,13 @@
                 android:id="@+id/pie_chart"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#E0E0E0"
                 android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:orientation="vertical"
+                    android:background="#E0E0E0"
+                    android:layout_height="wrap_content">
 
                 <com.kinitoapps.moneymanager.piechart.PieGraph
                     android:id="@+id/graph"
@@ -150,10 +156,12 @@
                     </LinearLayout>
 
                 </LinearLayout>
+                </LinearLayout>
 
 
                 <com.kinitoapps.moneymanager.NonScrollListView
                     android:id="@+id/list"
+                    android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="#FAFAFA" />

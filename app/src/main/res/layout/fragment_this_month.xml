@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FAFAFA"
+    android:scrollbars="none"
     android:focusable="true">
 
     <RelativeLayout
@@ -68,92 +69,99 @@
                 android:id="@+id/pie_chart"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#E0E0E0"
                 android:orientation="vertical">
-
-                <com.kinitoapps.moneymanager.piechart.PieGraph
-                    android:id="@+id/graph"
-                    android:layout_width="match_parent"
-                    android:layout_height="200dp"
-                    android:layout_marginTop="16dp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:orientation="horizontal"
-                    android:weightSum="12">
+                    android:orientation="vertical"
+                    android:background="#E0E0E0"
+                    android:layout_height="wrap_content">
+
+                    <com.kinitoapps.moneymanager.piechart.PieGraph
+                        android:id="@+id/graph"
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        android:layout_marginTop="16dp" />
 
                     <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="3"
-                        android:orientation="vertical"
-                        android:padding="4dp">
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:orientation="horizontal"
+                        android:weightSum="12">
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:text="RECEIVED"
-                            android:textStyle="bold" />
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="3"
+                            android:orientation="vertical"
+                            android:padding="4dp">
 
-                        <TextView
-                            android:id="@+id/sum_received"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:text="10000"
-                            android:textColor="#AA66CC"
-                            android:textStyle="bold" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal"
+                                android:text="RECEIVED"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/sum_received"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal"
+                                android:text="10000"
+                                android:textColor="#AA66CC"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="6"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/total"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginTop="20dp"
+                                android:text="100000000"
+                                android:textColor="#D59180"
+                                android:textSize="24sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="3"
+                            android:orientation="vertical"
+                            android:padding="4dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal"
+                                android:text="SPENT"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/sum_spent"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal"
+                                android:text="10000"
+                                android:textColor="#FFBB33"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+
                     </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="6"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/total"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_marginTop="20dp"
-                            android:text="100000000"
-                            android:textColor="#D59180"
-                            android:textSize="24sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="3"
-                        android:orientation="vertical"
-                        android:padding="4dp">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:text="SPENT"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/sum_spent"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:text="10000"
-                            android:textColor="#FFBB33"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-
                 </LinearLayout>
 
 
                 <com.kinitoapps.moneymanager.NonScrollListView
                     android:id="@+id/list"
+                    android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="#FAFAFA" />

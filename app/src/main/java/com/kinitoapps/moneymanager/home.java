@@ -23,6 +23,7 @@ public class home extends AppCompatActivity
     boolean mDrawerItemClicked = false;
     short clicked = 0;
     short selected = 1;
+    public static boolean shouldAnimate = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
