@@ -82,14 +82,14 @@ public class Settings extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         if(!isNumeric(input.getText().toString())){
                             if(input.getText().toString()=="")
-                                sh.edit().putLong("limit_daily", 0).commit();
+                                sh.edit().putLong("limit_today", 0).commit();
                             else{
                                 Toast.makeText(Settings.this,"Please enter a numeric value as the limit",Toast.LENGTH_LONG).show();
                             }
                         }
                         else {
                             lim = Long.parseLong(input.getText().toString());
-                            sh.edit().putLong("limit_daily", lim).commit();
+                            sh.edit().putLong("limit_today", lim).commit();
                         }
                     }
                 });

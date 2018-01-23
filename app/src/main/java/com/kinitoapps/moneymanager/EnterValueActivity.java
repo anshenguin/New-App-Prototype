@@ -76,6 +76,7 @@ public class EnterValueActivity extends AppCompatActivity {
     private void setupSpinner() {
         // Create adapter for spinner. The list options are from the String array it will use
         // the spinner will use the default layout
+
         ArrayAdapter genderSpinnerAdapter = ArrayAdapter.createFromResource(this,
                 R.array.array_status_options, android.R.layout.simple_spinner_item);
 

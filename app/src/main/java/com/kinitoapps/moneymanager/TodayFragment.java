@@ -22,6 +22,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.LinearLayout;
@@ -35,6 +36,7 @@ import com.kinitoapps.moneymanager.data.MoneyDbHelper;
 import com.kinitoapps.moneymanager.piechart.PieGraph;
 import com.kinitoapps.moneymanager.piechart.PieSlice;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -278,6 +280,7 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
         sum_total.setText("0");
 //        pg.setInterpolator(new DecelerateInterpolator());
         pg.setDuration(1000);//default if unspecified is 300 ms
+        final Animation slide = AnimationUtils.loadAnimation(getActivity(), R.anim.enter_from_left);
         pg.setAnimationListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
@@ -286,7 +289,7 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
                 handler.postDelayed(new Runnable() {
                     public void run() {
                         moneyListView.setVisibility(View.VISIBLE);
-                        moneyListView.startAnimation(AnimationUtils.loadAnimation(getActivity(),R.anim.enter_from_left));
+                        moneyListView.startAnimation(slide);
                     }
                 }, 50);
 
@@ -301,16 +304,16 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                sum_spent.setText(valueAnimator.getAnimatedValue().toString());
+                sum_spent.setText(new DecimalFormat("#.00").format(valueAnimator.getAnimatedValue()));
             }
         });
         valueAnimator.start();
-        ValueAnimator valueAnimator_two = ValueAnimator.ofFloat(0, (float)Double.parseDouble(getSumReceived()));
+        ValueAnimator valueAnimator_two = ValueAnimator.ofFloat(0, (int)Double.parseDouble(getSumReceived()));
         valueAnimator_two.setDuration(1000);
         valueAnimator_two.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                sum_received.setText(valueAnimator.getAnimatedValue().toString());
+                sum_received.setText(new DecimalFormat("#.00").format(valueAnimator.getAnimatedValue()));
             }
         });
 
@@ -321,7 +324,7 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
         valueAnimator_three.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                sum_total.setText(valueAnimator.getAnimatedValue().toString());
+                sum_total.setText(new DecimalFormat("#.00").format(valueAnimator.getAnimatedValue()));
             }
         });
         valueAnimator_three.start();
