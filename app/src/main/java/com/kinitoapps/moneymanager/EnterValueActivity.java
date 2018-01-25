@@ -77,14 +77,14 @@ public class EnterValueActivity extends AppCompatActivity {
         // Create adapter for spinner. The list options are from the String array it will use
         // the spinner will use the default layout
 
-        ArrayAdapter genderSpinnerAdapter = ArrayAdapter.createFromResource(this,
+        ArrayAdapter spinnerAdapter = ArrayAdapter.createFromResource(this,
                 R.array.array_status_options, android.R.layout.simple_spinner_item);
 
         // Specify dropdown layout style - simple list view with 1 item per line
-        genderSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
 
         // Apply the adapter to the spinner
-        mStatusSpinner.setAdapter(genderSpinnerAdapter);
+        mStatusSpinner.setAdapter(spinnerAdapter);
 
         // Set the integer mSelected to the constant values
         mStatusSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {

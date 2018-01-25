@@ -3,6 +3,8 @@ package com.kinitoapps.moneymanager;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
+import android.content.ContentUris;
+import android.content.Intent;
 import android.database.DatabaseUtils;
 import android.graphics.Color;
 import android.opengl.Visibility;
@@ -25,6 +27,7 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -396,6 +399,16 @@ public class YesterdayFragment extends Fragment implements LoaderManager.LoaderC
 ////        }
         mCursorAdapter = new MoneyCursorAdapter(getActivity(),null);
         moneyListView.setAdapter(mCursorAdapter);
+        moneyListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                Intent intent = new Intent(getActivity(),EditActivity.class);
+                Uri currentEntryUri = ContentUris.withAppendedId(MoneyContract.MoneyEntry.CONTENT_URI, id);
+                Log.v("URI", String.valueOf(currentEntryUri));
+                intent.setData(currentEntryUri);
+                startActivity(intent);
+            }
+        });
 //        setListViewHeightBasedOnChildren(moneyListView);
         getLoaderManager().initLoader(MONEY_LOADER,null,this);
         return root;
