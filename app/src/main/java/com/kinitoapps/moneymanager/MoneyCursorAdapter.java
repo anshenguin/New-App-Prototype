@@ -33,6 +33,8 @@ import com.kinitoapps.moneymanager.R;
  */
 public class MoneyCursorAdapter extends CursorAdapter {
 
+
+
     /**
      * Constructs a new {@link MoneyCursorAdapter}.
      *

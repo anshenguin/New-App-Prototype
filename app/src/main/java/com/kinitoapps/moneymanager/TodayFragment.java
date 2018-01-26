@@ -18,15 +18,21 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.view.ActionMode;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
@@ -41,6 +47,7 @@ import com.kinitoapps.moneymanager.piechart.PieSlice;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
@@ -56,7 +63,9 @@ import java.util.Locale;
 public class TodayFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
     // TODO: Rename parameter arguments, choose names that match
     private static final int MONEY_LOADER = 0;
+    private static ArrayList<Long> mSelectedItemIds;
     MoneyCursorAdapter mCursorAdapter;
+    private android.view.ActionMode mActionMode;
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -65,7 +74,6 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
     private String mParam1;
     private String mParam2;
     private String currentDate;
-
     private OnFragmentInteractionListener mListener;
 
     public TodayFragment() {
@@ -232,32 +240,36 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_today, container, false);
-        // Inflate the layout for this fragment
-        // Create and/or open a database to read from it
 
-        // Perform this raw SQL query "SELECT * FROM pets"
-        // to get a Cursor that contains all rows from the pets table.
-//        Cursor cursor = db.rawQuery("SELECT * FROM " + MoneyContract.MoneyEntry.TABLE_NAME, null);
 
-//        String[] projection = {
-//                MoneyContract.MoneyEntry._ID,
-//                MoneyContract.MoneyEntry.COLUMN_MONEY_VALUE,
-//                MoneyContract.MoneyEntry.COLUMN_MONEY_DESC,
-//                MoneyContract.MoneyEntry.COLUMN_MONEY_DATE,
-//                MoneyContract.MoneyEntry.COLUMN_MONEY_TIME,
-//                MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS
-//        };
+//        // Inflate the layout for this fragment
+//        // Create and/or open a database to read from it
 //
-//        Cursor cursor = db.query(
-//                MoneyContract.MoneyEntry.TABLE_NAME,
-//                projection,
-//                null,
-//                null,
-//                null,
-//                null,
-//                null
-//        );
+//        // Perform this raw SQL query "SELECT * FROM pets"
+//        // to get a Cursor that contains all rows from the pets table.
+////        Cursor cursor = db.rawQuery("SELECT * FROM " + MoneyContract.MoneyEntry.TABLE_NAME, null);
+//
+////        String[] projection = {
+////                MoneyContract.MoneyEntry._ID,
+////                MoneyContract.MoneyEntry.COLUMN_MONEY_VALUE,
+////                MoneyContract.MoneyEntry.COLUMN_MONEY_DESC,
+////                MoneyContract.MoneyEntry.COLUMN_MONEY_DATE,
+////                MoneyContract.MoneyEntry.COLUMN_MONEY_TIME,
+////                MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS
+////        };
+////
+////        Cursor cursor = db.query(
+////                MoneyContract.MoneyEntry.TABLE_NAME,
+////                projection,
+////                null,
+////                null,
+////                null,
+////                null,
+////                null
+////        );
         final NonScrollListView moneyListView = root.findViewById(R.id.list);
+        mSelectedItemIds = new ArrayList<>();
+        //        Toolbar toolbar = root.findViewById(R.id.toolbar);
         final PieGraph pg = root.findViewById(R.id.graph);
         pg.setInnerCircleRatio(140);
         boolean purpleValueGreater = false;
@@ -307,27 +319,41 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                sum_spent.setText(new DecimalFormat("#.00").format(valueAnimator.getAnimatedValue()));
+                if(Float.parseFloat(valueAnimator.getAnimatedValue().toString())>=0&&
+                        Float.parseFloat(valueAnimator.getAnimatedValue().toString())<1)
+                    sum_spent.setText("0"+new DecimalFormat("#.00").format(valueAnimator.getAnimatedValue()));
+                else
+                    sum_spent.setText(new DecimalFormat("#.00").format(valueAnimator.getAnimatedValue()));
+
             }
         });
         valueAnimator.start();
-        ValueAnimator valueAnimator_two = ValueAnimator.ofFloat(0, (int)Double.parseDouble(getSumReceived()));
+        final ValueAnimator valueAnimator_two = ValueAnimator.ofFloat(0, (int)Double.parseDouble(getSumReceived()));
         valueAnimator_two.setDuration(1000);
         valueAnimator_two.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                sum_received.setText(new DecimalFormat("#.00").format(valueAnimator.getAnimatedValue()));
+                if(Float.parseFloat(valueAnimator_two.getAnimatedValue().toString())>=0&&
+                        Float.parseFloat(valueAnimator_two.getAnimatedValue().toString())<1)
+                    sum_received.setText("0"+new DecimalFormat("#.00").format(valueAnimator.getAnimatedValue()));
+                else
+                    sum_received.setText(new DecimalFormat("#.00").format(valueAnimator.getAnimatedValue()));
             }
         });
 
         valueAnimator_two.start();
-        ValueAnimator valueAnimator_three = ValueAnimator.ofFloat(0,(float)
+        final ValueAnimator valueAnimator_three = ValueAnimator.ofFloat(0,(float)
                 -Double.parseDouble(getSumSpent())+(float)Double.parseDouble(getSumReceived()));
         valueAnimator_three.setDuration(1000);
         valueAnimator_three.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                sum_total.setText(new DecimalFormat("#.00").format(valueAnimator.getAnimatedValue()));
+                if(Float.parseFloat(valueAnimator_three.getAnimatedValue().toString())>=0&&
+                        Float.parseFloat(valueAnimator_three.getAnimatedValue().toString())<1)
+                    sum_total.setText("0"+new DecimalFormat("#.00").format(valueAnimator.getAnimatedValue()));
+                else
+                    sum_total.setText(new DecimalFormat("#.00").format(valueAnimator.getAnimatedValue()));
+
             }
         });
         valueAnimator_three.start();
@@ -400,14 +426,56 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
 ////        }
         mCursorAdapter = new MoneyCursorAdapter(getActivity(),null);
         moneyListView.setAdapter(mCursorAdapter);
+//        moneyListView.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE_MODAL);
+//        moneyListView.setLongClickable(true);
+        moneyListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
+                if(!doesContainThisItem(id,mSelectedItemIds)) {
+                    view.setBackgroundColor(0x9934B5E4);
+                    mSelectedItemIds.add(id);
+                    mActionMode = getActivity().startActionMode(new ActionBarCallBack());
+                }
+                else if(mSelectedItemIds.size()!=0){
+                    view.setBackgroundColor(Color.TRANSPARENT);
+                    mSelectedItemIds.remove(id);
+                    updateTitle(mActionMode);
+                    if(mSelectedItemIds.size()==0)
+                        mActionMode.finish();
+                }
+//                else{
+//                    mActionMode.finish();
+//                }
+//                if (moneyListView.isItemChecked(position)){moneyListView.setItemChecked(position,false);}
+//                else{moneyListView.setItemChecked(position,true);}
+                return true;
+            }
+        });
         moneyListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                Intent intent = new Intent(getActivity(),EditActivity.class);
-                Uri currentEntryUri = ContentUris.withAppendedId(MoneyContract.MoneyEntry.CONTENT_URI, id);
-                Log.v("URI", String.valueOf(currentEntryUri));
-                intent.setData(currentEntryUri);
-                startActivity(intent);
+//                if (moneyListView.isItemChecked(position)){moneyListView.setItemChecked(position,false);}else{moneyListView.setItemChecked(position,true);}
+                if(mSelectedItemIds.size()==0) {
+                    Intent intent = new Intent(getActivity(), EditActivity.class);
+                    Uri currentEntryUri = ContentUris.withAppendedId(MoneyContract.MoneyEntry.CONTENT_URI, id);
+                    Log.v("URI", String.valueOf(currentEntryUri));
+                    intent.setData(currentEntryUri);
+                    startActivity(intent);
+                }
+                else if(!doesContainThisItem(id,mSelectedItemIds)){
+                    view.setBackgroundColor(0x9934B5E4);
+                    mSelectedItemIds.add(id);
+                    updateTitle(mActionMode);
+
+                }
+                else{
+                    view.setBackgroundColor(Color.TRANSPARENT);
+                    mSelectedItemIds.remove(id);
+                    updateTitle(mActionMode);
+                    if(mSelectedItemIds.size()==0)
+                        mActionMode.finish();
+
+                }
             }
         });
 //        setListViewHeightBasedOnChildren(moneyListView);
@@ -416,6 +484,13 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
 
     }
 
+    private boolean doesContainThisItem(long l, ArrayList<Long> mSelectedItemIds) {
+        for(Long p: mSelectedItemIds){
+            if(p==l)
+                return true;
+        }
+        return false;
+    }
 
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -554,5 +629,34 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
         if(numRows == 0)
         return true;
         else return false;
+    }
+    class ActionBarCallBack implements android.view.ActionMode.Callback {
+
+        @Override
+        public boolean onCreateActionMode(android.view.ActionMode mode, Menu menu) {
+            mode.getMenuInflater().inflate(R.menu.toolbar_cab, menu);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(android.view.ActionMode mode, Menu menu) {
+            mode.setTitle(String.valueOf(mSelectedItemIds.size()));
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(android.view.ActionMode mode, MenuItem menuItem) {
+            return false;
+        }
+
+        @Override
+        public void onDestroyActionMode(android.view.ActionMode mode) {
+
+        }
+
+
+    }
+    public void updateTitle(android.view.ActionMode mode){
+        mode.setTitle(String.valueOf(mSelectedItemIds.size()));
     }
 }

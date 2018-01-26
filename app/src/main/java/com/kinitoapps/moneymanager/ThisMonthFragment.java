@@ -307,27 +307,41 @@ public class ThisMonthFragment extends Fragment implements LoaderManager.LoaderC
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                sum_spent.setText(new DecimalFormat("#.00").format(valueAnimator.getAnimatedValue()));
+                if(Float.parseFloat(valueAnimator.getAnimatedValue().toString())>=0&&
+                        Float.parseFloat(valueAnimator.getAnimatedValue().toString())<1)
+                    sum_spent.setText("0"+new DecimalFormat("#.00").format(valueAnimator.getAnimatedValue()));
+                else
+                    sum_spent.setText(new DecimalFormat("#.00").format(valueAnimator.getAnimatedValue()));
+
             }
         });
         valueAnimator.start();
-        ValueAnimator valueAnimator_two = ValueAnimator.ofFloat(0, (int)Double.parseDouble(getSumReceived()));
+        final ValueAnimator valueAnimator_two = ValueAnimator.ofFloat(0, (int)Double.parseDouble(getSumReceived()));
         valueAnimator_two.setDuration(1000);
         valueAnimator_two.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                sum_received.setText(new DecimalFormat("#.00").format(valueAnimator.getAnimatedValue()));
+                if(Float.parseFloat(valueAnimator_two.getAnimatedValue().toString())>=0&&
+                        Float.parseFloat(valueAnimator_two.getAnimatedValue().toString())<1)
+                    sum_received.setText("0"+new DecimalFormat("#.00").format(valueAnimator.getAnimatedValue()));
+                else
+                    sum_received.setText(new DecimalFormat("#.00").format(valueAnimator.getAnimatedValue()));
             }
         });
 
         valueAnimator_two.start();
-        ValueAnimator valueAnimator_three = ValueAnimator.ofFloat(0,(float)
+        final ValueAnimator valueAnimator_three = ValueAnimator.ofFloat(0,(float)
                 -Double.parseDouble(getSumSpent())+(float)Double.parseDouble(getSumReceived()));
         valueAnimator_three.setDuration(1000);
         valueAnimator_three.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                sum_total.setText(new DecimalFormat("#.00").format(valueAnimator.getAnimatedValue()));
+                if(Float.parseFloat(valueAnimator_three.getAnimatedValue().toString())>=0&&
+                        Float.parseFloat(valueAnimator_three.getAnimatedValue().toString())<1)
+                    sum_total.setText("0"+new DecimalFormat("#.00").format(valueAnimator.getAnimatedValue()));
+                else
+                    sum_total.setText(new DecimalFormat("#.00").format(valueAnimator.getAnimatedValue()));
+
             }
         });
         valueAnimator_three.start();

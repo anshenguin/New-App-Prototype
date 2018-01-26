@@ -18,15 +18,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
-
 import com.kinitoapps.moneymanager.data.MoneyContract;
 import com.kinitoapps.moneymanager.data.MoneyDbHelper;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
 
 public class EditActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
     private static final int EXISTING_MONEY_LOADER = 0;
@@ -90,14 +84,9 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
             int valueColumnIndex = cursor.getColumnIndex(MoneyContract.MoneyEntry.COLUMN_MONEY_VALUE);
             int descColumnIndex = cursor.getColumnIndex(MoneyContract.MoneyEntry.COLUMN_MONEY_DESC);
             int statusColumnIndex = cursor.getColumnIndex(MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS);
-//            int timeColumnIndex = cursor.getColumnIndex(MoneyContract.MoneyEntry.COLUMN_MONEY_TIME);
-//            int dateColumnIndex = cursor.getColumnIndex(MoneyContract.MoneyEntry.COLUMN_MONEY_DATE);
-
             double value = cursor.getDouble(valueColumnIndex);
             String desc = cursor.getString(descColumnIndex);
             int status = cursor.getInt(statusColumnIndex);
-//            String time = cursor.getString(timeColumnIndex);
-//            String date = cursor.getString(dateColumnIndex);
             String str = String.valueOf(value);
 
             mValueEditText.setText(str);
@@ -159,18 +148,12 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
     private void editValue(){
         Intent intent = getIntent();
         Uri currentEntryUri = intent.getData();
-
         String desc = mDescEditText.getText().toString().trim();
-//        String date = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
-//        DateFormat df = new SimpleDateFormat("h:mm a",Locale.getDefault());
-//        String time = df.format(Calendar.getInstance().getTime());
         double value = Double.parseDouble(mValueEditText.getText().toString().trim());
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(MoneyContract.MoneyEntry.COLUMN_MONEY_VALUE, value);
         values.put(MoneyContract.MoneyEntry.COLUMN_MONEY_DESC, desc);
-//        values.put(MoneyContract.MoneyEntry.COLUMN_MONEY_DATE, date);
-//        values.put(MoneyContract.MoneyEntry.COLUMN_MONEY_TIME, time);
         values.put(MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS, mStatus);
 
         // Insert a new row for Toto in the database, returning the ID of that new row.
