@@ -3,12 +3,15 @@ package com.kinitoapps.moneymanager;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
+import android.app.AlertDialog;
 import android.content.ContentUris;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.DatabaseUtils;
 import android.graphics.Color;
 import android.opengl.Visibility;
 import android.os.Handler;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.content.Context;
 import android.support.v4.content.CursorLoader;
@@ -23,6 +26,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.SparseBooleanArray;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -65,6 +69,9 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
     private static final int MONEY_LOADER = 0;
     private static ArrayList<Long> mSelectedItemIds;
     MoneyCursorAdapter mCursorAdapter;
+    private NonScrollListView moneyListView;
+    private boolean isActionModeOn = false;
+
     private android.view.ActionMode mActionMode;
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -267,8 +274,8 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
 ////                null,
 ////                null
 ////        );
-        final NonScrollListView moneyListView = root.findViewById(R.id.list);
         mSelectedItemIds = new ArrayList<>();
+        moneyListView = root.findViewById(R.id.list);
         //        Toolbar toolbar = root.findViewById(R.id.toolbar);
         final PieGraph pg = root.findViewById(R.id.graph);
         pg.setInnerCircleRatio(140);
@@ -276,7 +283,6 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
         PieSlice slice;
         slice = new PieSlice();
         slice.setColor(Color.parseColor("#FFBB33"));
-
         slice.setValue(Double.parseDouble(getSumReceived())>Double.parseDouble(getSumSpent())? (float) (Double.parseDouble(getSumReceived()) + Double.parseDouble(getSumSpent())) :0);
         if(slice.getValue()==0)
             purpleValueGreater = true;
@@ -426,8 +432,6 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
 ////        }
         mCursorAdapter = new MoneyCursorAdapter(getActivity(),null);
         moneyListView.setAdapter(mCursorAdapter);
-//        moneyListView.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE_MODAL);
-//        moneyListView.setLongClickable(true);
         moneyListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
@@ -480,11 +484,40 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
         });
 //        setListViewHeightBasedOnChildren(moneyListView);
         getLoaderManager().initLoader(MONEY_LOADER,null,this);
+
         return root;
 
     }
 
-    private boolean doesContainThisItem(long l, ArrayList<Long> mSelectedItemIds) {
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//
+//        if(getView() == null){
+//            return;
+//        }
+//
+//        getView().setFocusableInTouchMode(true);
+//        getView().requestFocus();
+//        getView().setOnKeyListener(new View.OnKeyListener() {
+//            @Override
+//            public boolean onKey(View v, int keyCode, KeyEvent event) {
+//                if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK && mSelectedItemIds.size()!=0){
+//                    // handle back button's click listener
+//                    for(int i = 0 ; i < moneyListView.getCount() ; i++){
+//                        moneyListView.getChildAt(i).setBackgroundColor(Color.TRANSPARENT);
+//                    }
+//                    mSelectedItemIds.clear();
+//                    mActionMode.finish();
+//
+//                    return true;
+//                }
+//                return false;
+//            }
+//        });
+//    }
+
+        private boolean doesContainThisItem(long l, ArrayList<Long> mSelectedItemIds) {
         for(Long p: mSelectedItemIds){
             if(p==l)
                 return true;
@@ -630,6 +663,75 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
         return true;
         else return false;
     }
+
+    private void deletePet() {
+        int rowsDeleted = 0;
+            for(Long id:mSelectedItemIds){
+                Uri currentEntryUri = ContentUris.withAppendedId(MoneyContract.MoneyEntry.CONTENT_URI, id);
+                Log.v("lag",String.valueOf(currentEntryUri));
+                Log.v("lag",String.valueOf(id));
+                rowsDeleted = getActivity().getApplicationContext().getContentResolver().delete(currentEntryUri, null, null);
+
+            }
+
+
+            // Show a toast message depending on whether or not the delete was successful.
+            if (rowsDeleted == 0) {
+                // If no rows were deleted, then there was an error with the delete.
+                Toast.makeText(getActivity(), "Deletion Failed",
+                        Toast.LENGTH_SHORT).show();
+            } else {
+                // Otherwise, the delete was successful and we can display a toast.
+                Toast.makeText(getActivity(), "Deleted Successfully",
+                        Toast.LENGTH_SHORT).show();
+            }
+
+        mActionMode.finish();
+
+        android.support.v4.app.Fragment fragment = null;
+        Class fragmentClass = null;
+
+        fragmentClass = TodayFragment.class;
+        try {
+            fragment = (android.support.v4.app.Fragment) fragmentClass.newInstance();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        FragmentManager fragmentManager = getFragmentManager();
+
+        fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left).replace(R.id.flContent, fragment).commit();
+        // Close the activity
+    }
+
+    private void showDeleteConfirmationDialog() {
+        // Create an AlertDialog.Builder and set the message, and click listeners
+        // for the postivie and negative buttons on the dialog.
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        if(mSelectedItemIds.size()>1)
+            builder.setMessage("Do you want to delete these entries?");
+        else
+            builder.setMessage("Do you want to delete this entry?");
+        builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked the "Delete" button, so delete the pet.
+                deletePet();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked the "Cancel" button, so dismiss the dialog
+                // and continue editing the pet.
+                if (dialog != null) {
+                    dialog.dismiss();
+                }
+            }
+        });
+
+        // Create and show the AlertDialog
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
     class ActionBarCallBack implements android.view.ActionMode.Callback {
 
         @Override
@@ -640,23 +742,44 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
 
         @Override
         public boolean onPrepareActionMode(android.view.ActionMode mode, Menu menu) {
+            isActionModeOn = true;
             mode.setTitle(String.valueOf(mSelectedItemIds.size()));
             return false;
         }
 
         @Override
         public boolean onActionItemClicked(android.view.ActionMode mode, MenuItem menuItem) {
-            return false;
+            switch (menuItem.getItemId()){
+                case R.id.action_delete:
+                    showDeleteConfirmationDialog();
+                    return true;
+                default:
+                    return false;
+            }
         }
 
         @Override
         public void onDestroyActionMode(android.view.ActionMode mode) {
-
+            isActionModeOn = false;
+            mSelectedItemIds.clear();
+            makeAllItemsWhite();
         }
-
 
     }
     public void updateTitle(android.view.ActionMode mode){
         mode.setTitle(String.valueOf(mSelectedItemIds.size()));
+    }
+
+    public void makeAllItemsWhite() {
+        for(int i = 0 ; i < moneyListView.getCount() ; i++){
+            moneyListView.getChildAt(i).setBackgroundColor(Color.TRANSPARENT);
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(isActionModeOn)
+            mActionMode.finish();
     }
 }
