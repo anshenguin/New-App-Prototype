@@ -3,12 +3,15 @@ package com.kinitoapps.moneymanager;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
+import android.app.AlertDialog;
 import android.content.ContentUris;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.DatabaseUtils;
 import android.graphics.Color;
 import android.opengl.Visibility;
 import android.os.Handler;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.content.Context;
 import android.support.v4.content.CursorLoader;
@@ -21,6 +24,8 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -41,6 +46,7 @@ import com.kinitoapps.moneymanager.piechart.PieSlice;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
@@ -56,7 +62,12 @@ import java.util.Locale;
 public class YesterdayFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
     // TODO: Rename parameter arguments, choose names that match
     private static final int MONEY_LOADER = 0;
+    private static ArrayList<Long> mSelectedItemIds;
     MoneyCursorAdapter mCursorAdapter;
+    private NonScrollListView moneyListView;
+    private boolean isActionModeOn = false;
+
+    private android.view.ActionMode mActionMode;
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -257,7 +268,8 @@ public class YesterdayFragment extends Fragment implements LoaderManager.LoaderC
 //                null,
 //                null
 //        );
-        final NonScrollListView moneyListView = root.findViewById(R.id.list);
+        moneyListView = root.findViewById(R.id.list);
+        mSelectedItemIds = new ArrayList<>();
         final PieGraph pg = root.findViewById(R.id.graph);
         pg.setInnerCircleRatio(140);
         boolean purpleValueGreater = false;
@@ -413,20 +425,97 @@ public class YesterdayFragment extends Fragment implements LoaderManager.LoaderC
 ////        }
         mCursorAdapter = new MoneyCursorAdapter(getActivity(),null);
         moneyListView.setAdapter(mCursorAdapter);
+        moneyListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
+                if(!doesContainThisItem(id,mSelectedItemIds)) {
+                    view.setBackgroundColor(0x9934B5E4);
+                    mSelectedItemIds.add(id);
+                    mActionMode = getActivity().startActionMode(new ActionBarCallBack());
+                }
+                else if(mSelectedItemIds.size()!=0){
+                    view.setBackgroundColor(Color.TRANSPARENT);
+                    mSelectedItemIds.remove(id);
+                    updateTitle(mActionMode);
+                    if(mSelectedItemIds.size()==0)
+                        mActionMode.finish();
+                }
+//                else{
+//                    mActionMode.finish();
+//                }
+//                if (moneyListView.isItemChecked(position)){moneyListView.setItemChecked(position,false);}
+//                else{moneyListView.setItemChecked(position,true);}
+                return true;
+            }
+        });
         moneyListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                Intent intent = new Intent(getActivity(),EditActivity.class);
-                Uri currentEntryUri = ContentUris.withAppendedId(MoneyContract.MoneyEntry.CONTENT_URI, id);
-                Log.v("URI", String.valueOf(currentEntryUri));
-                intent.setData(currentEntryUri);
-                startActivity(intent);
+//                if (moneyListView.isItemChecked(position)){moneyListView.setItemChecked(position,false);}else{moneyListView.setItemChecked(position,true);}
+                if(mSelectedItemIds.size()==0) {
+                    Intent intent = new Intent(getActivity(), EditActivity.class);
+                    Uri currentEntryUri = ContentUris.withAppendedId(MoneyContract.MoneyEntry.CONTENT_URI, id);
+                    Log.v("URI", String.valueOf(currentEntryUri));
+                    intent.setData(currentEntryUri);
+                    startActivity(intent);
+                }
+                else if(!doesContainThisItem(id,mSelectedItemIds)){
+                    view.setBackgroundColor(0x9934B5E4);
+                    mSelectedItemIds.add(id);
+                    updateTitle(mActionMode);
+
+                }
+                else{
+                    view.setBackgroundColor(Color.TRANSPARENT);
+                    mSelectedItemIds.remove(id);
+                    updateTitle(mActionMode);
+                    if(mSelectedItemIds.size()==0)
+                        mActionMode.finish();
+
+                }
             }
         });
 //        setListViewHeightBasedOnChildren(moneyListView);
         getLoaderManager().initLoader(MONEY_LOADER,null,this);
+
         return root;
 
+    }
+
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//
+//        if(getView() == null){
+//            return;
+//        }
+//
+//        getView().setFocusableInTouchMode(true);
+//        getView().requestFocus();
+//        getView().setOnKeyListener(new View.OnKeyListener() {
+//            @Override
+//            public boolean onKey(View v, int keyCode, KeyEvent event) {
+//                if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK && mSelectedItemIds.size()!=0){
+//                    // handle back button's click listener
+//                    for(int i = 0 ; i < moneyListView.getCount() ; i++){
+//                        moneyListView.getChildAt(i).setBackgroundColor(Color.TRANSPARENT);
+//                    }
+//                    mSelectedItemIds.clear();
+//                    mActionMode.finish();
+//
+//                    return true;
+//                }
+//                return false;
+//            }
+//        });
+//    }
+
+    private boolean doesContainThisItem(long l, ArrayList<Long> mSelectedItemIds) {
+        for(Long p: mSelectedItemIds){
+            if(p==l)
+                return true;
+        }
+        return false;
     }
 
 
@@ -578,5 +667,123 @@ public class YesterdayFragment extends Fragment implements LoaderManager.LoaderC
         if(numRows == 0)
             return true;
         else return false;
+    }
+    private void deletePet() {
+        int rowsDeleted = 0;
+        for(Long id:mSelectedItemIds){
+            Uri currentEntryUri = ContentUris.withAppendedId(MoneyContract.MoneyEntry.CONTENT_URI, id);
+            Log.v("lag",String.valueOf(currentEntryUri));
+            Log.v("lag",String.valueOf(id));
+            rowsDeleted = getActivity().getApplicationContext().getContentResolver().delete(currentEntryUri, null, null);
+
+        }
+
+
+        // Show a toast message depending on whether or not the delete was successful.
+        if (rowsDeleted == 0) {
+            // If no rows were deleted, then there was an error with the delete.
+            Toast.makeText(getActivity(), "Deletion Failed",
+                    Toast.LENGTH_SHORT).show();
+        } else {
+            // Otherwise, the delete was successful and we can display a toast.
+            Toast.makeText(getActivity(), "Deleted Successfully",
+                    Toast.LENGTH_SHORT).show();
+        }
+
+        mActionMode.finish();
+
+        android.support.v4.app.Fragment fragment = null;
+        Class fragmentClass = null;
+
+        fragmentClass = YesterdayFragment.class;
+        try {
+            fragment = (android.support.v4.app.Fragment) fragmentClass.newInstance();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        FragmentManager fragmentManager = getFragmentManager();
+
+        fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left).replace(R.id.flContent, fragment).commit();
+        // Close the activity
+    }
+
+    private void showDeleteConfirmationDialog() {
+        // Create an AlertDialog.Builder and set the message, and click listeners
+        // for the postivie and negative buttons on the dialog.
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        if(mSelectedItemIds.size()>1)
+            builder.setMessage("Do you want to delete these entries?");
+        else
+            builder.setMessage("Do you want to delete this entry?");
+        builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked the "Delete" button, so delete the pet.
+                deletePet();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked the "Cancel" button, so dismiss the dialog
+                // and continue editing the pet.
+                if (dialog != null) {
+                    dialog.dismiss();
+                }
+            }
+        });
+
+        // Create and show the AlertDialog
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    class ActionBarCallBack implements android.view.ActionMode.Callback {
+
+        @Override
+        public boolean onCreateActionMode(android.view.ActionMode mode, Menu menu) {
+            mode.getMenuInflater().inflate(R.menu.toolbar_cab, menu);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(android.view.ActionMode mode, Menu menu) {
+            isActionModeOn = true;
+            mode.setTitle(String.valueOf(mSelectedItemIds.size()));
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(android.view.ActionMode mode, MenuItem menuItem) {
+            switch (menuItem.getItemId()){
+                case R.id.action_delete:
+                    showDeleteConfirmationDialog();
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        @Override
+        public void onDestroyActionMode(android.view.ActionMode mode) {
+            isActionModeOn = false;
+            mSelectedItemIds.clear();
+            makeAllItemsWhite();
+        }
+
+    }
+    public void updateTitle(android.view.ActionMode mode){
+        mode.setTitle(String.valueOf(mSelectedItemIds.size()));
+    }
+
+    public void makeAllItemsWhite() {
+        for(int i = 0 ; i < moneyListView.getCount() ; i++){
+            moneyListView.getChildAt(i).setBackgroundColor(Color.TRANSPARENT);
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(isActionModeOn)
+            mActionMode.finish();
     }
 }
