@@ -447,9 +447,14 @@ public class ThisYearFragment extends Fragment implements LoaderManager.LoaderCa
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
 //                if (moneyListView.isItemChecked(position)){moneyListView.setItemChecked(position,false);}else{moneyListView.setItemChecked(position,true);}
                 if(mSelectedItemIds.size()==0) {
-                    Intent intent = new Intent(getActivity(), EditActivity.class);
-                    Uri currentEntryUri = ContentUris.withAppendedId(MoneyContract.MoneyEntry.CONTENT_URI, id);
-                    Log.v("URI", String.valueOf(currentEntryUri));
+//                    Intent intent = new Intent(getActivity(), EditActivity.class);
+//                    Uri currentEntryUri = ContentUris.withAppendedId(MoneyContract.MoneyEntry.CONTENT_URI, id);
+//                    Log.v("URI", String.valueOf(currentEntryUri));
+//                    intent.setData(currentEntryUri);
+//                    startActivity(intent);
+
+                    Intent intent = new Intent(getActivity(),SingleValueDetails.class);
+                    Uri currentEntryUri = ContentUris.withAppendedId(MoneyContract.MoneyEntry.CONTENT_URI,id);
                     intent.setData(currentEntryUri);
                     startActivity(intent);
                 }

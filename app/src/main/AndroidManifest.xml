@@ -32,7 +32,10 @@
             android:authorities="com.kinitoapps.moneymanager"
             android:exported="false" />
 
-        <activity android:name=".EditActivity"></activity>
+        <activity android:name=".EditActivity" />
+        <activity android:name=".SingleValueDetails">
+
+        </activity>
     </application>
 
 </manifest>
