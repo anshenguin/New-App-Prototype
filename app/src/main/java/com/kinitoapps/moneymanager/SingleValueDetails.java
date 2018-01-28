@@ -17,6 +17,7 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -48,7 +49,10 @@ public class SingleValueDetails extends AppCompatActivity implements LoaderManag
         statusTextView = (TextView) findViewById(R.id.status);
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setTitle("");
+        if(Build.VERSION.SDK_INT<Build.VERSION_CODES.LOLLIPOP)
+            actionBar.setTitle(Html.fromHtml("<font color=\"black\">" + getString(R.string.app_name) + "</font>"));
+        else
+            actionBar.setTitle("");
         actionBar.setElevation(0);
         actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_black_24dp);
         actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#F5F5F5")));

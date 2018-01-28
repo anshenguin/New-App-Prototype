@@ -453,9 +453,8 @@ public class YesterdayFragment extends Fragment implements LoaderManager.LoaderC
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
 //                if (moneyListView.isItemChecked(position)){moneyListView.setItemChecked(position,false);}else{moneyListView.setItemChecked(position,true);}
                 if(mSelectedItemIds.size()==0) {
-                    Intent intent = new Intent(getActivity(), EditActivity.class);
-                    Uri currentEntryUri = ContentUris.withAppendedId(MoneyContract.MoneyEntry.CONTENT_URI, id);
-                    Log.v("URI", String.valueOf(currentEntryUri));
+                    Intent intent = new Intent(getActivity(),SingleValueDetails.class);
+                    Uri currentEntryUri = ContentUris.withAppendedId(MoneyContract.MoneyEntry.CONTENT_URI,id);
                     intent.setData(currentEntryUri);
                     startActivity(intent);
                 }
@@ -748,6 +747,7 @@ public class YesterdayFragment extends Fragment implements LoaderManager.LoaderC
         public boolean onPrepareActionMode(android.view.ActionMode mode, Menu menu) {
             isActionModeOn = true;
             mode.setTitle(String.valueOf(mSelectedItemIds.size()));
+            ((home) getActivity()).disableDrawer();
             return false;
         }
 
@@ -767,6 +767,8 @@ public class YesterdayFragment extends Fragment implements LoaderManager.LoaderC
             isActionModeOn = false;
             mSelectedItemIds.clear();
             makeAllItemsWhite();
+            ((home) getActivity()).enableDrawer();
+
         }
 
     }
