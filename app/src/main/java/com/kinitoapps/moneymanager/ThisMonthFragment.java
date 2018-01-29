@@ -21,12 +21,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.view.ActionMode;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.util.SparseBooleanArray;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -36,7 +32,6 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
@@ -64,7 +59,7 @@ import java.util.Locale;
  * Use the {@link TodayFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class TodayFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
+public class ThisMonthFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
     // TODO: Rename parameter arguments, choose names that match
     private static final int MONEY_LOADER = 0;
     private static ArrayList<Long> mSelectedItemIds;
@@ -81,9 +76,10 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
     private String mParam1;
     private String mParam2;
     private String currentDate;
+
     private OnFragmentInteractionListener mListener;
 
-    public TodayFragment() {
+    public ThisMonthFragment() {
         // Required empty public constructor
     }
 
@@ -246,43 +242,41 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_today, container, false);
+        View root = inflater.inflate(R.layout.fragment_this_month, container, false);
+        // Inflate the layout for this fragment
+        // Create and/or open a database to read from it
 
+        // Perform this raw SQL query "SELECT * FROM pets"
+        // to get a Cursor that contains all rows from the pets table.
+//        Cursor cursor = db.rawQuery("SELECT * FROM " + MoneyContract.MoneyEntry.TABLE_NAME, null);
 
-//        // Inflate the layout for this fragment
-//        // Create and/or open a database to read from it
+//        String[] projection = {
+//                MoneyContract.MoneyEntry._ID,
+//                MoneyContract.MoneyEntry.COLUMN_MONEY_VALUE,
+//                MoneyContract.MoneyEntry.COLUMN_MONEY_DESC,
+//                MoneyContract.MoneyEntry.COLUMN_MONEY_DATE,
+//                MoneyContract.MoneyEntry.COLUMN_MONEY_TIME,
+//                MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS
+//        };
 //
-//        // Perform this raw SQL query "SELECT * FROM pets"
-//        // to get a Cursor that contains all rows from the pets table.
-////        Cursor cursor = db.rawQuery("SELECT * FROM " + MoneyContract.MoneyEntry.TABLE_NAME, null);
-//
-////        String[] projection = {
-////                MoneyContract.MoneyEntry._ID,
-////                MoneyContract.MoneyEntry.COLUMN_MONEY_VALUE,
-////                MoneyContract.MoneyEntry.COLUMN_MONEY_DESC,
-////                MoneyContract.MoneyEntry.COLUMN_MONEY_DATE,
-////                MoneyContract.MoneyEntry.COLUMN_MONEY_TIME,
-////                MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS
-////        };
-////
-////        Cursor cursor = db.query(
-////                MoneyContract.MoneyEntry.TABLE_NAME,
-////                projection,
-////                null,
-////                null,
-////                null,
-////                null,
-////                null
-////        );
-        mSelectedItemIds = new ArrayList<>();
+//        Cursor cursor = db.query(
+//                MoneyContract.MoneyEntry.TABLE_NAME,
+//                projection,
+//                null,
+//                null,
+//                null,
+//                null,
+//                null
+//        );
         moneyListView = root.findViewById(R.id.list);
-        //        Toolbar toolbar = root.findViewById(R.id.toolbar);
         final PieGraph pg = root.findViewById(R.id.graph);
+        mSelectedItemIds = new ArrayList<>();
         pg.setInnerCircleRatio(140);
         boolean purpleValueGreater = false;
         PieSlice slice;
         slice = new PieSlice();
         slice.setColor(Color.parseColor("#FFBB33"));
+
         slice.setValue(Double.parseDouble(getSumReceived())>Double.parseDouble(getSumSpent())? (float) (Double.parseDouble(getSumReceived()) + Double.parseDouble(getSumSpent())) :0);
         if(slice.getValue()==0)
             purpleValueGreater = true;
@@ -516,13 +510,15 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
 //        });
 //    }
 
-        private boolean doesContainThisItem(long l, ArrayList<Long> mSelectedItemIds) {
+    private boolean doesContainThisItem(long l, ArrayList<Long> mSelectedItemIds) {
         for(Long p: mSelectedItemIds){
             if(p==l)
                 return true;
         }
         return false;
     }
+
+
 
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -552,10 +548,13 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
-        String SELECTION = MoneyContract.MoneyEntry.COLUMN_MONEY_DATE+" =?";
-        String[] ARGS = {currentDate};
+//        String date = String.valueOf(Integer.parseInt(currentDate.substring(0,2))-1);
+        String monthAndYear = currentDate.substring(2);
+
+        String SELECTION = MoneyContract.MoneyEntry.COLUMN_MONEY_DATE+" LIKE?";
+        String[] ARGS = {"%"+monthAndYear};
         Log.v("date",MoneyContract.MoneyEntry.COLUMN_MONEY_DATE);
-        Log.v("date",currentDate);
+        Log.v("date",monthAndYear);
         String[] projection = {
                 MoneyContract.MoneyEntry._ID,
                 MoneyContract.MoneyEntry.COLUMN_MONEY_VALUE,
@@ -603,12 +602,13 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
 
     public String getSumSpent(){
         currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
-        String SELECTION = MoneyContract.MoneyEntry.COLUMN_MONEY_DATE+" =? AND "+ MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS+" =?";
-
-        String[] ARGS = {currentDate,"1"};
+//        String date = String.valueOf(Integer.parseInt(currentDate.substring(0,2))-1);
+        String monthAndYear = currentDate.substring(2);
+        String SELECTION = MoneyContract.MoneyEntry.COLUMN_MONEY_DATE+" LIKE? AND "+ MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS+" =?";
+        String[] ARGS = {"%"+monthAndYear,"1"};
+        String str = "";
         MoneyDbHelper mDbHelper = new MoneyDbHelper(getActivity());
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
-        String str = "";
         String[] PROJECTION = {
                 "SUM(value)"
         };
@@ -617,7 +617,7 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
                 SELECTION,
                 ARGS,
                 null,null,null);
-//        Cursor cur = db.rawQuery("SELECT SUM(value) FROM today WHERE status = 1 AND date = "+currentDate, null);
+//        Cursor cur = db.rawQuery("SELECT SUM(value) FROM today WHERE status = 1 AND date LIKE %"+monthAndYear, null);
         if(cur.moveToFirst())
         {
             str = String.valueOf(cur.getDouble(0));
@@ -628,12 +628,13 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
 
     public String getSumReceived() {
         currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
-            String SELECTION = MoneyContract.MoneyEntry.COLUMN_MONEY_DATE+" =? AND "+ MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS+" =?";
-
-        String[] ARGS = {currentDate,"2"};
+//        String date = String.valueOf(Integer.parseInt(currentDate.substring(0,2))-1);
+        String monthAndYear = currentDate.substring(2);
+        String SELECTION = MoneyContract.MoneyEntry.COLUMN_MONEY_DATE+" LIKE? AND "+ MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS+" =?";
+        String[] ARGS = {"%"+monthAndYear,"2"};
+        String sumReceived = "";
         MoneyDbHelper mDbHelper = new MoneyDbHelper(getActivity());
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
-        String sumReceived = "";
         String[] PROJECTION = {
                 "SUM(value)"
         };
@@ -642,7 +643,7 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
                 SELECTION,
                 ARGS,
                 null,null,null);
-//        Cursor cur = db.rawQuery("SELECT SUM(value) FROM today WHERE status = 2 AND date = "+currentDate, null);
+//        Cursor cur = db.rawQuery("SELECT SUM(value) FROM today WHERE status = 2 AND date LIKE %"+monthAndYear, null);
         if(cur.moveToFirst())
         {
             sumReceived = String.valueOf(cur.getDouble(0));
@@ -653,44 +654,45 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
 
     public boolean noEntriesExist(){
         currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
-        String SELECTION = MoneyContract.MoneyEntry.COLUMN_MONEY_DATE+" =?";
-        String[] ARGS = {currentDate};
+//        String date = String.valueOf(Integer.parseInt(currentDate.substring(0,2))-1);
+        String monthAndYear = currentDate.substring(2);
+        String SELECTION = MoneyContract.MoneyEntry.COLUMN_MONEY_DATE+" LIKE?";
+        String[] ARGS = {"%"+monthAndYear};
         MoneyDbHelper mDbHelper = new MoneyDbHelper(getActivity());
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         int numRows = (int)DatabaseUtils.queryNumEntries(db, MoneyContract.MoneyEntry.TABLE_NAME,SELECTION,ARGS);
         if(numRows == 0)
-        return true;
+            return true;
         else return false;
     }
-
     private void deletePet() {
         int rowsDeleted = 0;
-            for(Long id:mSelectedItemIds){
-                Uri currentEntryUri = ContentUris.withAppendedId(MoneyContract.MoneyEntry.CONTENT_URI, id);
-                Log.v("lag",String.valueOf(currentEntryUri));
-                Log.v("lag",String.valueOf(id));
-                rowsDeleted = getActivity().getApplicationContext().getContentResolver().delete(currentEntryUri, null, null);
+        for(Long id:mSelectedItemIds){
+            Uri currentEntryUri = ContentUris.withAppendedId(MoneyContract.MoneyEntry.CONTENT_URI, id);
+            Log.v("lag",String.valueOf(currentEntryUri));
+            Log.v("lag",String.valueOf(id));
+            rowsDeleted = getActivity().getApplicationContext().getContentResolver().delete(currentEntryUri, null, null);
 
-            }
+        }
 
 
-            // Show a toast message depending on whether or not the delete was successful.
-            if (rowsDeleted == 0) {
-                // If no rows were deleted, then there was an error with the delete.
-                Toast.makeText(getActivity(), "Deletion Failed",
-                        Toast.LENGTH_SHORT).show();
-            } else {
-                // Otherwise, the delete was successful and we can display a toast.
-                Toast.makeText(getActivity(), "Deleted Successfully",
-                        Toast.LENGTH_SHORT).show();
-            }
+        // Show a toast message depending on whether or not the delete was successful.
+        if (rowsDeleted == 0) {
+            // If no rows were deleted, then there was an error with the delete.
+            Toast.makeText(getActivity(), "Deletion Failed",
+                    Toast.LENGTH_SHORT).show();
+        } else {
+            // Otherwise, the delete was successful and we can display a toast.
+            Toast.makeText(getActivity(), "Deleted Successfully",
+                    Toast.LENGTH_SHORT).show();
+        }
 
         mActionMode.finish();
 
         android.support.v4.app.Fragment fragment = null;
         Class fragmentClass = null;
 
-        fragmentClass = TodayFragment.class;
+        fragmentClass = ThisMonthFragment.class;
         try {
             fragment = (android.support.v4.app.Fragment) fragmentClass.newInstance();
         } catch (Exception e) {

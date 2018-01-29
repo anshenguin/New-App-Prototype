@@ -1,7 +1,10 @@
 package com.kinitoapps.moneymanager;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
@@ -30,10 +33,12 @@ public class EnterValueActivity extends AppCompatActivity {
     private EditText mDescEditText;
     private Uri mCurrentPetUri;
 
+    private String currentDate;
+
     /** EditText field to enter the pet's breed */
     /** EditText field to enter the pet's weight */
     private EditText mValueEditText;
-
+    private SharedPreferences sharedPreferences;
     /** EditText field to enter the pet's gender */
     private Spinner mStatusSpinner;
     private Button mSaveButton;
@@ -47,6 +52,7 @@ public class EnterValueActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_enter_value);
+        sharedPreferences = getSharedPreferences("LIMIT", Context.MODE_PRIVATE);
         SharedPreferences canCallNow = getSharedPreferences("CALL", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = canCallNow.edit();
         editor.putBoolean("CALL",false);
@@ -60,6 +66,7 @@ public class EnterValueActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 insertValue();
+                checkForLimit();
                 finish();
             }
         });
@@ -69,14 +76,15 @@ public class EnterValueActivity extends AppCompatActivity {
     private void setupSpinner() {
         // Create adapter for spinner. The list options are from the String array it will use
         // the spinner will use the default layout
-        ArrayAdapter genderSpinnerAdapter = ArrayAdapter.createFromResource(this,
+
+        ArrayAdapter spinnerAdapter = ArrayAdapter.createFromResource(this,
                 R.array.array_status_options, android.R.layout.simple_spinner_item);
 
         // Specify dropdown layout style - simple list view with 1 item per line
-        genderSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
 
         // Apply the adapter to the spinner
-        mStatusSpinner.setAdapter(genderSpinnerAdapter);
+        mStatusSpinner.setAdapter(spinnerAdapter);
 
         // Set the integer mSelected to the constant values
         mStatusSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -107,7 +115,7 @@ public class EnterValueActivity extends AppCompatActivity {
         String date = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
         DateFormat df = new SimpleDateFormat("h:mm a",Locale.getDefault());
         String time = df.format(Calendar.getInstance().getTime());
-        int value = Integer.parseInt(mValueEditText.getText().toString().trim());
+        double value = Double.parseDouble(mValueEditText.getText().toString().trim());
 
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
@@ -127,7 +135,39 @@ public class EnterValueActivity extends AppCompatActivity {
         // this is set to "null", then the framework will not insert a row when
         // there are no values).
         // The third argument is the ContentValues object containing the info for Toto.
-        long newRowId = db.insert(MoneyContract.MoneyEntry.TABLE_NAME, null, values);
+       db.insert(MoneyContract.MoneyEntry.TABLE_NAME, null, values);
+
+    }
+
+    private void checkForLimit(){
+        //TODO: DONT CHECK FOR LIMIT IF ALREADY CHECKED TODAY
+        Long limit_today = sharedPreferences.getLong("limit_today",0);
+        Long limit_month = sharedPreferences.getLong("limit_month",0);
+        if(limit_today<= getDailySumSpent()&&limit_today>0){
+            // Build notification
+            // Actions are just fake
+            Notification noti = new Notification.Builder(this)
+                    .setContentTitle("DAILY LIMIT WARNING")
+                    .setContentText("You have exceeded your daily limit").setSmallIcon(R.mipmap.ic_launcher)
+                    .setPriority(Notification.PRIORITY_HIGH)
+                    .setDefaults(Notification.DEFAULT_VIBRATE)
+                    .build();
+            NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            // hide the notification after its selected
+            notificationManager.notify(1, noti);
+        }
+
+        if(limit_month<=getMonthlySumSpent()&&limit_month>0){
+            Notification noti = new Notification.Builder(this)
+                    .setContentTitle("MONTHLY LIMIT WARNING")
+                    .setContentText("You have exceeded your monthly limit").setSmallIcon(R.mipmap.ic_launcher)
+                    .setPriority(Notification.PRIORITY_HIGH)
+                    .setDefaults(Notification.DEFAULT_VIBRATE)
+                    .build();
+            NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            // hide the notification after its selected
+            notificationManager.notify(2, noti);
+        }
 
     }
 
@@ -138,5 +178,56 @@ public class EnterValueActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = canCallNow.edit();
         editor.putBoolean("CALL",true);
         editor.commit();
+    }
+
+    public double getDailySumSpent(){
+        currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
+        String SELECTION = MoneyContract.MoneyEntry.COLUMN_MONEY_DATE+" =? AND "+ MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS+" =?";
+
+        String[] ARGS = {currentDate,"1"};
+        MoneyDbHelper mDbHelper = new MoneyDbHelper(this);
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        double sumSpent = 0;
+        String[] PROJECTION = {
+                "SUM(value)"
+        };
+        Cursor cur = db.query(MoneyContract.MoneyEntry.TABLE_NAME,
+                PROJECTION,
+                SELECTION,
+                ARGS,
+                null,null,null);
+//        Cursor cur = db.rawQuery("SELECT SUM(value) FROM today WHERE status = 1 AND date = "+currentDate, null);
+        if(cur.moveToFirst())
+        {
+            sumSpent = cur.getDouble(0);
+            cur.close();
+        }
+        return sumSpent;
+    }
+
+    public double getMonthlySumSpent(){
+        currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
+//        String date = String.valueOf(Integer.parseInt(currentDate.substring(0,2))-1);
+        String monthAndYear = currentDate.substring(2);
+        String SELECTION = MoneyContract.MoneyEntry.COLUMN_MONEY_DATE+" LIKE? AND "+ MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS+" =?";
+        String[] ARGS = {"%"+monthAndYear,"1"};
+        double sumspent = 0;
+        MoneyDbHelper mDbHelper = new MoneyDbHelper(this);
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        String[] PROJECTION = {
+                "SUM(value)"
+        };
+        Cursor cur = db.query(MoneyContract.MoneyEntry.TABLE_NAME,
+                PROJECTION,
+                SELECTION,
+                ARGS,
+                null,null,null);
+//        Cursor cur = db.rawQuery("SELECT SUM(value) FROM today WHERE status = 1 AND date LIKE %"+monthAndYear, null);
+        if(cur.moveToFirst())
+        {
+            sumspent = cur.getDouble(0);
+            cur.close();
+        }
+        return sumspent;
     }
 }

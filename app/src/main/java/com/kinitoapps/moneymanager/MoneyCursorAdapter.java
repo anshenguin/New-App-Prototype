@@ -33,6 +33,8 @@ import com.kinitoapps.moneymanager.R;
  */
 public class MoneyCursorAdapter extends CursorAdapter {
 
+
+
     /**
      * Constructs a new {@link MoneyCursorAdapter}.
      *
@@ -85,14 +87,14 @@ public class MoneyCursorAdapter extends CursorAdapter {
         int dateColumnIndex = cursor.getColumnIndex(MoneyEntry.COLUMN_MONEY_DATE);
 
         // Read the pet attributes from the Cursor for the current pet
-        int value = cursor.getInt(valueColumnIndex);
+        double value = cursor.getDouble(valueColumnIndex);
         String desc = cursor.getString(descColumnIndex);
         int status = cursor.getInt(statusColumnIndex);
         String time = cursor.getString(timeColumnIndex);
         String date = cursor.getString(dateColumnIndex);
-
+        String str = String.valueOf(value);
         // Update the TextViews with the attributes for the current pet
-        nameTextView.setText(Integer.toString(value));
+        nameTextView.setText(str);
         summaryTextView.setText(desc);
         statusTextView.setText((status==1)?"Spent":"Received");
         timeTextView.setText(time);

@@ -9,7 +9,6 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
-import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -20,10 +19,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 public class home extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, TodayFragment.OnFragmentInteractionListener,YesterdayFragment.OnFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener, TodayFragment.OnFragmentInteractionListener,YesterdayFragment.OnFragmentInteractionListener,ThisYearFragment.OnFragmentInteractionListener,ThisMonthFragment.OnFragmentInteractionListener {
     boolean mDrawerItemClicked = false;
     short clicked = 0;
     short selected = 1;
+    ActionBarDrawerToggle toggle;
+    DrawerLayout drawer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,12 +46,18 @@ public class home extends AppCompatActivity
         fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
 //        SharedPreferences sharedPreferences = getSharedPreferences("SWITCH_NOTIFICATION", Context.MODE_PRIVATE);
         SharedPreferences firstRun = getSharedPreferences("com.example.lockscreentest",Context.MODE_PRIVATE);
+        SharedPreferences sh = getSharedPreferences("LIMIT",Context.MODE_PRIVATE);
+
         if(firstRun.getBoolean("firstrun",true)) {
+
+            firstRun.edit().putBoolean("firstrun",false).commit();
+            sh.edit().putLong("limit_today",0).commit();
+            sh.edit().putLong("limit_month",0).commit();
             createNotification();
         }
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+        toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
@@ -99,10 +107,34 @@ public class home extends AppCompatActivity
                         fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left).replace(R.id.flContent, fragment).commit();
                     }
 
+                    else if(clicked == 3){
+                        selected = 3;
+                        fragmentClass = ThisMonthFragment.class;
+                        try {
+                            fragment = (android.support.v4.app.Fragment) fragmentClass.newInstance();
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        FragmentManager fragmentManager = getSupportFragmentManager();
+                        fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left).replace(R.id.flContent, fragment).commit();
+
+                    }
+                    else if(clicked == 4){
+                        selected = 4;
+                        fragmentClass = ThisYearFragment.class;
+                        try {
+                            fragment = (android.support.v4.app.Fragment) fragmentClass.newInstance();
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        FragmentManager fragmentManager = getSupportFragmentManager();
+                        fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left).replace(R.id.flContent, fragment).commit();
+
+                    }
                     clicked = 0;
                     mDrawerItemClicked = false;
-
-
                 }
 
             }
@@ -113,7 +145,7 @@ public class home extends AppCompatActivity
             }
         });
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.getMenu().findItem(R.id.nav_camera).setChecked(true);
+        navigationView.getMenu().findItem(R.id.nav_today).setChecked(true);
         navigationView.setNavigationItemSelectedListener(this);
     }
 
@@ -161,16 +193,20 @@ public class home extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
 
-        if (id == R.id.nav_camera) {
+        if (id == R.id.nav_today) {
             clicked = 1;
             //part of the work around
 //            navigationView.getMenu().findItem(R.id.nav_camera).setChecked(true);
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.nav_yesterday) {
             clicked = 2;
 
 
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.nav_this_month) {
+            clicked = 3;
 
+
+        } else if (id == R.id.nav_year) {
+            clicked = 4;
 
         } else if (id == R.id.nav_edit_history) {
 
@@ -261,6 +297,41 @@ public class home extends AppCompatActivity
             fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left).replace(R.id.flContent, fragment).commit();
         }
 
+        else if(selected == 3){
+            fragmentClass = ThisMonthFragment.class;
+            try {
+                fragment = (android.support.v4.app.Fragment) fragmentClass.newInstance();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left).replace(R.id.flContent, fragment).commit();
+        }
+        else if(selected == 4){
+            fragmentClass = ThisYearFragment.class;
+            try {
+                fragment = (android.support.v4.app.Fragment) fragmentClass.newInstance();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left).replace(R.id.flContent, fragment).commit();
+        }
 
+
+    }
+
+    public void disableDrawer(){
+        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        toggle.onDrawerStateChanged(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        toggle.setDrawerIndicatorEnabled(false);
+        toggle.syncState();
+    }
+
+    public void enableDrawer(){
+        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+        toggle.onDrawerStateChanged(DrawerLayout.LOCK_MODE_UNLOCKED);
+        toggle.setDrawerIndicatorEnabled(true);
+        toggle.syncState();
     }
 }
