@@ -7,7 +7,9 @@ import android.app.AlertDialog;
 import android.content.ContentUris;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.DatabaseUtils;
+import android.database.sqlite.SQLiteException;
 import android.graphics.Color;
 import android.opengl.Visibility;
 import android.os.Handler;
@@ -637,11 +639,41 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
         String[] PROJECTION = {
                 "SUM(value)"
         };
-        Cursor cur = db.query(MoneyContract.MoneyEntry.TABLE_NAME,
-                PROJECTION,
-                SELECTION,
-                ARGS,
-                null,null,null);
+        Cursor cur=null;
+        try {
+            cur = db.query(MoneyContract.MoneyEntry.TABLE_NAME,
+                    PROJECTION,
+                    SELECTION,
+                    ARGS,
+                    null, null, null);
+        }catch (SQLiteException e){
+            if (e.getMessage().contains("no such table")){
+//                SharedPreferences databaseversion = getActivity().getSharedPreferences("DBVER", Context.MODE_PRIVATE);
+//                int DATABASE_VERSION = databaseversion.getInt("DATABASE_VERSION",0);
+//                ++DATABASE_VERSION;
+//                databaseversion.edit().putInt("DATABASE_VERSION",DATABASE_VERSION).commit();
+//                mDbHelper = new MoneyDbHelper(getActivity());
+//                db = mDbHelper.getReadableDatabase();
+                String SQL_CREATE_PETS_TABLE =  "CREATE TABLE " + MoneyContract.MoneyEntry.TABLE_NAME + " ("
+                        + MoneyContract.MoneyEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                        + MoneyContract.MoneyEntry.COLUMN_MONEY_VALUE + " DOUBLE NOT NULL, "
+                        + MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS + " INTEGER NOT NULL DEFAULT 0, "
+                        + MoneyContract.MoneyEntry.COLUMN_MONEY_DESC + " TEXT, "
+                        + MoneyContract.MoneyEntry.COLUMN_MONEY_DATE + " TEXT NOT NULL, "
+                        + MoneyContract.MoneyEntry.COLUMN_MONEY_TIME + " TEXT NOT NULL);";
+
+                // Execute the SQL statement
+                db.execSQL(SQL_CREATE_PETS_TABLE);
+                cur = db.query(MoneyContract.MoneyEntry.TABLE_NAME,
+                        PROJECTION,
+                        SELECTION,
+                        ARGS,
+                        null, null, null);
+                // create table
+                // re-run query, etc.
+
+            }
+        }
 //        Cursor cur = db.rawQuery("SELECT SUM(value) FROM today WHERE status = 2 AND date = "+currentDate, null);
         if(cur.moveToFirst())
         {

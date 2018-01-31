@@ -4,6 +4,8 @@ package com.kinitoapps.moneymanager.data;
  * Created by HP INDIA on 25-Dec-17.
  */
 import android.content.ContentResolver;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
@@ -15,7 +17,6 @@ import java.util.Locale;
  * API Contract for the Pets app.
  */
 public final class MoneyContract{
-
     // To prevent someone from accidentally instantiating the contract class,
     // give it an empty constructor.
     private MoneyContract() {}

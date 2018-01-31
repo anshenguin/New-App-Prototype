@@ -8,6 +8,7 @@ import android.content.ContentUris;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.DatabaseUtils;
+import android.database.sqlite.SQLiteException;
 import android.graphics.Color;
 import android.opengl.Visibility;
 import android.os.Handler;
@@ -545,10 +546,89 @@ public class YesterdayFragment extends Fragment implements LoaderManager.LoaderC
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        String date;
+        String year;
+        String yesterdayDate;
+        String month;
         currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
-        String date = String.valueOf(Integer.parseInt(currentDate.substring(0,2))-1);
-        String monthAndYear = currentDate.substring(2);
-        String yesterdayDate = date+monthAndYear;
+        if(!currentDate.substring(0,2).equals("01")) {
+            date = String.valueOf(Integer.parseInt(currentDate.substring(0, 2)) - 1);
+            String monthAndYear = currentDate.substring(2);
+            if(Integer.parseInt(date)/10<1)
+                yesterdayDate = "0"+date+monthAndYear;
+            else
+                yesterdayDate = date+monthAndYear;
+            Log.v("lagging","not wali");
+        }
+        else{//new month started
+            Log.v("lagging","new month started");
+
+            //last month was feb
+            if(currentDate.substring(3,5).equals("03")){
+                Log.v("lagging","feb");
+                //check for leap year
+                int year_int = Integer.parseInt(currentDate.substring(6));
+                if(year_int%4==0){
+                    if(year_int%100==0){
+                        if(year_int%400==0)
+                        {
+                            //leap year
+                            month = String.valueOf(Integer.parseInt(currentDate.substring(3,5))-1);
+                            year = currentDate.substring(5);
+                            yesterdayDate="29-0"+month+year;
+                        }
+                        else{
+                            month = String.valueOf(Integer.parseInt(currentDate.substring(3,5))-1);
+                            year = currentDate.substring(5);
+                            yesterdayDate="28-0"+month+year;
+
+                            //not leap year
+                        }
+                    }
+                    else{
+                        //leap year
+                        month = String.valueOf(Integer.parseInt(currentDate.substring(3,5))-1);
+                        year = currentDate.substring(5);
+                        yesterdayDate="29-0"+month+year;
+
+                    }
+                }
+                else{
+                    month = String.valueOf(Integer.parseInt(currentDate.substring(3,5))-1);
+                    year = currentDate.substring(5);
+                    yesterdayDate="28-0"+month+year;
+
+                    //not leap year
+                }
+            }
+            //last month was jan,mar,may,jul,aug,oct,dec
+            else if(currentDate.substring(3,5).equals("02")||
+                    currentDate.substring(3,5).equals("04")||
+                    currentDate.substring(3,5).equals("06")||
+                    currentDate.substring(3,5).equals("08")||
+                    currentDate.substring(3,5).equals("09")||
+                    currentDate.substring(3,5).equals("11")){
+                Log.v("lagging","jan");
+                month = String.valueOf(Integer.parseInt(currentDate.substring(3,5))-1);
+                year = currentDate.substring(5);
+                if(Integer.parseInt(month)/10<1)
+                    yesterdayDate = "31-0"+month+year;
+                else
+                    yesterdayDate = "31-"+month+year;
+
+            }
+
+            else{
+                Log.v("lagging","mar");
+                month = String.valueOf(Integer.parseInt(currentDate.substring(3,5))-1);
+                year = currentDate.substring(5);
+                if(Integer.parseInt(month)/10<1)
+                    yesterdayDate = "30-0"+month+year;
+                else
+                    yesterdayDate = "30-"+month+year;
+
+            }
+        }
         String SELECTION = MoneyContract.MoneyEntry.COLUMN_MONEY_DATE+" =?";
         String[] ARGS = {yesterdayDate};
         Log.v("date",MoneyContract.MoneyEntry.COLUMN_MONEY_DATE);
@@ -599,10 +679,89 @@ public class YesterdayFragment extends Fragment implements LoaderManager.LoaderC
     }
 
     public String getSumSpent(){
+        String date;
+        String year;
+        String yesterdayDate;
+        String month;
         currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
-        String date = String.valueOf(Integer.parseInt(currentDate.substring(0,2))-1);
-        String monthAndYear = currentDate.substring(2);
-        String yesterdayDate = date+monthAndYear;
+        if(!currentDate.substring(0,2).equals("01")) {
+            date = String.valueOf(Integer.parseInt(currentDate.substring(0, 2)) - 1);
+            String monthAndYear = currentDate.substring(2);
+            if(Integer.parseInt(date)/10<1)
+                yesterdayDate = "0"+date+monthAndYear;
+            else
+                yesterdayDate = date+monthAndYear;
+            Log.v("lagging","not wali");
+        }
+        else{//new month started
+            Log.v("lagging","new month started");
+
+            //last month was feb
+            if(currentDate.substring(3,5).equals("03")){
+                Log.v("lagging","feb");
+                //check for leap year
+                int year_int = Integer.parseInt(currentDate.substring(6));
+                if(year_int%4==0){
+                    if(year_int%100==0){
+                        if(year_int%400==0)
+                        {
+                            //leap year
+                            month = String.valueOf(Integer.parseInt(currentDate.substring(3,5))-1);
+                            year = currentDate.substring(5);
+                            yesterdayDate="29-0"+month+year;
+                        }
+                        else{
+                            month = String.valueOf(Integer.parseInt(currentDate.substring(3,5))-1);
+                            year = currentDate.substring(5);
+                            yesterdayDate="28-0"+month+year;
+
+                            //not leap year
+                        }
+                    }
+                    else{
+                        //leap year
+                        month = String.valueOf(Integer.parseInt(currentDate.substring(3,5))-1);
+                        year = currentDate.substring(5);
+                        yesterdayDate="29-0"+month+year;
+
+                    }
+                }
+                else{
+                    month = String.valueOf(Integer.parseInt(currentDate.substring(3,5))-1);
+                    year = currentDate.substring(5);
+                    yesterdayDate="28-0"+month+year;
+
+                    //not leap year
+                }
+            }
+            //last month was jan,mar,may,jul,aug,oct,dec
+            else if(currentDate.substring(3,5).equals("02")||
+                    currentDate.substring(3,5).equals("04")||
+                    currentDate.substring(3,5).equals("06")||
+                    currentDate.substring(3,5).equals("08")||
+                    currentDate.substring(3,5).equals("09")||
+                    currentDate.substring(3,5).equals("11")){
+                Log.v("lagging","jan");
+                month = String.valueOf(Integer.parseInt(currentDate.substring(3,5))-1);
+                year = currentDate.substring(5);
+                if(Integer.parseInt(month)/10<1)
+                    yesterdayDate = "31-0"+month+year;
+                else
+                    yesterdayDate = "31-"+month+year;
+
+            }
+
+            else{
+                Log.v("lagging","mar");
+                month = String.valueOf(Integer.parseInt(currentDate.substring(3,5))-1);
+                year = currentDate.substring(5);
+                if(Integer.parseInt(month)/10<1)
+                    yesterdayDate = "30-0"+month+year;
+                else
+                    yesterdayDate = "30-"+month+year;
+
+            }
+        }
         String str = "";
         MoneyDbHelper mDbHelper = new MoneyDbHelper(getActivity());
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
@@ -627,10 +786,89 @@ public class YesterdayFragment extends Fragment implements LoaderManager.LoaderC
 
     //TODO: CHECKING FOR YESTERDAYS WONT WORK ON START OF A NEW MONTH, PLEASE WRITE BETTER CODE DUMBASS
     public String getSumReceived() {
+        String date;
+        String year;
+        String yesterdayDate;
+        String month;
         currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
-        String date = String.valueOf(Integer.parseInt(currentDate.substring(0,2))-1);
-        String monthAndYear = currentDate.substring(2);
-        String yesterdayDate = date+monthAndYear;
+        if(!currentDate.substring(0,2).equals("01")) {
+            date = String.valueOf(Integer.parseInt(currentDate.substring(0, 2)) - 1);
+            String monthAndYear = currentDate.substring(2);
+            if(Integer.parseInt(date)/10<1)
+                yesterdayDate = "0"+date+monthAndYear;
+            else
+                yesterdayDate = date+monthAndYear;
+            Log.v("lagging","not wali");
+        }
+        else{//new month started
+            Log.v("lagging","new month started");
+
+            //last month was feb
+            if(currentDate.substring(3,5).equals("03")){
+                Log.v("lagging","feb");
+                //check for leap year
+                int year_int = Integer.parseInt(currentDate.substring(6));
+                if(year_int%4==0){
+                    if(year_int%100==0){
+                        if(year_int%400==0)
+                        {
+                            //leap year
+                            month = String.valueOf(Integer.parseInt(currentDate.substring(3,5))-1);
+                            year = currentDate.substring(5);
+                            yesterdayDate="29-0"+month+year;
+                        }
+                        else{
+                            month = String.valueOf(Integer.parseInt(currentDate.substring(3,5))-1);
+                            year = currentDate.substring(5);
+                            yesterdayDate="28-0"+month+year;
+
+                            //not leap year
+                        }
+                    }
+                    else{
+                        //leap year
+                        month = String.valueOf(Integer.parseInt(currentDate.substring(3,5))-1);
+                        year = currentDate.substring(5);
+                        yesterdayDate="29-0"+month+year;
+
+                    }
+                }
+                else{
+                    month = String.valueOf(Integer.parseInt(currentDate.substring(3,5))-1);
+                    year = currentDate.substring(5);
+                    yesterdayDate="28-0"+month+year;
+
+                    //not leap year
+                }
+            }
+            //last month was jan,mar,may,jul,aug,oct,dec
+            else if(currentDate.substring(3,5).equals("02")||
+                    currentDate.substring(3,5).equals("04")||
+                    currentDate.substring(3,5).equals("06")||
+                    currentDate.substring(3,5).equals("08")||
+                    currentDate.substring(3,5).equals("09")||
+                    currentDate.substring(3,5).equals("11")){
+                Log.v("lagging","jan");
+                month = String.valueOf(Integer.parseInt(currentDate.substring(3,5))-1);
+                year = currentDate.substring(5);
+                if(Integer.parseInt(month)/10<1)
+                    yesterdayDate = "31-0"+month+year;
+                else
+                    yesterdayDate = "31-"+month+year;
+
+            }
+
+            else{
+                Log.v("lagging","mar");
+                month = String.valueOf(Integer.parseInt(currentDate.substring(3,5))-1);
+                year = currentDate.substring(5);
+                if(Integer.parseInt(month)/10<1)
+                    yesterdayDate = "30-0"+month+year;
+                else
+                    yesterdayDate = "30-"+month+year;
+
+            }
+        }
         String sumReceived = "";
         MoneyDbHelper mDbHelper = new MoneyDbHelper(getActivity());
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
@@ -640,11 +878,41 @@ public class YesterdayFragment extends Fragment implements LoaderManager.LoaderC
         String[] ARGS = {yesterdayDate,"2"};
 
         String SELECTION = MoneyContract.MoneyEntry.COLUMN_MONEY_DATE+" =? AND "+ MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS+" =?";
-        Cursor cur = db.query(MoneyContract.MoneyEntry.TABLE_NAME,
-                PROJECTION,
-                SELECTION,
-                ARGS,
-                null,null,null);
+        Cursor cur=null;
+        try {
+            cur = db.query(MoneyContract.MoneyEntry.TABLE_NAME,
+                    PROJECTION,
+                    SELECTION,
+                    ARGS,
+                    null, null, null);
+        }catch (SQLiteException e){
+            if (e.getMessage().contains("no such table")){
+//                SharedPreferences databaseversion = getActivity().getSharedPreferences("DBVER", Context.MODE_PRIVATE);
+//                int DATABASE_VERSION = databaseversion.getInt("DATABASE_VERSION",0);
+//                ++DATABASE_VERSION;
+//                databaseversion.edit().putInt("DATABASE_VERSION",DATABASE_VERSION).commit();
+//                mDbHelper = new MoneyDbHelper(getActivity());
+//                db = mDbHelper.getReadableDatabase();
+                String SQL_CREATE_PETS_TABLE =  "CREATE TABLE " + MoneyContract.MoneyEntry.TABLE_NAME + " ("
+                        + MoneyContract.MoneyEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                        + MoneyContract.MoneyEntry.COLUMN_MONEY_VALUE + " DOUBLE NOT NULL, "
+                        + MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS + " INTEGER NOT NULL DEFAULT 0, "
+                        + MoneyContract.MoneyEntry.COLUMN_MONEY_DESC + " TEXT, "
+                        + MoneyContract.MoneyEntry.COLUMN_MONEY_DATE + " TEXT NOT NULL, "
+                        + MoneyContract.MoneyEntry.COLUMN_MONEY_TIME + " TEXT NOT NULL);";
+
+                // Execute the SQL statement
+                db.execSQL(SQL_CREATE_PETS_TABLE);
+                cur = db.query(MoneyContract.MoneyEntry.TABLE_NAME,
+                        PROJECTION,
+                        SELECTION,
+                        ARGS,
+                        null, null, null);
+                // create table
+                // re-run query, etc.
+
+            }
+        }
         if(cur.moveToFirst())
         {
             sumReceived = String.valueOf(cur.getDouble(0));
@@ -654,10 +922,89 @@ public class YesterdayFragment extends Fragment implements LoaderManager.LoaderC
     }
 
     public boolean noEntriesExist(){
+        String date;
+        String year;
+        String yesterdayDate;
+        String month;
         currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
-        String date = String.valueOf(Integer.parseInt(currentDate.substring(0,2))-1);
-        String monthAndYear = currentDate.substring(2);
-        String yesterdayDate = date+monthAndYear;
+        if(!currentDate.substring(0,2).equals("01")) {
+            date = String.valueOf(Integer.parseInt(currentDate.substring(0, 2)) - 1);
+            String monthAndYear = currentDate.substring(2);
+            if(Integer.parseInt(date)/10<1)
+                yesterdayDate = "0"+date+monthAndYear;
+            else
+                yesterdayDate = date+monthAndYear;
+            Log.v("lagging","not wali");
+        }
+        else{//new month started
+            Log.v("lagging","new month started");
+
+            //last month was feb
+            if(currentDate.substring(3,5).equals("03")){
+                Log.v("lagging","feb");
+                //check for leap year
+                int year_int = Integer.parseInt(currentDate.substring(6));
+                if(year_int%4==0){
+                    if(year_int%100==0){
+                        if(year_int%400==0)
+                        {
+                            //leap year
+                            month = String.valueOf(Integer.parseInt(currentDate.substring(3,5))-1);
+                            year = currentDate.substring(5);
+                            yesterdayDate="29-0"+month+year;
+                        }
+                        else{
+                            month = String.valueOf(Integer.parseInt(currentDate.substring(3,5))-1);
+                            year = currentDate.substring(5);
+                            yesterdayDate="28-0"+month+year;
+
+                            //not leap year
+                        }
+                    }
+                    else{
+                        //leap year
+                        month = String.valueOf(Integer.parseInt(currentDate.substring(3,5))-1);
+                        year = currentDate.substring(5);
+                        yesterdayDate="29-0"+month+year;
+
+                    }
+                }
+                else{
+                    month = String.valueOf(Integer.parseInt(currentDate.substring(3,5))-1);
+                    year = currentDate.substring(5);
+                    yesterdayDate="28-0"+month+year;
+
+                    //not leap year
+                }
+            }
+            //last month was jan,mar,may,jul,aug,oct,dec
+            else if(currentDate.substring(3,5).equals("02")||
+                    currentDate.substring(3,5).equals("04")||
+                    currentDate.substring(3,5).equals("06")||
+                    currentDate.substring(3,5).equals("08")||
+                    currentDate.substring(3,5).equals("09")||
+                    currentDate.substring(3,5).equals("11")){
+                Log.v("lagging","jan");
+                month = String.valueOf(Integer.parseInt(currentDate.substring(3,5))-1);
+                year = currentDate.substring(5);
+                if(Integer.parseInt(month)/10<1)
+                    yesterdayDate = "31-0"+month+year;
+                else
+                    yesterdayDate = "31-"+month+year;
+
+            }
+
+            else{
+                Log.v("lagging","mar");
+                month = String.valueOf(Integer.parseInt(currentDate.substring(3,5))-1);
+                year = currentDate.substring(5);
+                if(Integer.parseInt(month)/10<1)
+                    yesterdayDate = "30-0"+month+year;
+                else
+                    yesterdayDate = "30-"+month+year;
+
+            }
+        }
         String SELECTION = MoneyContract.MoneyEntry.COLUMN_MONEY_DATE+" =?";
         String[] ARGS = {yesterdayDate};
         MoneyDbHelper mDbHelper = new MoneyDbHelper(getActivity());

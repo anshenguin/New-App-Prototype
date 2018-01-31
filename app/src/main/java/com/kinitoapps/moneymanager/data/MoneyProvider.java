@@ -6,6 +6,8 @@ package com.kinitoapps.moneymanager.data;
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -58,8 +60,7 @@ public class MoneyProvider extends ContentProvider {
         // TODO: Create and initialize a PetDbHelper object to gain access to the pets database.
         // Make sure the variable is a global variable, so it can be referenced from other
         // ContentProvider methods.
-
-        mDbHelper = new MoneyDbHelper(getContext());
+            mDbHelper = new MoneyDbHelper(getContext());
         return true;
     }
 
@@ -283,4 +284,6 @@ public class MoneyProvider extends ContentProvider {
                 throw new IllegalStateException("Unknown URI " + uri + " with match " + match);
         }
     }
+
+
 }
