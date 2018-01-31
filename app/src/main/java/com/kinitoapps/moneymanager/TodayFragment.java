@@ -654,7 +654,7 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
 //                databaseversion.edit().putInt("DATABASE_VERSION",DATABASE_VERSION).commit();
 //                mDbHelper = new MoneyDbHelper(getActivity());
 //                db = mDbHelper.getReadableDatabase();
-                String SQL_CREATE_PETS_TABLE =  "CREATE TABLE " + MoneyContract.MoneyEntry.TABLE_NAME + " ("
+                String SQL_CREATE_TABLE =  "CREATE TABLE " + MoneyContract.MoneyEntry.TABLE_NAME + " ("
                         + MoneyContract.MoneyEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                         + MoneyContract.MoneyEntry.COLUMN_MONEY_VALUE + " DOUBLE NOT NULL, "
                         + MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS + " INTEGER NOT NULL DEFAULT 0, "
@@ -663,7 +663,7 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
                         + MoneyContract.MoneyEntry.COLUMN_MONEY_TIME + " TEXT NOT NULL);";
 
                 // Execute the SQL statement
-                db.execSQL(SQL_CREATE_PETS_TABLE);
+                db.execSQL(SQL_CREATE_TABLE);
                 cur = db.query(MoneyContract.MoneyEntry.TABLE_NAME,
                         PROJECTION,
                         SELECTION,

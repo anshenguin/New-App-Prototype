@@ -82,12 +82,14 @@
         android:paddingLeft="16dp"
         android:layout_marginLeft="32dp"
         android:layout_marginRight="32dp"
-        android:paddingRight="16dp"
+        android:paddingRight="32dp"
         android:layout_below="@+id/datetime"
         android:layout_centerHorizontal="true"
         android:drawableLeft="@drawable/ic_action_del"
         android:background="@drawable/gradient"
-        android:drawableStart="@drawable/ic_action_del" />
+        android:drawableStart="@drawable/ic_action_del"
+        android:paddingEnd="32dp"
+        android:paddingStart="16dp" />
 
     <Button
         android:id="@+id/edit_button"
@@ -100,10 +102,12 @@
         android:background="@drawable/gradient_white"
         android:drawablePadding="4dp"
         android:paddingLeft="16dp"
-        android:paddingRight="16dp"
+        android:paddingRight="36dp"
         android:text="EDIT VALUES"
         android:textColor="#212121"
         android:drawableLeft="@drawable/ic_action_name"
-        android:drawableStart="@drawable/ic_action_name" />
+        android:drawableStart="@drawable/ic_action_name"
+        android:paddingEnd="36dp"
+        android:paddingStart="16dp" />
 
 </RelativeLayout>

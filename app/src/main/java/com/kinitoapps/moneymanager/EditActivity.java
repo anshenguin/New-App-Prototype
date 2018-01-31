@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -40,6 +41,9 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);
         mDbHelper = new MoneyDbHelper(this);
+        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+
         mDescEditText = (EditText) findViewById(R.id.edit_desc);
         mStatusSpinner = (Spinner) findViewById(R.id.spinner_status);
         save = (Button) findViewById(R.id.saveValue);
@@ -176,5 +180,15 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
                                     Toast.makeText(this, "Entry Updated Successfully",
                                                     Toast.LENGTH_SHORT).show();
                         }
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

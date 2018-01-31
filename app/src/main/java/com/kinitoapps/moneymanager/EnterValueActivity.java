@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import android.text.TextUtils;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -52,6 +53,8 @@ public class EnterValueActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_enter_value);
+        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
         sharedPreferences = getSharedPreferences("LIMIT", Context.MODE_PRIVATE);
         SharedPreferences canCallNow = getSharedPreferences("CALL", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = canCallNow.edit();
@@ -229,5 +232,15 @@ public class EnterValueActivity extends AppCompatActivity {
             cur.close();
         }
         return sumspent;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
