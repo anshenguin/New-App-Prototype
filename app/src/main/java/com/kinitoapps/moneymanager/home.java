@@ -51,8 +51,8 @@ public class home extends AppCompatActivity
 
         if(firstRun.getBoolean("firstrun",true)) {
             firstRun.edit().putBoolean("firstrun",false).commit();
-            sh.edit().putLong("limit_today",0).commit();
-            sh.edit().putLong("limit_month",0).commit();
+            sh.edit().putFloat("limit_today",0).commit();
+            sh.edit().putFloat("limit_month",0).commit();
             createNotification();
         }
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

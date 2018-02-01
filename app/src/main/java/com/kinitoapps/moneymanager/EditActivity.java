@@ -1,7 +1,11 @@
 package com.kinitoapps.moneymanager;
 
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
@@ -23,6 +27,10 @@ import android.widget.Toast;
 import com.kinitoapps.moneymanager.data.MoneyContract;
 import com.kinitoapps.moneymanager.data.MoneyDbHelper;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 
 public class EditActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
     private static final int EXISTING_MONEY_LOADER = 0;
@@ -32,7 +40,9 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
     private EditText mDescEditText;
     private MoneyDbHelper mDbHelper;
     private Button save;
-
+    private SharedPreferences sharedPreferences;
+    private double oldValue;
+    private String currentDate;
     private int mStatus = MoneyContract.MoneyEntry.STATUS_UNKNOWN;
 
 
@@ -41,6 +51,7 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);
         mDbHelper = new MoneyDbHelper(this);
+        sharedPreferences = getSharedPreferences("LIMIT", Context.MODE_PRIVATE);
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
@@ -51,7 +62,6 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
             @Override
             public void onClick(View view) {
                 editValue();
-                finish();
             }
         });
         mValueEditText = (EditText) findViewById(R.id.edit_value);
@@ -94,7 +104,7 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
             String desc = cursor.getString(descColumnIndex);
             int status = cursor.getInt(statusColumnIndex);
             String str = String.valueOf(value);
-
+            oldValue = value;
             mValueEditText.setText(str);
             mDescEditText.setText(desc);
             mStatusSpinner.setSelection(status-1);
@@ -158,6 +168,7 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
         double value = Double.parseDouble(mValueEditText.getText().toString().trim());
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
+        double currentValue = value;
         values.put(MoneyContract.MoneyEntry.COLUMN_MONEY_VALUE, value);
         values.put(MoneyContract.MoneyEntry.COLUMN_MONEY_DESC, desc);
         values.put(MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS, mStatus);
@@ -179,6 +190,7 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
                             // Otherwise, the update was successful and we can display a toast.
                                     Toast.makeText(this, "Entry Updated Successfully",
                                                     Toast.LENGTH_SHORT).show();
+                                    checkForLimit(currentValue,oldValue);
                         }
     }
     @Override
@@ -190,5 +202,90 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public double getDailySumSpent(){
+        currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
+        String SELECTION = MoneyContract.MoneyEntry.COLUMN_MONEY_DATE+" =? AND "+ MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS+" =?";
+
+        String[] ARGS = {currentDate,"1"};
+        MoneyDbHelper mDbHelper = new MoneyDbHelper(this);
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        double sumSpent = 0;
+        String[] PROJECTION = {
+                "SUM(value)"
+        };
+        Cursor cur = db.query(MoneyContract.MoneyEntry.TABLE_NAME,
+                PROJECTION,
+                SELECTION,
+                ARGS,
+                null,null,null);
+//        Cursor cur = db.rawQuery("SELECT SUM(value) FROM today WHERE status = 1 AND date = "+currentDate, null);
+        if(cur.moveToFirst())
+        {
+            sumSpent = cur.getDouble(0);
+            cur.close();
+        }
+        return sumSpent;
+    }
+
+    public double getMonthlySumSpent(){
+        currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
+//        String date = String.valueOf(Integer.parseInt(currentDate.substring(0,2))-1);
+        String monthAndYear = currentDate.substring(2);
+        String SELECTION = MoneyContract.MoneyEntry.COLUMN_MONEY_DATE+" LIKE? AND "+ MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS+" =?";
+        String[] ARGS = {"%"+monthAndYear,"1"};
+        double sumspent = 0;
+        MoneyDbHelper mDbHelper = new MoneyDbHelper(this);
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        String[] PROJECTION = {
+                "SUM(value)"
+        };
+        Cursor cur = db.query(MoneyContract.MoneyEntry.TABLE_NAME,
+                PROJECTION,
+                SELECTION,
+                ARGS,
+                null,null,null);
+//        Cursor cur = db.rawQuery("SELECT SUM(value) FROM today WHERE status = 1 AND date LIKE %"+monthAndYear, null);
+        if(cur.moveToFirst())
+        {
+            sumspent = cur.getDouble(0);
+            cur.close();
+        }
+        return sumspent;
+    }
+
+    private void checkForLimit(double currentVal, double oldValue){
+        //TODO: DONT CHECK FOR LIMIT IF ALREADY CHECKED TODAY
+        float limit_today = sharedPreferences.getFloat("limit_today",0);
+        float limit_month = sharedPreferences.getFloat("limit_month",0);
+        if(limit_today<= getDailySumSpent()&&limit_today>0&&(getDailySumSpent()+oldValue-currentVal)<limit_today){
+            // Build notification
+            // Actions are just fake
+            Notification noti = new Notification.Builder(this)
+                    .setContentTitle("DAILY LIMIT WARNING")
+                    .setContentText("You have exceeded your daily limit").setSmallIcon(R.mipmap.ic_launcher)
+                    .setPriority(Notification.PRIORITY_HIGH)
+                    .setDefaults(Notification.DEFAULT_VIBRATE)
+                    .build();
+            NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            // hide the notification after its selected
+            notificationManager.notify(1, noti);
+        }
+
+        if(limit_month<=getMonthlySumSpent()&&limit_month>0&&(getMonthlySumSpent()+oldValue-currentVal)<limit_month){
+            Notification noti = new Notification.Builder(this)
+                    .setContentTitle("MONTHLY LIMIT WARNING")
+                    .setContentText("You have exceeded your monthly limit").setSmallIcon(R.mipmap.ic_launcher)
+                    .setPriority(Notification.PRIORITY_HIGH)
+                    .setDefaults(Notification.DEFAULT_VIBRATE)
+                    .build();
+            NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            // hide the notification after its selected
+            notificationManager.notify(2, noti);
+        }
+
+        finish();
+
     }
 }

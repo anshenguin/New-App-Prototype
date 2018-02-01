@@ -16,6 +16,7 @@
         android:minWidth="40dp"
         android:id="@+id/monthly_limit_value"
         android:inputType="numberDecimal"
+        android:gravity="center"
         android:layout_marginBottom="8dp"
         android:layout_gravity="center_horizontal"
         android:layout_height="wrap_content" />

@@ -18,6 +18,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.kinitoapps.moneymanager.data.MoneyContract;
 import com.kinitoapps.moneymanager.data.MoneyDbHelper;
@@ -32,8 +33,6 @@ import java.util.Locale;
 public class EnterValueActivity extends AppCompatActivity {
 
     private EditText mDescEditText;
-    private Uri mCurrentPetUri;
-
     private String currentDate;
 
     /** EditText field to enter the pet's breed */
@@ -69,8 +68,6 @@ public class EnterValueActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 insertValue();
-                checkForLimit();
-                finish();
             }
         });
         setupSpinner();
@@ -114,22 +111,34 @@ public class EnterValueActivity extends AppCompatActivity {
     }
 
     private void insertValue(){
+        double value=0;
         String desc = mDescEditText.getText().toString().trim();
+        if(TextUtils.isEmpty(mDescEditText.getText().toString().trim())){
+            desc="No description given";
+        }
         String date = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
         DateFormat df = new SimpleDateFormat("h:mm a",Locale.getDefault());
         String time = df.format(Calendar.getInstance().getTime());
-        double value = Double.parseDouble(mValueEditText.getText().toString().trim());
+        if(!TextUtils.isEmpty(mValueEditText.getText().toString().trim())) {
+            value = Double.parseDouble(mValueEditText.getText().toString().trim());
+            SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+            // Create a ContentValues object where column names are the keys,
+            // and Toto's pet attributes are the values.
+            ContentValues values = new ContentValues();
+            values.put(MoneyContract.MoneyEntry.COLUMN_MONEY_VALUE, value);
+            values.put(MoneyContract.MoneyEntry.COLUMN_MONEY_DESC, desc);
+            values.put(MoneyContract.MoneyEntry.COLUMN_MONEY_DATE, date);
+            values.put(MoneyContract.MoneyEntry.COLUMN_MONEY_TIME, time);
+            values.put(MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS, mStatus);
+            db.insert(MoneyContract.MoneyEntry.TABLE_NAME, null, values);
+            if(mStatus == MoneyContract.MoneyEntry.STATUS_SPENT)
+            checkForLimit(value);
+        }
+        else{
+            Toast.makeText(this,"Value field can't be blank",Toast.LENGTH_LONG).show();
+        }
 
-        // Create a ContentValues object where column names are the keys,
-        // and Toto's pet attributes are the values.
-        ContentValues values = new ContentValues();
-        values.put(MoneyContract.MoneyEntry.COLUMN_MONEY_VALUE, value);
-        values.put(MoneyContract.MoneyEntry.COLUMN_MONEY_DESC, desc);
-        values.put(MoneyContract.MoneyEntry.COLUMN_MONEY_DATE, date);
-        values.put(MoneyContract.MoneyEntry.COLUMN_MONEY_TIME, time);
-        values.put(MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS, mStatus);
 
         // Insert a new row for Toto in the database, returning the ID of that new row.
         // The first argument for db.insert() is the pets table name.
@@ -138,15 +147,14 @@ public class EnterValueActivity extends AppCompatActivity {
         // this is set to "null", then the framework will not insert a row when
         // there are no values).
         // The third argument is the ContentValues object containing the info for Toto.
-       db.insert(MoneyContract.MoneyEntry.TABLE_NAME, null, values);
 
     }
 
-    private void checkForLimit(){
+    private void checkForLimit(double currentVal){
         //TODO: DONT CHECK FOR LIMIT IF ALREADY CHECKED TODAY
-        Long limit_today = sharedPreferences.getLong("limit_today",0);
-        Long limit_month = sharedPreferences.getLong("limit_month",0);
-        if(limit_today<= getDailySumSpent()&&limit_today>0){
+        float limit_today = sharedPreferences.getFloat("limit_today",0);
+        float limit_month = sharedPreferences.getFloat("limit_month",0);
+        if(limit_today<= getDailySumSpent()&&limit_today>0&&(getDailySumSpent()-currentVal)<limit_today){
             // Build notification
             // Actions are just fake
             Notification noti = new Notification.Builder(this)
@@ -160,7 +168,7 @@ public class EnterValueActivity extends AppCompatActivity {
             notificationManager.notify(1, noti);
         }
 
-        if(limit_month<=getMonthlySumSpent()&&limit_month>0){
+        if(limit_month<=getMonthlySumSpent()&&limit_month>0&&(getMonthlySumSpent()-currentVal)<limit_month){
             Notification noti = new Notification.Builder(this)
                     .setContentTitle("MONTHLY LIMIT WARNING")
                     .setContentText("You have exceeded your monthly limit").setSmallIcon(R.mipmap.ic_launcher)
@@ -171,6 +179,8 @@ public class EnterValueActivity extends AppCompatActivity {
             // hide the notification after its selected
             notificationManager.notify(2, noti);
         }
+
+        finish();
 
     }
 
