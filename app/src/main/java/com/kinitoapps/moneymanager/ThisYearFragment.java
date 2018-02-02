@@ -598,11 +598,11 @@ public class ThisYearFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     public String getSumSpent(){
-//        currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
-////        String date = String.valueOf(Integer.parseInt(currentDate.substring(0,2))-1);
-//        String year = currentDate.substring(5);
-        String SELECTION = MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS+" =?";
-        String[] ARGS = {"1"};
+        currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
+//        String date = String.valueOf(Integer.parseInt(currentDate.substring(0,2))-1);
+        String year = currentDate.substring(5);
+        String SELECTION = MoneyContract.MoneyEntry.COLUMN_MONEY_DATE+" LIKE? AND "+ MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS+" =?";
+        String[] ARGS = {"%"+year,"1"};
         String str = "";
         MoneyDbHelper mDbHelper = new MoneyDbHelper(getActivity());
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
@@ -624,11 +624,11 @@ public class ThisYearFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     public String getSumReceived() {
-//        currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
-////        String date = String.valueOf(Integer.parseInt(currentDate.substring(0,2))-1);
-//        String year = currentDate.substring(5);
-        String SELECTION = MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS+" =?";
-        String[] ARGS = {"2"};
+        currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
+//        String date = String.valueOf(Integer.parseInt(currentDate.substring(0,2))-1);
+        String year = currentDate.substring(5);
+        String SELECTION = MoneyContract.MoneyEntry.COLUMN_MONEY_DATE+" LIKE? AND "+ MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS+" =?";
+        String[] ARGS = {"%"+year,"2"};
         String sumReceived = "";
         MoneyDbHelper mDbHelper = new MoneyDbHelper(getActivity());
         SQLiteDatabase db = mDbHelper.getReadableDatabase();

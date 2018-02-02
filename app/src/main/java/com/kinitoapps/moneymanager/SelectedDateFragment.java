@@ -66,14 +66,13 @@ import java.util.Locale;
  * Use the {@link TodayFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class TodayFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
+public class SelectedDateFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
     // TODO: Rename parameter arguments, choose names that match
     private static final int MONEY_LOADER = 0;
     private static ArrayList<Long> mSelectedItemIds;
     MoneyCursorAdapter mCursorAdapter;
     private NonScrollListView moneyListView;
     private boolean isActionModeOn = false;
-
     private android.view.ActionMode mActionMode;
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -85,7 +84,7 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
     private String currentDate;
     private OnFragmentInteractionListener mListener;
 
-    public TodayFragment() {
+    public SelectedDateFragment() {
         // Required empty public constructor
     }
 
@@ -248,7 +247,8 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_today, container, false);
+        currentDate = getArguments().getString("Date");
+        View root = inflater.inflate(R.layout.fragment_selected_date, container, false);
 
 
 //        // Inflate the layout for this fragment
@@ -518,7 +518,7 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
 //        });
 //    }
 
-        private boolean doesContainThisItem(long l, ArrayList<Long> mSelectedItemIds) {
+    private boolean doesContainThisItem(long l, ArrayList<Long> mSelectedItemIds) {
         for(Long p: mSelectedItemIds){
             if(p==l)
                 return true;
@@ -553,7 +553,7 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
+//        currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
         String SELECTION = MoneyContract.MoneyEntry.COLUMN_MONEY_DATE+" =?";
         String[] ARGS = {currentDate};
         Log.v("date",MoneyContract.MoneyEntry.COLUMN_MONEY_DATE);
@@ -604,7 +604,7 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
     }
 
     public String getSumSpent(){
-        currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
+//        currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
         String SELECTION = MoneyContract.MoneyEntry.COLUMN_MONEY_DATE+" =? AND "+ MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS+" =?";
 
         String[] ARGS = {currentDate,"1"};
@@ -629,8 +629,8 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
     }
 
     public String getSumReceived() {
-        currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
-            String SELECTION = MoneyContract.MoneyEntry.COLUMN_MONEY_DATE+" =? AND "+ MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS+" =?";
+//        currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
+        String SELECTION = MoneyContract.MoneyEntry.COLUMN_MONEY_DATE+" =? AND "+ MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS+" =?";
 
         String[] ARGS = {currentDate,"2"};
         MoneyDbHelper mDbHelper = new MoneyDbHelper(getActivity());
@@ -684,38 +684,38 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
     }
 
     public boolean noEntriesExist(){
-        currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
+//        currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
         String SELECTION = MoneyContract.MoneyEntry.COLUMN_MONEY_DATE+" =?";
         String[] ARGS = {currentDate};
         MoneyDbHelper mDbHelper = new MoneyDbHelper(getActivity());
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         int numRows = (int)DatabaseUtils.queryNumEntries(db, MoneyContract.MoneyEntry.TABLE_NAME,SELECTION,ARGS);
         if(numRows == 0)
-        return true;
+            return true;
         else return false;
     }
 
     private void deletePet() {
         int rowsDeleted = 0;
-            for(Long id:mSelectedItemIds){
-                Uri currentEntryUri = ContentUris.withAppendedId(MoneyContract.MoneyEntry.CONTENT_URI, id);
-                Log.v("lag",String.valueOf(currentEntryUri));
-                Log.v("lag",String.valueOf(id));
-                rowsDeleted = getActivity().getApplicationContext().getContentResolver().delete(currentEntryUri, null, null);
+        for(Long id:mSelectedItemIds){
+            Uri currentEntryUri = ContentUris.withAppendedId(MoneyContract.MoneyEntry.CONTENT_URI, id);
+            Log.v("lag",String.valueOf(currentEntryUri));
+            Log.v("lag",String.valueOf(id));
+            rowsDeleted = getActivity().getApplicationContext().getContentResolver().delete(currentEntryUri, null, null);
 
-            }
+        }
 
 
-            // Show a toast message depending on whether or not the delete was successful.
-            if (rowsDeleted == 0) {
-                // If no rows were deleted, then there was an error with the delete.
-                Toast.makeText(getActivity(), "Deletion Failed",
-                        Toast.LENGTH_SHORT).show();
-            } else {
-                // Otherwise, the delete was successful and we can display a toast.
-                Toast.makeText(getActivity(), "Deleted Successfully",
-                        Toast.LENGTH_SHORT).show();
-            }
+        // Show a toast message depending on whether or not the delete was successful.
+        if (rowsDeleted == 0) {
+            // If no rows were deleted, then there was an error with the delete.
+            Toast.makeText(getActivity(), "Deletion Failed",
+                    Toast.LENGTH_SHORT).show();
+        } else {
+            // Otherwise, the delete was successful and we can display a toast.
+            Toast.makeText(getActivity(), "Deleted Successfully",
+                    Toast.LENGTH_SHORT).show();
+        }
 
         mActionMode.finish();
 

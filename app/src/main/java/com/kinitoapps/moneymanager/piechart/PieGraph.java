@@ -291,10 +291,10 @@ public class PieGraph extends View implements HoloGraphAnimate {
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
     @Override
     public void animateToGoalValues() {
-        if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB_MR1){
-            Log.e("HoloGLib errorcompat", "Animation not supported on api level 12 and below. Returning without animating.");
-            return;
-        }
+//        if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB_MR1){
+//            Log.e("HoloGLib errorcompat", "Animation not supported on api level 12 and below. Returning without animating.");
+//            return;
+//        }
         if (mValueAnimator != null)
             mValueAnimator.cancel();
 

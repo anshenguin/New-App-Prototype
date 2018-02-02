@@ -1,14 +1,22 @@
 package com.kinitoapps.moneymanager;
 
+import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
+import android.text.TextUtils;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -17,14 +25,26 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.CalendarView;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 public class home extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, TodayFragment.OnFragmentInteractionListener,YesterdayFragment.OnFragmentInteractionListener,ThisYearFragment.OnFragmentInteractionListener,ThisMonthFragment.OnFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener, TodayFragment.OnFragmentInteractionListener,YesterdayFragment.OnFragmentInteractionListener,ThisYearFragment.OnFragmentInteractionListener,ThisMonthFragment.OnFragmentInteractionListener, SelectedDateFragment.OnFragmentInteractionListener {
     boolean mDrawerItemClicked = false;
     short clicked = 0;
     short selected = 1;
+    boolean changedDate;
     ActionBarDrawerToggle toggle;
     DrawerLayout drawer;
+    String currentDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,6 +153,75 @@ public class home extends AppCompatActivity
                         fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left).replace(R.id.flContent, fragment).commit();
 
                     }
+                    else if(clicked==5){
+                        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
+                            selected = 5;
+                            AlertDialog.Builder builder = new AlertDialog.Builder(home.this);
+                            builder.setTitle("Select a Date");
+                            final LayoutInflater inflater = getLayoutInflater();
+                            View v = inflater.inflate(R.layout.calendar_dialog, null);
+                            final CalendarView calendarView = v.findViewById(R.id.calendar);
+
+                            changedDate = false;
+                            calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+                                @Override
+                                public void onSelectedDayChange(@NonNull CalendarView calendarView, int year, int month, int day) {
+                                    changedDate = true;
+                                    String dayS = String.valueOf(day), monthS = String.valueOf(month + 1);
+                                    if ((day / 10) < 1)
+                                        dayS = "0" + dayS;
+                                    if (((month + 1) / 10) < 1)
+                                        monthS = "0" + monthS;
+                                    currentDate = dayS + "-" + monthS + "-" + year;
+                                }
+                            });
+                            builder.setView(v);
+                            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    if (!changedDate) {
+                                        long milliseconds = calendarView.getDate();
+                                        Date date = new Date(milliseconds);
+                                        //dd/mm/yyyy
+                                        String currentDateWithSlashes = DateFormat.getDateInstance(DateFormat.SHORT).format(date);
+                                        currentDate = currentDateWithSlashes.substring(0, 2) + "-"
+                                                + currentDateWithSlashes.substring(3, 5) + "-"
+                                                + currentDateWithSlashes.substring(6);
+                                        Toast.makeText(home.this, currentDate, Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast.makeText(home.this, currentDate, Toast.LENGTH_SHORT).show();
+                                    }
+                                    Bundle bundle = new Bundle();
+                                    bundle.putString("Date", currentDate);
+                                    Class fragmentClass = null;
+                                    android.support.v4.app.Fragment fragment = null;
+                                    fragmentClass = SelectedDateFragment.class;
+                                    try {
+                                        fragment = (android.support.v4.app.Fragment) fragmentClass.newInstance();
+                                        fragment.setArguments(bundle);
+
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                    FragmentManager fragmentManager = getSupportFragmentManager();
+                                    fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left).replace(R.id.flContent, fragment).commit();
+
+                                }
+                            });
+                            builder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+
+                                }
+                            });
+                            builder.show();
+                            //TODO: DISPLAY CALENDAR AND ADD THIS TO ONRESUME
+                        }
+                        else{
+                            Toast.makeText(home.this,"This Function Requires Android 6.0+",Toast.LENGTH_LONG).show();
+                        }
+
+                    }
                     clicked = 0;
                     mDrawerItemClicked = false;
                 }
@@ -213,6 +302,9 @@ public class home extends AppCompatActivity
 
         } else if (id == R.id.nav_settings) {
             clicked = 8;
+        }
+        else if(id == R.id.nav_cal){
+            clicked = 5;
         }
         mDrawerItemClicked = true;
         drawer.closeDrawer(GravityCompat.START);
@@ -317,8 +409,6 @@ public class home extends AppCompatActivity
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left).replace(R.id.flContent, fragment).commit();
         }
-
-
     }
 
     public void disableDrawer(){
@@ -334,4 +424,6 @@ public class home extends AppCompatActivity
         toggle.setDrawerIndicatorEnabled(true);
         toggle.syncState();
     }
+
+
 }

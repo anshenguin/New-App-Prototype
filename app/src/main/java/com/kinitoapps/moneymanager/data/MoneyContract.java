@@ -37,7 +37,7 @@ public final class MoneyContract{
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_MONEY;
 
         /** Name of database table for pets */
-        public final static String TABLE_NAME = getTableName();
+        public final static String TABLE_NAME = "MONEY_TABLE";
 
         /**
          * Unique ID number for the pet (only for use in the database table).
@@ -90,13 +90,6 @@ public final class MoneyContract{
                 return true;
             }
             return false;
-        }
-
-        public static String getTableName() {
-            String currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
-//        String date = String.valueOf(Integer.parseInt(currentDate.substring(0,2))-1);
-            String year = currentDate.substring(6);
-            return "money_"+year;
         }
     }
 

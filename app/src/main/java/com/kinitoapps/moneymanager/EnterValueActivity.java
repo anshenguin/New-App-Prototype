@@ -114,7 +114,7 @@ public class EnterValueActivity extends AppCompatActivity {
         double value=0;
         String desc = mDescEditText.getText().toString().trim();
         if(TextUtils.isEmpty(mDescEditText.getText().toString().trim())){
-            desc="No description given";
+            desc="No Description Given";
         }
         String date = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
         DateFormat df = new SimpleDateFormat("h:mm a",Locale.getDefault());
