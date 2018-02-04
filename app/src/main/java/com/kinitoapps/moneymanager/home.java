@@ -41,10 +41,13 @@ public class home extends AppCompatActivity
     boolean mDrawerItemClicked = false;
     short clicked = 0;
     short selected = 1;
+    boolean cancelledCalendar = false;
     boolean changedDate;
+    int LAST_SELECTED = R.id.nav_today;
     ActionBarDrawerToggle toggle;
     DrawerLayout drawer;
     String currentDate;
+    boolean isDateSelected = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +70,7 @@ public class home extends AppCompatActivity
 //        SharedPreferences sharedPreferences = getSharedPreferences("SWITCH_NOTIFICATION", Context.MODE_PRIVATE);
         SharedPreferences firstRun = getSharedPreferences("com.example.lockscreentest",Context.MODE_PRIVATE);
         SharedPreferences sh = getSharedPreferences("LIMIT",Context.MODE_PRIVATE);
-
+        final NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 
         if(firstRun.getBoolean("firstrun",true)) {
             firstRun.edit().putBoolean("firstrun",false).commit();
@@ -90,15 +93,17 @@ public class home extends AppCompatActivity
 
             @Override
             public void onDrawerOpened(View drawerView) {
-
+                cancelledCalendar = false;
             }
 
             @Override
-            public void onDrawerClosed(View drawerView) {
+            public void onDrawerClosed(final View drawerView) {
 
                 if(mDrawerItemClicked) {
                     android.support.v4.app.Fragment fragment = null;
                     Class fragmentClass = null;
+                    if(clicked!=5)
+                        isDateSelected = false;
                     if (clicked == 8)
                         startActivity(new Intent(home.this, Settings.class));
 
@@ -179,6 +184,7 @@ public class home extends AppCompatActivity
                             builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
+                                    isDateSelected = true;
                                     if (!changedDate) {
                                         long milliseconds = calendarView.getDate();
                                         Date date = new Date(milliseconds);
@@ -187,9 +193,6 @@ public class home extends AppCompatActivity
                                         currentDate = currentDateWithSlashes.substring(0, 2) + "-"
                                                 + currentDateWithSlashes.substring(3, 5) + "-"
                                                 + currentDateWithSlashes.substring(6);
-                                        Toast.makeText(home.this, currentDate, Toast.LENGTH_SHORT).show();
-                                    } else {
-                                        Toast.makeText(home.this, currentDate, Toast.LENGTH_SHORT).show();
                                     }
                                     Bundle bundle = new Bundle();
                                     bundle.putString("Date", currentDate);
@@ -211,14 +214,19 @@ public class home extends AppCompatActivity
                             builder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
-
+                                    if (!isDateSelected) {
+                                        cancelledCalendar = true;
+                                        navigationView.getMenu().findItem(R.id.nav_cal).setChecked(false);
+                                        navigationView.getMenu().findItem(LAST_SELECTED).setChecked(true);
+                                    onNavigationItemSelected(navigationView.getMenu().findItem(LAST_SELECTED));
+                                    }
                                 }
                             });
                             builder.show();
                             //TODO: DISPLAY CALENDAR AND ADD THIS TO ONRESUME
                         }
                         else{
-                            Toast.makeText(home.this,"This Function Requires Android 6.0+",Toast.LENGTH_LONG).show();
+                            Toast.makeText(home.this,"This Feature Requires Android 6.0+",Toast.LENGTH_LONG).show();
                         }
 
                     }
@@ -233,7 +241,6 @@ public class home extends AppCompatActivity
 
             }
         });
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.getMenu().findItem(R.id.nav_today).setChecked(true);
         navigationView.setNavigationItemSelectedListener(this);
     }
@@ -280,23 +287,25 @@ public class home extends AppCompatActivity
 //        // Handle navigation view item clicks here.
         int id = item.getItemId();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-
-
+        if(id!=R.id.nav_cal)
+        LAST_SELECTED = id;
         if (id == R.id.nav_today) {
             clicked = 1;
+            selected = 1;
             //part of the work around
 //            navigationView.getMenu().findItem(R.id.nav_camera).setChecked(true);
         } else if (id == R.id.nav_yesterday) {
             clicked = 2;
+            selected = 2;
 
 
         } else if (id == R.id.nav_this_month) {
             clicked = 3;
-
+            selected = 3;
 
         } else if (id == R.id.nav_year) {
             clicked = 4;
-
+            selected = 4;
         } else if (id == R.id.nav_edit_history) {
 
 
@@ -305,10 +314,14 @@ public class home extends AppCompatActivity
         }
         else if(id == R.id.nav_cal){
             clicked = 5;
+            selected = 5;
         }
-        mDrawerItemClicked = true;
-        drawer.closeDrawer(GravityCompat.START);
-
+        if(!cancelledCalendar) {
+            mDrawerItemClicked = true;
+            drawer.closeDrawer(GravityCompat.START);
+        }
+        else
+            mDrawerItemClicked = false;
         return true;
     }
 
@@ -408,6 +421,25 @@ public class home extends AppCompatActivity
             }
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left).replace(R.id.flContent, fragment).commit();
+        }
+        else if(selected == 5){
+            if(isDateSelected)
+            {
+                Bundle bundle = new Bundle();
+                bundle.putString("Date", currentDate);
+                fragment = null;
+                fragmentClass = SelectedDateFragment.class;
+                try {
+                    fragment = (android.support.v4.app.Fragment) fragmentClass.newInstance();
+                    fragment.setArguments(bundle);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left).replace(R.id.flContent, fragment).commit();
+
+            }
         }
     }
 

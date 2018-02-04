@@ -119,27 +119,32 @@ public class EnterValueActivity extends AppCompatActivity {
         String date = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
         DateFormat df = new SimpleDateFormat("h:mm a",Locale.getDefault());
         String time = df.format(Calendar.getInstance().getTime());
-        if(!TextUtils.isEmpty(mValueEditText.getText().toString().trim())) {
-            value = Double.parseDouble(mValueEditText.getText().toString().trim());
-            SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
-            // Create a ContentValues object where column names are the keys,
-            // and Toto's pet attributes are the values.
-            ContentValues values = new ContentValues();
-            values.put(MoneyContract.MoneyEntry.COLUMN_MONEY_VALUE, value);
-            values.put(MoneyContract.MoneyEntry.COLUMN_MONEY_DESC, desc);
-            values.put(MoneyContract.MoneyEntry.COLUMN_MONEY_DATE, date);
-            values.put(MoneyContract.MoneyEntry.COLUMN_MONEY_TIME, time);
-            values.put(MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS, mStatus);
-            db.insert(MoneyContract.MoneyEntry.TABLE_NAME, null, values);
-            if(mStatus == MoneyContract.MoneyEntry.STATUS_SPENT)
-            checkForLimit(value);
-        }
-        else{
-            Toast.makeText(this,"Value field can't be blank",Toast.LENGTH_LONG).show();
-        }
+            if (!TextUtils.isEmpty(mValueEditText.getText().toString().trim())) {
+                if(Double.parseDouble(mValueEditText.getText().toString().trim())>9999999){
+                    Toast.makeText(EnterValueActivity.this,"Value cannot be greater than 9,999,999",Toast.LENGTH_LONG).show();
+                }
+                else {
+                    value = Double.parseDouble(mValueEditText.getText().toString().trim());
+                    SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
-
+                    // Create a ContentValues object where column names are the keys,
+                    // and Toto's pet attributes are the values.
+                    ContentValues values = new ContentValues();
+                    values.put(MoneyContract.MoneyEntry.COLUMN_MONEY_VALUE, value);
+                    values.put(MoneyContract.MoneyEntry.COLUMN_MONEY_DESC, desc);
+                    values.put(MoneyContract.MoneyEntry.COLUMN_MONEY_DATE, date);
+                    values.put(MoneyContract.MoneyEntry.COLUMN_MONEY_TIME, time);
+                    values.put(MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS, mStatus);
+                    db.insert(MoneyContract.MoneyEntry.TABLE_NAME, null, values);
+                    if (mStatus == MoneyContract.MoneyEntry.STATUS_SPENT)
+                        checkForLimit(value);
+                    else
+                        finish();
+                }
+            } else {
+                Toast.makeText(this, "Value field cannot be blank", Toast.LENGTH_LONG).show();
+            }
         // Insert a new row for Toto in the database, returning the ID of that new row.
         // The first argument for db.insert() is the pets table name.
         // The second argument provides the name of a column in which the framework
@@ -147,7 +152,6 @@ public class EnterValueActivity extends AppCompatActivity {
         // this is set to "null", then the framework will not insert a row when
         // there are no values).
         // The third argument is the ContentValues object containing the info for Toto.
-
     }
 
     private void checkForLimit(double currentVal){

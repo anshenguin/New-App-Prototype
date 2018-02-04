@@ -164,35 +164,56 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
     private void editValue(){
         Intent intent = getIntent();
         Uri currentEntryUri = intent.getData();
-        String desc = mDescEditText.getText().toString().trim();
-        double value = Double.parseDouble(mValueEditText.getText().toString().trim());
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        double currentValue = value;
-        values.put(MoneyContract.MoneyEntry.COLUMN_MONEY_VALUE, value);
-        values.put(MoneyContract.MoneyEntry.COLUMN_MONEY_DESC, desc);
-        values.put(MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS, mStatus);
 
-        // Insert a new row for Toto in the database, returning the ID of that new row.
-        // The first argument for db.insert() is the pets table name.
-        // The second argument provides the name of a column in which the framework
-        // can insert NULL in the event that the ContentValues is empty (if
-        // this is set to "null", then the framework will not insert a row when
-        // there are no values).
-        // The third argument is the ContentValues object containing the info for Toto.
-        int rowsAffected = getContentResolver().update(currentEntryUri, values, null, null);
-        db.insert(MoneyContract.MoneyEntry.TABLE_NAME, null, values);
-        if (rowsAffected == 0) {
-                            // If no rows were affected, then there was an error with the update.
-                                    Toast.makeText(this, "Error: Entry Not Updated",
-                                                    Toast.LENGTH_SHORT).show();
-                        } else {
-                            // Otherwise, the update was successful and we can display a toast.
-                                    Toast.makeText(this, "Entry Updated Successfully",
-                                                    Toast.LENGTH_SHORT).show();
-                                    checkForLimit(currentValue,oldValue);
-                        }
-    }
+        String desc = mDescEditText.getText().toString().trim();
+        if(TextUtils.isEmpty(mDescEditText.getText().toString().trim())){
+            desc="No Description Given";
+        }
+        double value = 0;
+
+
+
+            if (!TextUtils.isEmpty(mValueEditText.getText().toString().trim())) {
+                if (Double.parseDouble(mValueEditText.getText().toString().trim()) > 9999999) {
+                    Toast.makeText(EditActivity.this, "Value cannot be greater than 9,999,999", Toast.LENGTH_LONG).show();
+                } else {
+                    value = Double.parseDouble(mValueEditText.getText().toString().trim());
+                    SQLiteDatabase db = mDbHelper.getWritableDatabase();
+                    ContentValues values = new ContentValues();
+
+                    values.put(MoneyContract.MoneyEntry.COLUMN_MONEY_VALUE, value);
+                    values.put(MoneyContract.MoneyEntry.COLUMN_MONEY_DESC, desc);
+                    values.put(MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS, mStatus);
+
+                    // Insert a new row for Toto in the database, returning the ID of that new row.
+                    // The first argument for db.insert() is the pets table name.
+                    // The second argument provides the name of a column in which the framework
+                    // can insert NULL in the event that the ContentValues is empty (if
+                    // this is set to "null", then the framework will not insert a row when
+                    // there are no values).
+                    // The third argument is the ContentValues object containing the info for Toto.
+                    int rowsAffected = getContentResolver().update(currentEntryUri, values, null, null);
+                    db.insert(MoneyContract.MoneyEntry.TABLE_NAME, null, values);
+                    if (rowsAffected == 0) {
+                        // If no rows were affected, then there was an error with the update.
+                        Toast.makeText(this, "Error: Entry Not Updated",
+                                Toast.LENGTH_SHORT).show();
+                    } else {
+                        // Otherwise, the update was successful and we can display a toast.
+                        Toast.makeText(this, "Entry Updated Successfully",
+                                Toast.LENGTH_SHORT).show();
+                        if(mStatus == MoneyContract.MoneyEntry.STATUS_SPENT)
+                        checkForLimit(value, oldValue);
+                        else
+                            finish();
+
+                    }
+                }
+            }
+            else{
+                Toast.makeText(this, "Value field cannot be blank", Toast.LENGTH_LONG).show();
+            }
+        }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
