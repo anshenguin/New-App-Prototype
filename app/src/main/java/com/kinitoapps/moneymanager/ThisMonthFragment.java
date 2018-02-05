@@ -659,8 +659,8 @@ public class ThisMonthFragment extends Fragment implements LoaderManager.LoaderC
                         + MoneyContract.MoneyEntry.COLUMN_MONEY_VALUE + " DOUBLE NOT NULL, "
                         + MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS + " INTEGER NOT NULL DEFAULT 0, "
                         + MoneyContract.MoneyEntry.COLUMN_MONEY_DESC + " TEXT, "
-                        + MoneyContract.MoneyEntry.COLUMN_MONEY_DATE + " TEXT NOT NULL, "
-                        + MoneyContract.MoneyEntry.COLUMN_MONEY_TIME + " TEXT NOT NULL);";
+                        + MoneyContract.MoneyEntry.COLUMN_MONEY_DATE + " TEXT, "
+                        + MoneyContract.MoneyEntry.COLUMN_MONEY_TIME + " TEXT);";
 
                 // Execute the SQL statement
                 db.execSQL(SQL_CREATE_PETS_TABLE);

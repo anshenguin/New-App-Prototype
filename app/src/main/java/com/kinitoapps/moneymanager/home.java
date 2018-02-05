@@ -163,6 +163,17 @@ public class home extends AppCompatActivity
                             selected = 5;
                             AlertDialog.Builder builder = new AlertDialog.Builder(home.this);
                             builder.setTitle("Select a Date");
+                            builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                                @Override
+                                public void onDismiss(DialogInterface dialogInterface) {
+                                    if (!isDateSelected) {
+                                        cancelledCalendar = true;
+                                        navigationView.getMenu().findItem(R.id.nav_cal).setChecked(false);
+                                        navigationView.getMenu().findItem(LAST_SELECTED).setChecked(true);
+                                        onNavigationItemSelected(navigationView.getMenu().findItem(LAST_SELECTED));
+                                    }
+                                }
+                            });
                             final LayoutInflater inflater = getLayoutInflater();
                             View v = inflater.inflate(R.layout.calendar_dialog, null);
                             final CalendarView calendarView = v.findViewById(R.id.calendar);
@@ -214,12 +225,12 @@ public class home extends AppCompatActivity
                             builder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
-                                    if (!isDateSelected) {
-                                        cancelledCalendar = true;
-                                        navigationView.getMenu().findItem(R.id.nav_cal).setChecked(false);
-                                        navigationView.getMenu().findItem(LAST_SELECTED).setChecked(true);
-                                    onNavigationItemSelected(navigationView.getMenu().findItem(LAST_SELECTED));
-                                    }
+//                                    if (!isDateSelected) {
+//                                        cancelledCalendar = true;
+//                                        navigationView.getMenu().findItem(R.id.nav_cal).setChecked(false);
+//                                        navigationView.getMenu().findItem(LAST_SELECTED).setChecked(true);
+//                                    onNavigationItemSelected(navigationView.getMenu().findItem(LAST_SELECTED));
+//                                    }
                                 }
                             });
                             builder.show();
@@ -287,7 +298,7 @@ public class home extends AppCompatActivity
 //        // Handle navigation view item clicks here.
         int id = item.getItemId();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if(id!=R.id.nav_cal)
+        if(id!=R.id.nav_cal&&id!=R.id.nav_settings)
         LAST_SELECTED = id;
         if (id == R.id.nav_today) {
             clicked = 1;

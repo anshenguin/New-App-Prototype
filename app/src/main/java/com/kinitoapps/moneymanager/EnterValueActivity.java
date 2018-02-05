@@ -17,6 +17,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -43,6 +44,8 @@ public class EnterValueActivity extends AppCompatActivity {
     private Spinner mStatusSpinner;
     private Button mSaveButton;
     private MoneyDbHelper mDbHelper;
+    private RadioButton spent;
+    private RadioButton received;
     private int mStatus = MoneyContract.MoneyEntry.STATUS_UNKNOWN;
 
 
@@ -54,6 +57,8 @@ public class EnterValueActivity extends AppCompatActivity {
         setContentView(R.layout.activity_enter_value);
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
+        spent = (RadioButton) findViewById(R.id.spent);
+        received = (RadioButton) findViewById(R.id.received);
         sharedPreferences = getSharedPreferences("LIMIT", Context.MODE_PRIVATE);
         SharedPreferences canCallNow = getSharedPreferences("CALL", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = canCallNow.edit();
@@ -87,27 +92,27 @@ public class EnterValueActivity extends AppCompatActivity {
         mStatusSpinner.setAdapter(spinnerAdapter);
 
         // Set the integer mSelected to the constant values
-        mStatusSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selection = (String) parent.getItemAtPosition(position);
-                if (!TextUtils.isEmpty(selection)) {
-                    if (selection.equals(("Spent"))) {
-                        mStatus = MoneyContract.MoneyEntry.STATUS_SPENT;
-                    } else if (selection.equals(("Received"))) {
-                        mStatus = MoneyContract.MoneyEntry.STATUS_RECEIVED;
-                    } else {
-                        mStatus = MoneyContract.MoneyEntry.STATUS_UNKNOWN;
-                    }
-                }
-            }
-
-            // Because AdapterView is an abstract class, onNothingSelected must be defined
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                mStatus = MoneyContract.MoneyEntry.STATUS_UNKNOWN;
-            }
-        });
+//        mStatusSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//                String selection = (String) parent.getItemAtPosition(position);
+//                if (!TextUtils.isEmpty(selection)) {
+//                    if (selection.equals(("Spent"))) {
+//                        mStatus = MoneyContract.MoneyEntry.STATUS_SPENT;
+//                    } else if (selection.equals(("Received"))) {
+//                        mStatus = MoneyContract.MoneyEntry.STATUS_RECEIVED;
+//                    } else {
+//                        mStatus = MoneyContract.MoneyEntry.STATUS_UNKNOWN;
+//                    }
+//                }
+//            }
+//
+//            // Because AdapterView is an abstract class, onNothingSelected must be defined
+//            @Override
+//            public void onNothingSelected(AdapterView<?> parent) {
+//                mStatus = MoneyContract.MoneyEntry.STATUS_UNKNOWN;
+//            }
+//        });
     }
 
     private void insertValue(){
@@ -131,6 +136,10 @@ public class EnterValueActivity extends AppCompatActivity {
                     // Create a ContentValues object where column names are the keys,
                     // and Toto's pet attributes are the values.
                     ContentValues values = new ContentValues();
+                    if(spent.isChecked())
+                        mStatus = MoneyContract.MoneyEntry.STATUS_SPENT;
+                    else
+                        mStatus = MoneyContract.MoneyEntry.STATUS_RECEIVED;
                     values.put(MoneyContract.MoneyEntry.COLUMN_MONEY_VALUE, value);
                     values.put(MoneyContract.MoneyEntry.COLUMN_MONEY_DESC, desc);
                     values.put(MoneyContract.MoneyEntry.COLUMN_MONEY_DATE, date);

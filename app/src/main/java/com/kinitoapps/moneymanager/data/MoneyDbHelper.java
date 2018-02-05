@@ -30,8 +30,8 @@ public class MoneyDbHelper extends SQLiteOpenHelper {
                 + MoneyContract.MoneyEntry.COLUMN_MONEY_VALUE + " DOUBLE NOT NULL, "
                 + MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS + " INTEGER NOT NULL DEFAULT 0, "
                 + MoneyContract.MoneyEntry.COLUMN_MONEY_DESC + " TEXT, "
-                + MoneyContract.MoneyEntry.COLUMN_MONEY_DATE + " TEXT NOT NULL, "
-                + MoneyContract.MoneyEntry.COLUMN_MONEY_TIME + " TEXT NOT NULL);";
+                + MoneyContract.MoneyEntry.COLUMN_MONEY_DATE + " TEXT, "
+                + MoneyContract.MoneyEntry.COLUMN_MONEY_TIME + " TEXT);";
 
         // Execute the SQL statement
         db.execSQL(SQL_CREATE_TABLE);
@@ -44,8 +44,8 @@ public class MoneyDbHelper extends SQLiteOpenHelper {
                 + MoneyContract.MoneyEntry.COLUMN_MONEY_VALUE + " DOUBLE NOT NULL, "
                 + MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS + " INTEGER NOT NULL DEFAULT 0, "
                 + MoneyContract.MoneyEntry.COLUMN_MONEY_DESC + " TEXT, "
-                + MoneyContract.MoneyEntry.COLUMN_MONEY_DATE + " TEXT NOT NULL, "
-                + MoneyContract.MoneyEntry.COLUMN_MONEY_TIME + " TEXT NOT NULL);";
+                + MoneyContract.MoneyEntry.COLUMN_MONEY_DATE + " TEXT, "
+                + MoneyContract.MoneyEntry.COLUMN_MONEY_TIME + " TEXT);";
 
         // Execute the SQL statement
         sqLiteDatabase.execSQL(SQL_CREATE_TABLE);

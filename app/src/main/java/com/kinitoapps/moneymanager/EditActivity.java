@@ -22,6 +22,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 import com.kinitoapps.moneymanager.data.MoneyContract;
@@ -37,6 +38,8 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
 
     private EditText mValueEditText;
     private Spinner mStatusSpinner;
+    private RadioButton spent;
+    private RadioButton received;
     private EditText mDescEditText;
     private MoneyDbHelper mDbHelper;
     private Button save;
@@ -54,7 +57,8 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
         sharedPreferences = getSharedPreferences("LIMIT", Context.MODE_PRIVATE);
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-
+        spent = (RadioButton) findViewById(R.id.spent);
+        received = (RadioButton) findViewById(R.id.received);
         mDescEditText = (EditText) findViewById(R.id.edit_desc);
         mStatusSpinner = (Spinner) findViewById(R.id.spinner_status);
         save = (Button) findViewById(R.id.saveValue);
@@ -108,6 +112,11 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
             mValueEditText.setText(str);
             mDescEditText.setText(desc);
             mStatusSpinner.setSelection(status-1);
+            if(status == MoneyContract.MoneyEntry.STATUS_SPENT)
+                spent.setChecked(true);
+            else
+                received.setChecked(true);
+//            if(status==MoneyContract)
 //            switch (status){
 //                case MoneyContract.MoneyEntry.STATUS_SPENT:
 //                    mStatusSpinner.setSelection(2);
@@ -139,27 +148,27 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
         mStatusSpinner.setAdapter(spinnerAdapter);
 
         // Set the integer mSelected to the constant values
-        mStatusSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selection = (String) parent.getItemAtPosition(position);
-                if (!TextUtils.isEmpty(selection)) {
-                    if (selection.equals(("Spent"))) {
-                        mStatus = MoneyContract.MoneyEntry.STATUS_SPENT;
-                    } else if (selection.equals(("Received"))) {
-                        mStatus = MoneyContract.MoneyEntry.STATUS_RECEIVED;
-                    } else {
-                        mStatus = MoneyContract.MoneyEntry.STATUS_UNKNOWN;
-                    }
-                }
-            }
-
-            // Because AdapterView is an abstract class, onNothingSelected must be defined
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                mStatus = MoneyContract.MoneyEntry.STATUS_UNKNOWN;
-            }
-        });
+//        mStatusSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//                String selection = (String) parent.getItemAtPosition(position);
+//                if (!TextUtils.isEmpty(selection)) {
+//                    if (selection.equals(("Spent"))) {
+//                        mStatus = MoneyContract.MoneyEntry.STATUS_SPENT;
+//                    } else if (selection.equals(("Received"))) {
+//                        mStatus = MoneyContract.MoneyEntry.STATUS_RECEIVED;
+//                    } else {
+//                        mStatus = MoneyContract.MoneyEntry.STATUS_UNKNOWN;
+//                    }
+//                }
+//            }
+//
+//            // Because AdapterView is an abstract class, onNothingSelected must be defined
+//            @Override
+//            public void onNothingSelected(AdapterView<?> parent) {
+//                mStatus = MoneyContract.MoneyEntry.STATUS_UNKNOWN;
+//            }
+//        });
     }
     private void editValue(){
         Intent intent = getIntent();
@@ -171,7 +180,10 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
         }
         double value = 0;
 
-
+        if(spent.isChecked())
+            mStatus = MoneyContract.MoneyEntry.STATUS_SPENT;
+        else
+            mStatus = MoneyContract.MoneyEntry.STATUS_RECEIVED;
 
             if (!TextUtils.isEmpty(mValueEditText.getText().toString().trim())) {
                 if (Double.parseDouble(mValueEditText.getText().toString().trim()) > 9999999) {
