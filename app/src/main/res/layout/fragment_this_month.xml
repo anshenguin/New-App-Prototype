@@ -76,6 +76,13 @@
                     android:orientation="vertical"
                     android:background="#E0E0E0"
                     android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="THIS MONTH"
+                        android:layout_marginTop="8dp"
+                        android:textSize="16sp"
+                        android:layout_gravity="center_horizontal"/>
 
                     <com.kinitoapps.moneymanager.piechart.PieGraph
                         android:id="@+id/graph"
@@ -110,7 +117,7 @@
                                 android:layout_gravity="center_horizontal"
                                 android:text="100000000"
                                 android:gravity="center"
-                                android:textColor="#AA66CC"
+                                android:textColor="#43C443"
                                 android:textStyle="bold" />
                         </LinearLayout>
 
@@ -133,7 +140,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
                                 android:text="1000000000"
-                                android:textColor="#D59180"
+                                android:textColor="#F9A825"
                                 android:layout_marginBottom="8dp"
                                 android:textSize="24sp"
                                 android:gravity="center"
@@ -161,10 +168,9 @@
                                 android:layout_gravity="center_horizontal"
                                 android:text="10000"
                                 android:gravity="center"
-                                android:textColor="#FFBB33"
+                                android:textColor="#F55454"
                                 android:textStyle="bold" />
                         </LinearLayout>
-
                     </LinearLayout>
                 </LinearLayout>
 

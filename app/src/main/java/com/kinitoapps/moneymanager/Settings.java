@@ -168,7 +168,7 @@ public class Settings extends AppCompatActivity {
                             .build();
                     NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                     // hide the notification after its selected
-                    noti.flags = Notification.FLAG_NO_CLEAR|Notification.FLAG_ONGOING_EVENT;
+//                    noti.flags = Notification.FLAG_NO_CLEAR|Notification.FLAG_ONGOING_EVENT;
 
                     notificationManager.notify(0, noti);
                 }

@@ -218,7 +218,7 @@ public class home extends AppCompatActivity
                                         e.printStackTrace();
                                     }
                                     FragmentManager fragmentManager = getSupportFragmentManager();
-                                    fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left).replace(R.id.flContent, fragment).commit();
+                                    fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left).replace(R.id.flContent, fragment,"date_fragment").commit();
 
                                 }
                             });
@@ -357,7 +357,7 @@ public class home extends AppCompatActivity
                 .build();
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         // hide the notification after its selected
-        noti.flags = Notification.FLAG_NO_CLEAR|Notification.FLAG_ONGOING_EVENT;
+//        noti.flags = Notification.FLAG_NO_CLEAR|Notification.FLAG_ONGOING_EVENT;
 
         notificationManager.notify(0, noti);
 
@@ -434,7 +434,8 @@ public class home extends AppCompatActivity
             fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left).replace(R.id.flContent, fragment).commit();
         }
         else if(selected == 5){
-            if(isDateSelected)
+            SelectedDateFragment selectedDateFragment = (SelectedDateFragment) getSupportFragmentManager().findFragmentByTag("date_fragment");
+            if(selectedDateFragment.isVisible())
             {
                 Bundle bundle = new Bundle();
                 bundle.putString("Date", currentDate);
@@ -448,7 +449,7 @@ public class home extends AppCompatActivity
                     e.printStackTrace();
                 }
                 FragmentManager fragmentManager = getSupportFragmentManager();
-                fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left).replace(R.id.flContent, fragment).commit();
+                fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left).replace(R.id.flContent, fragment,"date_fragment").commit();
 
             }
         }

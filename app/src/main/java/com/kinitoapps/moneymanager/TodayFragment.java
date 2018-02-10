@@ -280,18 +280,18 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
         moneyListView = root.findViewById(R.id.list);
         //        Toolbar toolbar = root.findViewById(R.id.toolbar);
         final PieGraph pg = root.findViewById(R.id.graph);
-        pg.setInnerCircleRatio(140);
+        pg.setInnerCircleRatio(160);
         boolean purpleValueGreater = false;
         PieSlice slice;
         slice = new PieSlice();
-        slice.setColor(Color.parseColor("#FFBB33"));
+        slice.setColor(Color.parseColor("#F55454"));
         slice.setValue(Double.parseDouble(getSumReceived())>Double.parseDouble(getSumSpent())? (float) (Double.parseDouble(getSumReceived()) + Double.parseDouble(getSumSpent())) :0);
         if(slice.getValue()==0)
             purpleValueGreater = true;
         slice.setGoalValue((float) Double.parseDouble(getSumSpent()));
         pg.addSlice(slice);
         slice = new PieSlice();
-        slice.setColor(Color.parseColor("#AA66CC"));
+        slice.setColor(Color.parseColor("#43C443"));
         slice.setValue(purpleValueGreater? (float) (Double.parseDouble(getSumReceived()) + Double.parseDouble(getSumSpent())) :0);
         slice.setGoalValue((float) Double.parseDouble(getSumReceived()));
         pg.addSlice(slice);
@@ -440,14 +440,20 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
                 if(!doesContainThisItem(id,mSelectedItemIds)) {
                     view.setBackgroundColor(0x9934B5E4);
                     mSelectedItemIds.add(id);
-                    mActionMode = getActivity().startActionMode(new ActionBarCallBack());
+                    if(mSelectedItemIds.size()==1)
+                        mActionMode = getActivity().startActionMode(new ActionBarCallBack());
+                    else {
+                        updateTitle(mActionMode);
+                    }
                 }
-                else if(mSelectedItemIds.size()!=0){
-                    view.setBackgroundColor(Color.TRANSPARENT);
-                    mSelectedItemIds.remove(id);
-                    updateTitle(mActionMode);
-                    if(mSelectedItemIds.size()==0)
-                        mActionMode.finish();
+                else {
+                    if (mSelectedItemIds.size() != 0) {
+                        view.setBackgroundColor(Color.TRANSPARENT);
+                        mSelectedItemIds.remove(id);
+                        updateTitle(mActionMode);
+                        if (mSelectedItemIds.size() == 0)
+                            mActionMode.finish();
+                    }
                 }
 //                else{
 //                    mActionMode.finish();

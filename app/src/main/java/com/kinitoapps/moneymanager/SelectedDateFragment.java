@@ -97,8 +97,8 @@ public class SelectedDateFragment extends Fragment implements LoaderManager.Load
      * @return A new instance of fragment TodayFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static TodayFragment newInstance(String param1, String param2) {
-        TodayFragment fragment = new TodayFragment();
+    public static SelectedDateFragment newInstance(String param1, String param2) {
+        SelectedDateFragment fragment = new SelectedDateFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -277,21 +277,24 @@ public class SelectedDateFragment extends Fragment implements LoaderManager.Load
 ////                null
 ////        );
         mSelectedItemIds = new ArrayList<>();
+        String dateWithMonthName = currentDate.substring(0,3)+getMonthName(currentDate.substring(3,5))+currentDate.substring(5);
+        TextView date = root.findViewById(R.id.date);
+        date.setText(dateWithMonthName);
         moneyListView = root.findViewById(R.id.list);
         //        Toolbar toolbar = root.findViewById(R.id.toolbar);
         final PieGraph pg = root.findViewById(R.id.graph);
-        pg.setInnerCircleRatio(140);
+        pg.setInnerCircleRatio(160);
         boolean purpleValueGreater = false;
         PieSlice slice;
         slice = new PieSlice();
-        slice.setColor(Color.parseColor("#FFBB33"));
+        slice.setColor(Color.parseColor("#F55454"));
         slice.setValue(Double.parseDouble(getSumReceived())>Double.parseDouble(getSumSpent())? (float) (Double.parseDouble(getSumReceived()) + Double.parseDouble(getSumSpent())) :0);
         if(slice.getValue()==0)
             purpleValueGreater = true;
         slice.setGoalValue((float) Double.parseDouble(getSumSpent()));
         pg.addSlice(slice);
         slice = new PieSlice();
-        slice.setColor(Color.parseColor("#AA66CC"));
+        slice.setColor(Color.parseColor("#43C443"));
         slice.setValue(purpleValueGreater? (float) (Double.parseDouble(getSumReceived()) + Double.parseDouble(getSumSpent())) :0);
         slice.setGoalValue((float) Double.parseDouble(getSumReceived()));
         pg.addSlice(slice);
@@ -440,14 +443,20 @@ public class SelectedDateFragment extends Fragment implements LoaderManager.Load
                 if(!doesContainThisItem(id,mSelectedItemIds)) {
                     view.setBackgroundColor(0x9934B5E4);
                     mSelectedItemIds.add(id);
-                    mActionMode = getActivity().startActionMode(new ActionBarCallBack());
+                    if(mSelectedItemIds.size()==1)
+                        mActionMode = getActivity().startActionMode(new ActionBarCallBack());
+                    else {
+                        updateTitle(mActionMode);
+                    }
                 }
-                else if(mSelectedItemIds.size()!=0){
-                    view.setBackgroundColor(Color.TRANSPARENT);
-                    mSelectedItemIds.remove(id);
-                    updateTitle(mActionMode);
-                    if(mSelectedItemIds.size()==0)
-                        mActionMode.finish();
+                else {
+                    if (mSelectedItemIds.size() != 0) {
+                        view.setBackgroundColor(Color.TRANSPARENT);
+                        mSelectedItemIds.remove(id);
+                        updateTitle(mActionMode);
+                        if (mSelectedItemIds.size() == 0)
+                            mActionMode.finish();
+                    }
                 }
 //                else{
 //                    mActionMode.finish();
@@ -816,5 +825,29 @@ public class SelectedDateFragment extends Fragment implements LoaderManager.Load
         if(isActionModeOn)
             mActionMode.finish();
     }
-
+    private String getMonthName(String month){
+        if(month.equals("01"))
+            return "Jan";
+        else if(month.equals("02"))
+            return "Feb";
+        else if(month.equals("03"))
+            return "Mar";
+        else if(month.equals("04"))
+            return "Apr";
+        else if(month.equals("05"))
+            return "May";
+        else if(month.equals("06"))
+            return "Jun";
+        else if(month.equals("07"))
+            return "Jul";
+        else if(month.equals("08"))
+            return "Aug";
+        else if(month.equals("09"))
+            return "Sep";
+        else if(month.equals("10"))
+            return "Oct";
+        else if(month.equals("11"))
+            return "Nov";
+        return "Dec";
+    }
 }
