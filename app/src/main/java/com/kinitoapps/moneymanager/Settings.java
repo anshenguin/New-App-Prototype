@@ -57,13 +57,12 @@ public class Settings extends AppCompatActivity {
         SharedPreferences firstRun = getSharedPreferences("com.example.lockscreentest",Context.MODE_PRIVATE);
 
 //        switch_unlock.setChecked(sharedPreferences.getBoolean("SWITCH",true));
-        if(firstRun.getBoolean("firstrun",true)){
-//            switch_unlock.setChecked(true);
-            switch_notification.setChecked(true);
-            firstRun.edit().putBoolean("firstrun",false).commit();
-            sharedPreferences.edit().putBoolean("SWITCH_NOTIFICATION",true).commit();
-
-        }
+//        if(firstRun.getBoolean("firstrun",true)){
+////            switch_unlock.setChecked(true);
+//            switch_notification.setChecked(true);
+//            firstRun.edit().putBoolean("firstrun",false).commit();
+//
+//        }
 
         switch_notification.setChecked(sharedPreferences.getBoolean("SWITCH_NOTIFICATION",true));
 
@@ -110,6 +109,8 @@ public class Settings extends AppCompatActivity {
                             sh.edit().putFloat("limit_today", lim).commit();
                             checkForDailyLimit();
                         }
+                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.toggleSoftInput(InputMethodManager.RESULT_UNCHANGED_HIDDEN,0);
                     }
                 });
                 builder.show();
@@ -136,14 +137,18 @@ public class Settings extends AppCompatActivity {
                         if(!isNumeric(input.getText().toString())){
                             if(TextUtils.isEmpty(input.getText().toString()))
                                 sh.edit().putFloat("limit_month", 0).commit();
+
                             else
-                                Toast.makeText(Settings.this,"Please enter a numeric value sa the limit",Toast.LENGTH_LONG).show();
+                                Toast.makeText(Settings.this,"Please enter a numeric value as the limit",Toast.LENGTH_LONG).show();
                         }
                         else {
                             lim = Float.parseFloat(input.getText().toString());
                             sh.edit().putFloat("limit_month", lim).commit();
+                            checkForMonthlyLimit();
 
                         }
+                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.toggleSoftInput(InputMethodManager.RESULT_UNCHANGED_HIDDEN,0);
                     }
                 });
                 builder.show();

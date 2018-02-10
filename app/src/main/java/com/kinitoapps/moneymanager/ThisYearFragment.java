@@ -571,7 +571,7 @@ public class ThisYearFragment extends Fragment implements LoaderManager.LoaderCa
                 projection,
                 SELECTION,
                 ARGS,
-                null);
+                "_id DESC");
     }
 
     @Override

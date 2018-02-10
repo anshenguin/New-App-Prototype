@@ -37,7 +37,6 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
     private static final int EXISTING_MONEY_LOADER = 0;
 
     private EditText mValueEditText;
-    private Spinner mStatusSpinner;
     private RadioButton spent;
     private RadioButton received;
     private EditText mDescEditText;
@@ -60,7 +59,6 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
         spent = (RadioButton) findViewById(R.id.spent);
         received = (RadioButton) findViewById(R.id.received);
         mDescEditText = (EditText) findViewById(R.id.edit_desc);
-        mStatusSpinner = (Spinner) findViewById(R.id.spinner_status);
         save = (Button) findViewById(R.id.saveValue);
         save.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -69,7 +67,6 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
             }
         });
         mValueEditText = (EditText) findViewById(R.id.edit_value);
-        setupSpinner();
         getSupportLoaderManager().initLoader(EXISTING_MONEY_LOADER, null, this);
     }
 
@@ -111,7 +108,6 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
             oldValue = value;
             mValueEditText.setText(str);
             mDescEditText.setText(desc);
-            mStatusSpinner.setSelection(status-1);
             if(status == MoneyContract.MoneyEntry.STATUS_SPENT)
                 spent.setChecked(true);
             else
@@ -132,43 +128,6 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
     public void onLoaderReset(Loader<Cursor> loader) {
         mValueEditText.setText("");
         mDescEditText.setText("");
-        mStatusSpinner.setSelection(0);
-    }
-    private void setupSpinner() {
-        // Create adapter for spinner. The list options are from the String array it will use
-        // the spinner will use the default layout
-
-        ArrayAdapter spinnerAdapter = ArrayAdapter.createFromResource(this,
-                R.array.array_status_options, android.R.layout.simple_spinner_item);
-
-        // Specify dropdown layout style - simple list view with 1 item per line
-        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
-
-        // Apply the adapter to the spinner
-        mStatusSpinner.setAdapter(spinnerAdapter);
-
-        // Set the integer mSelected to the constant values
-//        mStatusSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//            @Override
-//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//                String selection = (String) parent.getItemAtPosition(position);
-//                if (!TextUtils.isEmpty(selection)) {
-//                    if (selection.equals(("Spent"))) {
-//                        mStatus = MoneyContract.MoneyEntry.STATUS_SPENT;
-//                    } else if (selection.equals(("Received"))) {
-//                        mStatus = MoneyContract.MoneyEntry.STATUS_RECEIVED;
-//                    } else {
-//                        mStatus = MoneyContract.MoneyEntry.STATUS_UNKNOWN;
-//                    }
-//                }
-//            }
-//
-//            // Because AdapterView is an abstract class, onNothingSelected must be defined
-//            @Override
-//            public void onNothingSelected(AdapterView<?> parent) {
-//                mStatus = MoneyContract.MoneyEntry.STATUS_UNKNOWN;
-//            }
-//        });
     }
     private void editValue(){
         Intent intent = getIntent();
@@ -189,36 +148,40 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
                 if (Double.parseDouble(mValueEditText.getText().toString().trim()) > 9999999) {
                     Toast.makeText(EditActivity.this, "Value cannot be greater than 9,999,999", Toast.LENGTH_LONG).show();
                 } else {
-                    value = Double.parseDouble(mValueEditText.getText().toString().trim());
-                    SQLiteDatabase db = mDbHelper.getWritableDatabase();
-                    ContentValues values = new ContentValues();
+                    if(desc.length()>140)
+                        Toast.makeText(EditActivity.this, "Description cannot have more than 140 characters", Toast.LENGTH_LONG).show();
+                    else {
+                        value = Double.parseDouble(mValueEditText.getText().toString().trim());
+                        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+                        ContentValues values = new ContentValues();
 
-                    values.put(MoneyContract.MoneyEntry.COLUMN_MONEY_VALUE, value);
-                    values.put(MoneyContract.MoneyEntry.COLUMN_MONEY_DESC, desc);
-                    values.put(MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS, mStatus);
+                        values.put(MoneyContract.MoneyEntry.COLUMN_MONEY_VALUE, value);
+                        values.put(MoneyContract.MoneyEntry.COLUMN_MONEY_DESC, desc);
+                        values.put(MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS, mStatus);
 
-                    // Insert a new row for Toto in the database, returning the ID of that new row.
-                    // The first argument for db.insert() is the pets table name.
-                    // The second argument provides the name of a column in which the framework
-                    // can insert NULL in the event that the ContentValues is empty (if
-                    // this is set to "null", then the framework will not insert a row when
-                    // there are no values).
-                    // The third argument is the ContentValues object containing the info for Toto.
-                    int rowsAffected = getContentResolver().update(currentEntryUri, values, null, null);
-                    db.insert(MoneyContract.MoneyEntry.TABLE_NAME, null, values);
-                    if (rowsAffected == 0) {
-                        // If no rows were affected, then there was an error with the update.
-                        Toast.makeText(this, "Error: Entry Not Updated",
-                                Toast.LENGTH_SHORT).show();
-                    } else {
-                        // Otherwise, the update was successful and we can display a toast.
-                        Toast.makeText(this, "Entry Updated Successfully",
-                                Toast.LENGTH_SHORT).show();
-                        if(mStatus == MoneyContract.MoneyEntry.STATUS_SPENT)
-                        checkForLimit(value, oldValue);
-                        else
-                            finish();
+                        // Insert a new row for Toto in the database, returning the ID of that new row.
+                        // The first argument for db.insert() is the pets table name.
+                        // The second argument provides the name of a column in which the framework
+                        // can insert NULL in the event that the ContentValues is empty (if
+                        // this is set to "null", then the framework will not insert a row when
+                        // there are no values).
+                        // The third argument is the ContentValues object containing the info for Toto.
+                        int rowsAffected = getContentResolver().update(currentEntryUri, values, null, null);
+                        db.insert(MoneyContract.MoneyEntry.TABLE_NAME, null, values);
+                        if (rowsAffected == 0) {
+                            // If no rows were affected, then there was an error with the update.
+                            Toast.makeText(this, "Error: Entry Not Updated",
+                                    Toast.LENGTH_SHORT).show();
+                        } else {
+                            // Otherwise, the update was successful and we can display a toast.
+                            Toast.makeText(this, "Entry Updated Successfully",
+                                    Toast.LENGTH_SHORT).show();
+                            if (mStatus == MoneyContract.MoneyEntry.STATUS_SPENT)
+                                checkForLimit(value, oldValue);
+                            else
+                                finish();
 
+                        }
                     }
                 }
             }

@@ -78,7 +78,7 @@
                     android:layout_height="wrap_content"
                     android:textColor="#000"
                     android:layout_gravity="center_vertical"
-                    android:text="Set Daily Limit"/>
+                    android:text="Set Daily Limit on Spending"/>
 
             </LinearLayout>
 
@@ -103,7 +103,7 @@
                     android:layout_height="wrap_content"
                     android:textColor="#000"
                     android:layout_gravity="center_vertical"
-                    android:text="Set Monthly Limit"/>
+                    android:text="Set Monthly Limit on Spending"/>
 
             </LinearLayout>
 

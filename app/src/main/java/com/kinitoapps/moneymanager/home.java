@@ -67,7 +67,7 @@ public class home extends AppCompatActivity
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
-//        SharedPreferences sharedPreferences = getSharedPreferences("SWITCH_NOTIFICATION", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getSharedPreferences("SWITCH_NOTIFICATION", Context.MODE_PRIVATE);
         SharedPreferences firstRun = getSharedPreferences("com.example.lockscreentest",Context.MODE_PRIVATE);
         SharedPreferences sh = getSharedPreferences("LIMIT",Context.MODE_PRIVATE);
         final NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -76,8 +76,11 @@ public class home extends AppCompatActivity
             firstRun.edit().putBoolean("firstrun",false).commit();
             sh.edit().putFloat("limit_today",0).commit();
             sh.edit().putFloat("limit_month",0).commit();
-            createNotification();
+            sharedPreferences.edit().putBoolean("SWITCH_NOTIFICATION",true).commit();
         }
+
+        if(sharedPreferences.getBoolean("SWITCH_NOTIFICATION",true))
+            createNotification();
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         toggle = new ActionBarDrawerToggle(

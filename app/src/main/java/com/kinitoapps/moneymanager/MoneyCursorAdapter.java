@@ -21,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.kinitoapps.moneymanager.data.MoneyContract.MoneyEntry;
@@ -75,9 +76,10 @@ public class MoneyCursorAdapter extends CursorAdapter {
         // Find individual views that we want to modify in the list item layout
         TextView nameTextView = view.findViewById(R.id.value);
         TextView summaryTextView = view.findViewById(R.id.desc);
-        TextView statusTextView = view.findViewById(R.id.status);
+//        TextView statusTextView = view.findViewById(R.id.status);
         TextView timeTextView = view.findViewById(R.id.time);
         TextView dateTextView = view.findViewById(R.id.date);
+        ImageView arrow_image = view.findViewById(R.id.arrow_image);
 
         // Find the columns of pet attributes that we're interested in
         int valueColumnIndex = cursor.getColumnIndex(MoneyEntry.COLUMN_MONEY_VALUE);
@@ -97,7 +99,8 @@ public class MoneyCursorAdapter extends CursorAdapter {
         // Update the TextViews with the attributes for the current pet
         nameTextView.setText(str);
         summaryTextView.setText(desc);
-        statusTextView.setText((status==1)?"Spent":"Received");
+//        statusTextView.setText((status==1)?"Spent":"Received");
+        arrow_image.setImageResource((status==1)?R.drawable.ic_action_down:R.drawable.ic_action_up);
         timeTextView.setText(time);
         dateTextView.setText(dateWithMonthName);
     }

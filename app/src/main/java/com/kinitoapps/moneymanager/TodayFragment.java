@@ -578,7 +578,7 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
                 projection,
                 SELECTION,
                 ARGS,
-                null);
+                "_id DESC");
     }
 
     @Override

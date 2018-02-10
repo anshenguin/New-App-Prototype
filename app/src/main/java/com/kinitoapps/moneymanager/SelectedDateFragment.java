@@ -581,7 +581,7 @@ public class SelectedDateFragment extends Fragment implements LoaderManager.Load
                 projection,
                 SELECTION,
                 ARGS,
-                null);
+                "_id DESC");
     }
 
     @Override

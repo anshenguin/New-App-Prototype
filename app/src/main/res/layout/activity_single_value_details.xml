@@ -105,8 +105,8 @@
         android:paddingRight="36dp"
         android:text="EDIT VALUES"
         android:textColor="#212121"
-        android:drawableLeft="@drawable/ic_action_name"
-        android:drawableStart="@drawable/ic_action_name"
+        android:drawableLeft="@drawable/ic_action_edit"
+        android:drawableStart="@drawable/ic_action_edit"
         android:paddingEnd="36dp"
         android:paddingStart="16dp" />
 

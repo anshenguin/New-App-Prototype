@@ -655,7 +655,7 @@ public class YesterdayFragment extends Fragment implements LoaderManager.LoaderC
                 projection,
                 SELECTION,
                 ARGS,
-                null);
+                "_id DESC");
     }
 
     @Override
