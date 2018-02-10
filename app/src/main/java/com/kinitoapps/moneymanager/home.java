@@ -2,6 +2,7 @@ package com.kinitoapps.moneymanager;
 
 import android.app.AlertDialog;
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -13,6 +14,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.TaskStackBuilder;
+import android.support.v7.app.NotificationCompat;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -35,6 +38,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+
+import static android.content.Context.NOTIFICATION_SERVICE;
 
 public class home extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, TodayFragment.OnFragmentInteractionListener,YesterdayFragment.OnFragmentInteractionListener,ThisYearFragment.OnFragmentInteractionListener,ThisMonthFragment.OnFragmentInteractionListener, SelectedDateFragment.OnFragmentInteractionListener {
@@ -347,22 +352,52 @@ public class home extends AppCompatActivity
     public void createNotification() {
         // Prepare intent which is triggered if the
         // notification is selected
-        Intent intent = new Intent(this, EnterValueActivity.class);
-        PendingIntent pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, 0);
 
-        // Build notification
-        // Actions are just fake
-        Notification noti = new Notification.Builder(this)
-                .setContentTitle("Money Manager notification is on")
-                .setContentText("Click to add an entry").setSmallIcon(R.mipmap.ic_launcher)
-                .setContentIntent(pIntent)
-                .setOngoing(true)
-                .build();
-        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        // hide the notification after its selected
+        if(Build.VERSION.SDK_INT< Build.VERSION_CODES.O) {
+            Intent intent = new Intent(this, EnterValueActivity.class);
+            PendingIntent pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, 0);
+
+            // Build notification
+            // Actions are just fake
+            Notification noti = new Notification.Builder(this)
+                    .setContentTitle("Money Manager notification is on")
+                    .setContentText("Click to add an entry").setSmallIcon(R.mipmap.ic_launcher)
+                    .setContentIntent(pIntent)
+                    .setOngoing(true)
+                    .build();
+            NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            // hide the notification after its selected
 //        noti.flags = Notification.FLAG_NO_CLEAR|Notification.FLAG_ONGOING_EVENT;
 
-        notificationManager.notify(0, noti);
+            notificationManager.notify(0, noti);
+        }
+        else{
+            NotificationManager mNotificationManager =
+                    (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            Intent resultIntent = new Intent(this, EnterValueActivity.class);
+            TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+            stackBuilder.addParentStack(EnterValueActivity.class);
+            stackBuilder.addNextIntent(resultIntent);
+            PendingIntent resultPendingIntent =
+                    stackBuilder.getPendingIntent(
+                            0,
+                            PendingIntent.FLAG_UPDATE_CURRENT
+                    );
+
+            String id = "enter_channel";
+            NotificationChannel mChannel = new NotificationChannel(id, "Money Manager notification is ON", NotificationManager.IMPORTANCE_HIGH);
+            mChannel.setDescription("Click here to add an entry");
+            android.support.v4.app.NotificationCompat.Builder mBuilder = new android.support.v4.app.NotificationCompat.Builder(this,id)
+                    .setContentTitle("Money Manager notification is on")
+                    .setContentText("Click to add an entry").setSmallIcon(R.mipmap.ic_launcher)
+                    .setOngoing(true);
+            mBuilder.setContentIntent(resultPendingIntent);
+            mNotificationManager.notify(0, mBuilder.build());
+
+
+
+
+        }
 
     }
 
