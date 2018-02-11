@@ -22,6 +22,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -93,8 +94,8 @@ public class ThisMonthFragment extends Fragment implements LoaderManager.LoaderC
      * @return A new instance of fragment TodayFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static TodayFragment newInstance(String param1, String param2) {
-        TodayFragment fragment = new TodayFragment();
+    public static ThisMonthFragment newInstance(String param1, String param2) {
+        ThisMonthFragment fragment = new ThisMonthFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -287,11 +288,11 @@ public class ThisMonthFragment extends Fragment implements LoaderManager.LoaderC
         slice.setValue(purpleValueGreater? (float) (Double.parseDouble(getSumReceived()) + Double.parseDouble(getSumSpent())) :0);
         slice.setGoalValue((float) Double.parseDouble(getSumReceived()));
         pg.addSlice(slice);
-        final TextView sum_spent = root.findViewById(R.id.sum_spent);
+        final AppCompatTextView sum_spent = root.findViewById(R.id.sum_spent);
         sum_spent.setText("0");
-        final TextView sum_received = root.findViewById(R.id.sum_received);
+        final AppCompatTextView sum_received = root.findViewById(R.id.sum_received);
         sum_received.setText("0");
-        final TextView sum_total = root.findViewById(R.id.total);
+        final AppCompatTextView sum_total = root.findViewById(R.id.total);
         sum_total.setText("0");
 //        pg.setInterpolator(new DecelerateInterpolator());
         pg.setDuration(1000);//default if unspecified is 300 ms

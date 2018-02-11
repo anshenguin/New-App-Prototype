@@ -20,13 +20,15 @@
                 android:paddingLeft="24dp"
                 android:paddingStart="24dp"
                 android:clickable="true"
-                android:focusable="true"                android:foreground="?attr/selectableItemBackground"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
                 android:orientation="horizontal">
-                <Switch
+                <android.support.v7.widget.SwitchCompat
                     android:layout_width="match_parent"
                     android:text="Turn Notification On"
                     android:layout_gravity="center_vertical"
                     android:layout_marginRight="16dp"
+                    android:fontFamily="Roboto"
                     android:layout_marginEnd="16dp"
                     android:checked="false"
                     android:gravity="start|center_vertical"
@@ -54,6 +56,7 @@
                     android:layout_height="wrap_content"
                     android:textColor="#000"
                     android:layout_gravity="center_vertical"
+                    android:fontFamily="Roboto"
                     android:text="Create Shortcut"/>
 
             </LinearLayout>
@@ -78,6 +81,7 @@
                     android:layout_height="wrap_content"
                     android:textColor="#000"
                     android:layout_gravity="center_vertical"
+                    android:fontFamily="Roboto"
                     android:text="Set Daily Limit on Spending"/>
 
             </LinearLayout>
@@ -102,6 +106,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="#000"
+                    android:fontFamily="Roboto"
                     android:layout_gravity="center_vertical"
                     android:text="Set Monthly Limit on Spending"/>
 

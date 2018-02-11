@@ -15,6 +15,7 @@ import android.os.Build;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.SwitchCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -49,16 +50,18 @@ public class Settings extends AppCompatActivity {
 
 //        final Switch switch_unlock = (Switch) findViewById(R.id
 //                .switch_unlock);
-        final Switch switch_notification = (Switch) findViewById(R.id.switch_notification);
-        LinearLayout createShortcut = (LinearLayout) findViewById(R.id.create_shortcut);
-        LinearLayout setDailyLimit = (LinearLayout) findViewById(R.id.set_daily_limit);
-        LinearLayout setMonthlyLimit = (LinearLayout) findViewById(R.id.set_monthly_limit);
+        final SwitchCompat switch_notification = findViewById(R.id.switch_notification);
+        LinearLayout createShortcut = findViewById(R.id.create_shortcut);
+        LinearLayout setDailyLimit = findViewById(R.id.set_daily_limit);
+        LinearLayout setMonthlyLimit =
+
+
+                findViewById(R.id.set_monthly_limit);
         sharedPreferences = getSharedPreferences("LIMIT", Context.MODE_PRIVATE);
 
 
         SharedPreferences sharedPreferences = getSharedPreferences("SWITCH_NOTIFICATION", Context.MODE_PRIVATE);
         final SharedPreferences sh = getSharedPreferences("LIMIT",Context.MODE_PRIVATE);
-        SharedPreferences firstRun = getSharedPreferences("com.example.lockscreentest",Context.MODE_PRIVATE);
 
 //        switch_unlock.setChecked(sharedPreferences.getBoolean("SWITCH",true));
 //        if(firstRun.getBoolean("firstrun",true)){

@@ -242,7 +242,7 @@ public class home extends AppCompatActivity
                                 }
                             });
                             builder.show();
-                            //TODO: DISPLAY CALENDAR AND ADD THIS TO ONRESUME
+                            //TODO: DATE PICKER FOR PRE MARSHMALLOW
                         }
                         else{
                             Toast.makeText(home.this,"This Feature Requires Android 6.0+",Toast.LENGTH_LONG).show();

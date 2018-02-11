@@ -79,9 +79,10 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="21-Dec-1998"
+                        android:text="21-Dec-2018"
                         android:id="@+id/date"
                         android:layout_marginTop="8dp"
+                        android:fontFamily="@font/regular_oxygen"
                         android:textSize="16sp"
                         android:layout_gravity="center_horizontal"/>
 
@@ -95,12 +96,12 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:weightSum="12">
+                        android:weightSum="13">
 
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
-                            android:layout_weight="3"
+                            android:layout_weight="3.5"
                             android:orientation="vertical"
                             android:padding="4dp">
 
@@ -109,17 +110,20 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_horizontal"
                                 android:text="RECEIVED"
-                                android:textStyle="bold" />
+                                android:fontFamily="@font/bold_oxygen" />
 
-                            <TextView
+                            <android.support.v7.widget.AppCompatTextView
                                 android:id="@+id/sum_received"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center_horizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="32dp"
                                 android:text="100000000"
-                                android:gravity="center"
+                                android:autoSizeMaxTextSize="16sp"
+                                android:autoSizeTextType="uniform"
+                                app:autoSizeTextType="uniform"
+                                app:autoSizeMaxTextSize="16sp"
+                                android:gravity="center_horizontal"
                                 android:textColor="#43C443"
-                                android:textStyle="bold" />
+                                android:fontFamily="@font/bold_oxygen"/>
                         </LinearLayout>
 
                         <LinearLayout
@@ -133,25 +137,26 @@
                                 android:layout_gravity="center_horizontal"
                                 android:text="NET TOTAL"
                                 android:layout_marginTop="8dp"
-                                android:textStyle="bold" />
+                                android:fontFamily="@font/bold_oxygen"/>
 
-                            <TextView
+                            <android.support.v7.widget.AppCompatTextView
                                 android:id="@+id/total"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:text="1000000000"
+                                android:layout_width="match_parent"
+                                android:layout_height="36dp"
+                                android:text="100000000"
+                                app:autoSizeTextType="uniform"
+                                android:autoSizeTextType="uniform"
                                 android:textColor="#F9A825"
                                 android:layout_marginBottom="8dp"
                                 android:textSize="24sp"
-                                android:gravity="center"
-                                android:textStyle="bold" />
+                                android:gravity="center_horizontal"
+                                android:fontFamily="@font/bold_oxygen"/>
                         </LinearLayout>
 
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
-                            android:layout_weight="3"
+                            android:layout_weight="3.5"
                             android:orientation="vertical"
                             android:padding="4dp">
 
@@ -160,17 +165,20 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_horizontal"
                                 android:text="SPENT"
-                                android:textStyle="bold" />
+                                android:fontFamily="@font/bold_oxygen"/>
 
-                            <TextView
+                            <android.support.v7.widget.AppCompatTextView
                                 android:id="@+id/sum_spent"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center_horizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="32dp"
                                 android:text="10000"
-                                android:gravity="center"
+                                android:autoSizeMaxTextSize="16sp"
+                                android:autoSizeTextType="uniform"
+                                app:autoSizeTextType="uniform"
+                                app:autoSizeMaxTextSize="16sp"
+                                android:gravity="center_horizontal"
                                 android:textColor="#F55454"
-                                android:textStyle="bold" />
+                                android:fontFamily="@font/bold_oxygen"/>
                         </LinearLayout>
 
                     </LinearLayout>
@@ -191,14 +199,12 @@
             <!--android:layout_height="wrap_content"-->
             <!--android:layout_gravity="center"-->
             <!--android:layout_marginTop="40dp">-->
-
             <!--<ImageView-->
             <!--android:id="@+id/empty_shelter_image"-->
             <!--android:layout_width="wrap_content"-->
             <!--android:layout_height="wrap_content"-->
             <!--android:layout_centerHorizontal="true"-->
             <!--android:src="@mipmap/ic_launcher_round" />-->
-
             <!--<TextView-->
             <!--android:id="@+id/empty_title_text"-->
             <!--android:layout_width="wrap_content"-->
@@ -209,7 +215,6 @@
             <!--android:paddingTop="16dp"-->
             <!--android:text="@string/empty_view_title_text"-->
             <!--android:textAppearance="?android:textAppearanceMedium" />-->
-
             <!--<TextView-->
             <!--android:id="@+id/empty_subtitle_text"-->
             <!--android:layout_width="wrap_content"-->

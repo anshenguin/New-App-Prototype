@@ -24,6 +24,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.view.ActionMode;
+import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -298,11 +299,11 @@ public class SelectedDateFragment extends Fragment implements LoaderManager.Load
         slice.setValue(purpleValueGreater? (float) (Double.parseDouble(getSumReceived()) + Double.parseDouble(getSumSpent())) :0);
         slice.setGoalValue((float) Double.parseDouble(getSumReceived()));
         pg.addSlice(slice);
-        final TextView sum_spent = root.findViewById(R.id.sum_spent);
+        final AppCompatTextView sum_spent = root.findViewById(R.id.sum_spent);
         sum_spent.setText("0");
-        final TextView sum_received = root.findViewById(R.id.sum_received);
+        final AppCompatTextView sum_received = root.findViewById(R.id.sum_received);
         sum_received.setText("0");
-        final TextView sum_total = root.findViewById(R.id.total);
+        final AppCompatTextView sum_total = root.findViewById(R.id.total);
         sum_total.setText("0");
 //        pg.setInterpolator(new DecelerateInterpolator());
         pg.setDuration(1000);//default if unspecified is 300 ms

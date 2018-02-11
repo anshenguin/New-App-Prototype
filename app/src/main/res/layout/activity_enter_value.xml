@@ -28,6 +28,7 @@
 
         <EditText
             android:id="@+id/edit_value"
+            android:fontFamily="@font/regular_oxygen"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Value"
@@ -36,6 +37,7 @@
 
         <EditText
             android:id="@+id/edit_desc"
+            android:fontFamily="@font/regular_oxygen"
             android:hint="Description"
             android:inputType="textCapWords"
             android:layout_height="wrap_content"
@@ -75,6 +77,7 @@
         android:layout_height="wrap_content"
         android:text="SAVE"
         android:layout_marginTop="8dp"
+        android:fontFamily="@font/bold_oxygen"
         android:id="@+id/saveValue"/>
 
 
