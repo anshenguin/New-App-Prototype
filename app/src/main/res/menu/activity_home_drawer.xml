@@ -6,20 +6,20 @@
         <item android:title="Statistics">
         <item
             android:id="@+id/nav_today"
-            android:icon="@drawable/ic_menu_camera"
+            android:icon="@drawable/ic_today"
             android:title="Today" />
         <item
             android:id="@+id/nav_yesterday"
-            android:icon="@drawable/ic_menu_gallery"
+            android:icon="@drawable/ic_yesterday"
             android:title="Yesterday" />
         <item
             android:id="@+id/nav_this_month"
-            android:icon="@drawable/ic_menu_slideshow"
+            android:icon="@drawable/ic_this_month"
             android:title="This Month" />
 
             <item
                 android:id="@+id/nav_year"
-                android:icon="@drawable/ic_menu_slideshow"
+                android:icon="@drawable/ic_this_year"
                 android:title="This Year" />
 
             <item
