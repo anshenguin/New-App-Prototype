@@ -18,12 +18,24 @@
     </style>
     <style name="AppTheme.AppBarOverlay"  parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />     <!-- Customize your theme here. -->
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />     <!-- ustomize your theme here. -->
 
     <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
         <item name="android:windowBackground">@drawable/splash_screen</item>
-        <item name="colorPrimaryDark">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkSplash</item>
 
     </style>
 
+    <style name="ThemeOverlay.AppCompat.navTheme">
+
+        <!-- Color of text and icon when SELECTED -->
+        <item name="colorPrimary">@color/text_and_icon</item>
+
+        <!-- Background color when SELECTED -->
+        <item name="colorControlHighlight">@color/highlighted_background</item>
+
+    </style>
+
+    <color name="text_and_icon">#7DA4AD</color>
+    <color name="highlighted_background">#D5DEE0</color>
 </resources>
