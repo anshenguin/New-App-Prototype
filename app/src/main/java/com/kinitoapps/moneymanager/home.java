@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -361,7 +362,7 @@ public class home extends AppCompatActivity
             // Actions are just fake
             Notification noti = new Notification.Builder(this)
                     .setContentTitle("Money Manager notification is on")
-                    .setContentText("Click to add an entry").setSmallIcon(R.mipmap.ic_launcher)
+                    .setContentText("Click to add an entry").setSmallIcon(R.drawable.noti_wallet)
                     .setContentIntent(pIntent)
                     .setOngoing(true)
                     .build();
@@ -389,7 +390,7 @@ public class home extends AppCompatActivity
             mChannel.setDescription("Click here to add an entry");
             android.support.v4.app.NotificationCompat.Builder mBuilder = new android.support.v4.app.NotificationCompat.Builder(this,id)
                     .setContentTitle("Money Manager notification is on")
-                    .setContentText("Click to add an entry").setSmallIcon(R.mipmap.ic_launcher)
+                    .setContentText("Click to add an entry").setSmallIcon(R.drawable.noti_wallet)
                     .setOngoing(true);
             mBuilder.setContentIntent(resultPendingIntent);
             mNotificationManager.notify(0, mBuilder.build());

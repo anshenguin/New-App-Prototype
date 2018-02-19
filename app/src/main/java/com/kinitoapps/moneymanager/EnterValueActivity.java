@@ -138,7 +138,7 @@ public class EnterValueActivity extends AppCompatActivity {
             // Actions are just fake
             Notification noti = new Notification.Builder(this)
                     .setContentTitle("DAILY LIMIT WARNING")
-                    .setContentText("You have exceeded your daily limit").setSmallIcon(R.mipmap.ic_launcher)
+                    .setContentText("You have exceeded your daily limit").setSmallIcon(R.drawable.noti_wallet)
                     .setPriority(Notification.PRIORITY_HIGH)
                     .setDefaults(Notification.DEFAULT_VIBRATE)
                     .build();
@@ -150,7 +150,7 @@ public class EnterValueActivity extends AppCompatActivity {
         if(limit_month<=getMonthlySumSpent()&&limit_month>0&&(getMonthlySumSpent()-currentVal)<limit_month){
             Notification noti = new Notification.Builder(this)
                     .setContentTitle("MONTHLY LIMIT WARNING")
-                    .setContentText("You have exceeded your monthly limit").setSmallIcon(R.mipmap.ic_launcher)
+                    .setContentText("You have exceeded your monthly limit").setSmallIcon(R.drawable.noti_wallet)
                     .setPriority(Notification.PRIORITY_HIGH)
                     .setDefaults(Notification.DEFAULT_VIBRATE)
                     .build();
