@@ -13,6 +13,7 @@ import android.database.sqlite.SQLiteException;
 import android.graphics.Color;
 import android.opengl.Visibility;
 import android.os.Handler;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.content.Context;
@@ -250,7 +251,13 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_today, container, false);
-
+        FloatingActionButton fab = root.findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getActivity(),EnterValueActivity.class));
+            }
+        });
 
 //        // Inflate the layout for this fragment
 //        // Create and/or open a database to read from it

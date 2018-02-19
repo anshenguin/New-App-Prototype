@@ -9,9 +9,9 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="empty_view_title_text">No values added yet!</string>
+    <string name="empty_view_title_text">No entries exist for today!</string>
 
     <!-- Subtitle text for the empty view that prompts the user to add a pet [CHAR LIMIT=50] -->
-    <string name="empty_view_subtitle_text">Get started by adding a value...</string>
+    <string name="empty_view_subtitle_text">Tap the button below to add an entry&#8230;</string>
 
 </resources>

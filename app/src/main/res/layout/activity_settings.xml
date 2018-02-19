@@ -30,6 +30,7 @@
                     android:layout_marginRight="16dp"
                     android:fontFamily="Roboto"
                     android:layout_marginEnd="16dp"
+                    android:theme="@style/SCBSwitch"
                     android:checked="false"
                     android:gravity="start|center_vertical"
                     android:id="@+id/switch_notification"

@@ -16,6 +16,11 @@
         <item name="windowNoTitle">true</item>
 
     </style>
+    <style name="SCBSwitch" parent="Theme.AppCompat.Light">
+        <!-- active thumb & track color (30% transparency) -->
+        <item name="colorControlActivated">@color/activate</item>
+
+    </style>
     <style name="AppTheme.AppBarOverlay"  parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />     <!-- ustomize your theme here. -->
@@ -38,4 +43,5 @@
 
     <color name="text_and_icon">#7DA4AD</color>
     <color name="highlighted_background">#D5DEE0</color>
+
 </resources>

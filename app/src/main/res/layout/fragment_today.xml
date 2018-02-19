@@ -1,17 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <android.support.design.widget.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        app:useCompatPadding="true"
+        app:backgroundTint="#78909C"
+        android:id="@+id/fab"
+        app:srcCompat="@drawable/ic_add_black_24dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true" />
+<android.support.v4.widget.NestedScrollView
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FAFAFA"
     android:scrollbars="none"
+
     android:focusable="true">
 
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
+
+
         <LinearLayout
             android:layout_width="match_parent"
             android:orientation="vertical"
@@ -27,19 +43,18 @@
                 android:layout_gravity="center">
 
                 <ImageView
-                    android:id="@+id/empty_shelter_image"
+                    android:id="@+id/empty_image"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:src="@mipmap/ic_launcher_round"/>
+                    android:src="@drawable/emptylistview_one"/>
 
                 <TextView
                     android:id="@+id/empty_title_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/empty_shelter_image"
+                    android:layout_below="@+id/empty_image"
                     android:layout_centerHorizontal="true"
-                    android:fontFamily="sans-serif-medium"
                     android:paddingTop="16dp"
                     android:text="@string/empty_view_title_text"
                     android:textAppearance="?android:textAppearanceMedium"/>
@@ -50,7 +65,6 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/empty_title_text"
                     android:layout_centerHorizontal="true"
-                    android:fontFamily="sans-serif"
                     android:paddingTop="8dp"
                     android:text="@string/empty_view_subtitle_text"
                     android:textAppearance="?android:textAppearanceSmall"
@@ -188,6 +202,7 @@
                     android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="72dp"
                     android:background="#FAFAFA" />
             </LinearLayout>
 
@@ -231,4 +246,7 @@
 
     </RelativeLayout>
     <!--</android.support.v4.widget.NestedScrollView>-->
-</ScrollView>
+</android.support.v4.widget.NestedScrollView>
+
+</RelativeLayout>
+
