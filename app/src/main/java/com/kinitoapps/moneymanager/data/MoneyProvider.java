@@ -12,7 +12,10 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.os.Environment;
 import android.util.Log;
+
+import java.io.File;
 
 /**
  * {@link ContentProvider} for Pets app.
@@ -30,6 +33,8 @@ public class MoneyProvider extends ContentProvider {
      */
 
     private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+
+
 
     // Static initializer. This is run the first time anything is called from this class.
     static {
@@ -57,10 +62,14 @@ public class MoneyProvider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
+
+
+
         // TODO: Create and initialize a PetDbHelper object to gain access to the pets database.
         // Make sure the variable is a global variable, so it can be referenced from other
         // ContentProvider methods.
-            mDbHelper = new MoneyDbHelper(getContext());
+
+//            mDbHelper = new MoneyDbHelper(getContext());
         return true;
     }
 
@@ -70,7 +79,7 @@ public class MoneyProvider extends ContentProvider {
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs,
                         String sortOrder) {
-
+        mDbHelper = new MoneyDbHelper(getContext());
         SQLiteDatabase database = mDbHelper.getReadableDatabase();
         Cursor cursor;
 
@@ -144,6 +153,7 @@ public class MoneyProvider extends ContentProvider {
         // No need to check the breed, any value is valid (including null).
 
         // Get writeable database
+        mDbHelper = new MoneyDbHelper(getContext());
         SQLiteDatabase database = mDbHelper.getWritableDatabase();
 
         // Insert the new pet with the given values
@@ -241,6 +251,8 @@ public class MoneyProvider extends ContentProvider {
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
         // Get writeable database
+        mDbHelper = new MoneyDbHelper(getContext());
+
         SQLiteDatabase database = mDbHelper.getWritableDatabase();
 
         // Track the number of rows that were deleted
@@ -284,6 +296,8 @@ public class MoneyProvider extends ContentProvider {
                 throw new IllegalStateException("Unknown URI " + uri + " with match " + match);
         }
     }
+
+
 
 
 }

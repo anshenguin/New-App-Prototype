@@ -9,6 +9,7 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         app:useCompatPadding="true"
+        android:background="#78909C"
         app:backgroundTint="#78909C"
         android:id="@+id/fab"
         app:srcCompat="@drawable/ic_add_black_24dp"

@@ -25,7 +25,7 @@
                 android:orientation="horizontal">
                 <android.support.v7.widget.SwitchCompat
                     android:layout_width="match_parent"
-                    android:text="Turn Notification On"
+                    android:text="Quick Entry Notification"
                     android:layout_gravity="center_vertical"
                     android:layout_marginRight="16dp"
                     android:fontFamily="Roboto"
@@ -58,7 +58,7 @@
                     android:textColor="#000"
                     android:layout_gravity="center_vertical"
                     android:fontFamily="Roboto"
-                    android:text="Create Shortcut"/>
+                    android:text="Create Entry Shortcut"/>
 
             </LinearLayout>
             <View
@@ -84,9 +84,7 @@
                     android:layout_gravity="center_vertical"
                     android:fontFamily="Roboto"
                     android:text="Set Daily Limit on Spending"/>
-
             </LinearLayout>
-
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
@@ -110,17 +108,13 @@
                     android:fontFamily="Roboto"
                     android:layout_gravity="center_vertical"
                     android:text="Set Monthly Limit on Spending"/>
-
             </LinearLayout>
-
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
                 android:background="#d3d3d3"/>
-
-
         </LinearLayout>
     </ScrollView>
 

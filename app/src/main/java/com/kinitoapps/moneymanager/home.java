@@ -13,6 +13,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.TaskStackBuilder;
@@ -34,6 +35,7 @@ import android.widget.CalendarView;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -58,7 +60,11 @@ public class home extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        String extStore = System.getenv("EXTERNAL_STORAGE");
+        File file = new File(extStore+File.separator+"Money Manager"+File.separator+
+                "Database");
+        if(!file.exists()||!file.isDirectory())
+            file.mkdirs();
         setContentView(R.layout.activity_home);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -79,6 +85,7 @@ public class home extends AppCompatActivity
         final NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 
         if(firstRun.getBoolean("firstrun",true)) {
+
             firstRun.edit().putBoolean("firstrun",false).commit();
             sh.edit().putFloat("limit_today",0).commit();
             sh.edit().putFloat("limit_month",0).commit();
@@ -115,7 +122,8 @@ public class home extends AppCompatActivity
                         isDateSelected = false;
                     if (clicked == 8)
                         startActivity(new Intent(home.this, Settings.class));
-
+//                    else if (clicked == 6)
+//                        startActivity(new Intent(home.this,AboutActivity.class));
                     else if (clicked == 1) {
                         selected = 1;
                         fragmentClass = TodayFragment.class;
@@ -306,7 +314,7 @@ public class home extends AppCompatActivity
 //        }
 //        // Handle navigation view item clicks here.
         int id = item.getItemId();
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if(id!=R.id.nav_cal&&id!=R.id.nav_settings)
         LAST_SELECTED = id;
         if (id == R.id.nav_today) {
@@ -326,14 +334,15 @@ public class home extends AppCompatActivity
         } else if (id == R.id.nav_year) {
             clicked = 4;
             selected = 4;
-        } else if (id == R.id.nav_edit_history) {
-
-
+//        } else if (id == R.id.nav_about) {
+//            clicked = 6;
+//
         } else if (id == R.id.nav_settings) {
             clicked = 8;
         }
         else if(id == R.id.nav_cal){
             clicked = 5;
+            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1)
             selected = 5;
         }
         if(!cancelledCalendar) {
@@ -402,6 +411,7 @@ public class home extends AppCompatActivity
 
     }
 
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -439,6 +449,7 @@ public class home extends AppCompatActivity
             }
             FragmentManager fragmentManager = getSupportFragmentManager();
 
+            //TODO: FIX APPLOCK CRASH FROM KOHLI'S PHONE
             fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left).replace(R.id.flContent, fragment).commit();
         }
         else if(selected == 2){

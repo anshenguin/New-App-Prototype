@@ -252,6 +252,7 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_today, container, false);
         FloatingActionButton fab = root.findViewById(R.id.fab);
+        fab.bringToFront();
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

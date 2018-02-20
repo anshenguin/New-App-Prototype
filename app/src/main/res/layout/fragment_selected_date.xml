@@ -39,6 +39,9 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/empty_image"
                     android:layout_centerHorizontal="true"
+                    android:gravity="center"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
                     android:paddingTop="16dp"
                     android:text="No entries exist for the selected date!"
                     android:textAppearance="?android:textAppearanceMedium"/>

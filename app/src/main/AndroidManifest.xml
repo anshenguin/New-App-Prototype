@@ -3,6 +3,7 @@
     package="com.kinitoapps.moneymanager">
 
     <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -15,6 +16,7 @@
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -22,8 +24,7 @@
         <activity
             android:name=".home"
             android:configChanges="orientation|screenSize|keyboardHidden"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".Settings" />
         <activity
             android:name=".EnterValueActivity"
@@ -35,9 +36,8 @@
             android:exported="false" />
 
         <activity android:name=".EditActivity" />
-        <activity android:name=".SingleValueDetails">
-
-        </activity>
+        <activity android:name=".SingleValueDetails" />
+        <activity android:name=".PermDeniedActivity"></activity>
     </application>
 
 </manifest>

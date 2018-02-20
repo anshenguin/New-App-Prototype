@@ -30,17 +30,17 @@
 
     </group>
 
-   <item android:title="Options">
-        <menu>
-            <item
-                android:id="@+id/nav_edit_history"
-                android:icon="@drawable/ic_edit_black"
-                android:title="Edit History" />
+   <!--<item>-->
+        <!--<menu>-->
             <item
                 android:id="@+id/nav_settings"
                 android:icon="@drawable/ic_settings_black"
                 android:title="Settings" />
-        </menu>
-    </item>
+            <!--<item-->
+                <!--android:id="@+id/nav_about"-->
+                <!--android:icon="@drawable/ic_info_black_24dp"-->
+                <!--android:title="Tutorial" />-->
+        <!--</menu>-->
+    <!--</item>-->
 
 </menu>
