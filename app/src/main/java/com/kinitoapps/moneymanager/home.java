@@ -1,6 +1,9 @@
 package com.kinitoapps.moneymanager;
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -32,6 +35,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.CalendarView;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -45,7 +49,7 @@ import java.util.Locale;
 import static android.content.Context.NOTIFICATION_SERVICE;
 
 public class home extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, TodayFragment.OnFragmentInteractionListener,YesterdayFragment.OnFragmentInteractionListener,ThisYearFragment.OnFragmentInteractionListener,ThisMonthFragment.OnFragmentInteractionListener, SelectedDateFragment.OnFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener, TodayFragment.OnFragmentInteractionListener,YesterdayFragment.OnFragmentInteractionListener,ThisYearFragment.OnFragmentInteractionListener,ThisMonthFragment.OnFragmentInteractionListener, SelectedDateFragment.OnFragmentInteractionListener, DatePickerDialog.OnDateSetListener {
     boolean mDrawerItemClicked = false;
     short clicked = 0;
     short selected = 1;
@@ -56,7 +60,7 @@ public class home extends AppCompatActivity
     DrawerLayout drawer;
     String currentDate;
     boolean isDateSelected = false;
-
+    NavigationView navigationView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,7 +70,7 @@ public class home extends AppCompatActivity
         if(!file.exists()||!file.isDirectory())
             file.mkdirs();
         setContentView(R.layout.activity_home);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         android.support.v4.app.Fragment fragment = null;
         Class fragmentClass = null;
@@ -82,7 +86,7 @@ public class home extends AppCompatActivity
         SharedPreferences sharedPreferences = getSharedPreferences("SWITCH_NOTIFICATION", Context.MODE_PRIVATE);
         SharedPreferences firstRun = getSharedPreferences("com.example.lockscreentest",Context.MODE_PRIVATE);
         SharedPreferences sh = getSharedPreferences("LIMIT",Context.MODE_PRIVATE);
-        final NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
 
         if(firstRun.getBoolean("firstrun",true)) {
 
@@ -116,9 +120,10 @@ public class home extends AppCompatActivity
             public void onDrawerClosed(final View drawerView) {
 
                 if(mDrawerItemClicked) {
+//                    Toast.makeText(home.this,"this is being called",Toast.LENGTH_LONG).show();
                     android.support.v4.app.Fragment fragment = null;
                     Class fragmentClass = null;
-                    if(clicked!=5)
+                    if(clicked!=5 && clicked !=8)
                         isDateSelected = false;
                     if (clicked == 8)
                         startActivity(new Intent(home.this, Settings.class));
@@ -176,8 +181,8 @@ public class home extends AppCompatActivity
 
                     }
                     else if(clicked==5){
+                        selected = 5;
                         if(Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
-                            selected = 5;
                             AlertDialog.Builder builder = new AlertDialog.Builder(home.this);
                             builder.setTitle("Select a Date");
                             builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
@@ -212,6 +217,8 @@ public class home extends AppCompatActivity
                             builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
+                                    navigationView.getMenu().findItem(R.id.nav_cal).setChecked(true);
+                                    navigationView.getMenu().findItem(R.id.nav_today).setChecked(false);
                                     isDateSelected = true;
                                     if (!changedDate) {
                                         long milliseconds = calendarView.getDate();
@@ -242,25 +249,36 @@ public class home extends AppCompatActivity
                             builder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
-//                                    if (!isDateSelected) {
-//                                        cancelledCalendar = true;
-//                                        navigationView.getMenu().findItem(R.id.nav_cal).setChecked(false);
-//                                        navigationView.getMenu().findItem(LAST_SELECTED).setChecked(true);
-//                                    onNavigationItemSelected(navigationView.getMenu().findItem(LAST_SELECTED));
-//                                    }
+                                        if (!isDateSelected) {
+                                            cancelledCalendar = true;
+                                            navigationView.getMenu().findItem(R.id.nav_cal).setChecked(false);
+                                            navigationView.getMenu().findItem(LAST_SELECTED).setChecked(true);
+                                            onNavigationItemSelected(navigationView.getMenu().findItem(LAST_SELECTED));
+                                        }
                                 }
                             });
                             builder.show();
                             //TODO: DATE PICKER FOR PRE MARSHMALLOW
                         }
                         else{
-                            Toast.makeText(home.this,"This Feature Requires Android 6.0+",Toast.LENGTH_LONG).show();
+                            if (!isDateSelected) {
+                                navigationView.getMenu().findItem(R.id.nav_cal).setChecked(false);
+                                navigationView.getMenu().findItem(LAST_SELECTED).setChecked(true);
+//                            Toast.makeText(home.this,"This Feature Requires Android 6.0+",Toast.LENGTH_LONG).show();
+
+                            }
+                            DialogFragment newFragment = new DatePickerFragment();
+                            newFragment.show(getFragmentManager(), "datePicker");
                         }
 
+
+
                     }
+
                     clicked = 0;
                     mDrawerItemClicked = false;
                 }
+
 
             }
 
@@ -275,7 +293,7 @@ public class home extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -370,7 +388,7 @@ public class home extends AppCompatActivity
             // Build notification
             // Actions are just fake
             Notification noti = new Notification.Builder(this)
-                    .setContentTitle("Money Manager notification is on")
+                    .setContentTitle("Money Manager")
                     .setContentText("Click to add an entry").setSmallIcon(R.drawable.noti_wallet)
                     .setContentIntent(pIntent)
                     .setOngoing(true)
@@ -395,10 +413,10 @@ public class home extends AppCompatActivity
                     );
 
             String id = "enter_channel";
-            NotificationChannel mChannel = new NotificationChannel(id, "Money Manager notification is ON", NotificationManager.IMPORTANCE_HIGH);
+            NotificationChannel mChannel = new NotificationChannel(id, "Money Manager", NotificationManager.IMPORTANCE_HIGH);
             mChannel.setDescription("Click here to add an entry");
             android.support.v4.app.NotificationCompat.Builder mBuilder = new android.support.v4.app.NotificationCompat.Builder(this,id)
-                    .setContentTitle("Money Manager notification is on")
+                    .setContentTitle("Money Manager")
                     .setContentText("Click to add an entry").setSmallIcon(R.drawable.noti_wallet)
                     .setOngoing(true);
             mBuilder.setContentIntent(resultPendingIntent);
@@ -413,8 +431,8 @@ public class home extends AppCompatActivity
 
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onPostResume() {
+        super.onPostResume();
         android.support.v4.app.Fragment fragment = null;
         Class fragmentClass = null;
 //        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -439,6 +457,7 @@ public class home extends AppCompatActivity
 //
 //            }
 //        });
+//        Toast.makeText(home.this,"isDateSelected="+isDateSelected,Toast.LENGTH_LONG).show();
 
         if(selected == 1){
             fragmentClass = TodayFragment.class;
@@ -448,8 +467,6 @@ public class home extends AppCompatActivity
                 e.printStackTrace();
             }
             FragmentManager fragmentManager = getSupportFragmentManager();
-
-            //TODO: FIX APPLOCK CRASH FROM KOHLI'S PHONE
             fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left).replace(R.id.flContent, fragment).commit();
         }
         else if(selected == 2){
@@ -483,25 +500,34 @@ public class home extends AppCompatActivity
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left).replace(R.id.flContent, fragment).commit();
         }
-        else if(selected == 5){
-            SelectedDateFragment selectedDateFragment = (SelectedDateFragment) getSupportFragmentManager().findFragmentByTag("date_fragment");
-            if(selectedDateFragment.isVisible())
-            {
-                Bundle bundle = new Bundle();
-                bundle.putString("Date", currentDate);
-                fragment = null;
-                fragmentClass = SelectedDateFragment.class;
-                try {
-                    fragment = (android.support.v4.app.Fragment) fragmentClass.newInstance();
-                    fragment.setArguments(bundle);
+//        else if(selected == 5){
+//            navigationView.getMenu().findItem(R.id.nav_cal).setChecked(false);
+//            navigationView.getMenu().findItem(R.id.nav_today).setChecked(true);
+//            fragmentClass = TodayFragment.class;
+//            try {
+//                fragment = (android.support.v4.app.Fragment) fragmentClass.newInstance();
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//            FragmentManager fragmentManager = getSupportFragmentManager();
+//            fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left).replace(R.id.flContent, fragment).commit();
+//        }
+        else if(selected == 5 && isDateSelected) {
 
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left).replace(R.id.flContent, fragment,"date_fragment").commit();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("Date", currentDate);
+                    fragment = null;
+                    fragmentClass = SelectedDateFragment.class;
+                    try {
+                        fragment = (android.support.v4.app.Fragment) fragmentClass.newInstance();
+                        fragment.setArguments(bundle);
 
-            }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    FragmentManager fragmentManager = getSupportFragmentManager();
+                    fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left).replace(R.id.flContent, fragment, "date_fragment").commit();
+
         }
     }
 
@@ -520,4 +546,55 @@ public class home extends AppCompatActivity
     }
 
 
+
+    public static class DatePickerFragment extends DialogFragment {
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Use the current date as the default date in the picker
+            final Calendar c = Calendar.getInstance();
+            int year = c.get(Calendar.YEAR);
+            int month = c.get(Calendar.MONTH);
+            int day = c.get(Calendar.DAY_OF_MONTH);
+
+            // Create a new instance of DatePickerDialog and return it
+            return new DatePickerDialog(getActivity(), (home) getActivity(), year, month, day);
+        }
+
+        @Override
+        public void onCancel(DialogInterface dialog) {
+            super.onCancel(dialog);
+        }
+    }
+
+    @Override
+    public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+        isDateSelected=true;
+        navigationView.getMenu().findItem(LAST_SELECTED).setChecked(false);
+        navigationView.getMenu().findItem(R.id.nav_cal).setChecked(true);
+        String dayS = String.valueOf(day), monthS = String.valueOf(month + 1);
+        if ((day / 10) < 1)
+            dayS = "0" + dayS;
+        if (((month + 1) / 10) < 1)
+            monthS = "0" + monthS;
+        currentDate = dayS + "-" + monthS + "-" + year;
+        android.support.v4.app.Fragment fragment;
+        Bundle bundle = new Bundle();
+        bundle.putString("Date", currentDate);
+        Class fragmentClass = null;
+        fragment = null;
+        fragmentClass = SelectedDateFragment.class;
+        try {
+            fragment = (android.support.v4.app.Fragment) fragmentClass.newInstance();
+            fragment.setArguments(bundle);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left).replace(R.id.flContent, fragment,"date_fragment").commit();
+
+    }
+
 }
+

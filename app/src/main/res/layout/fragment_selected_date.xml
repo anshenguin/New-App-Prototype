@@ -69,10 +69,9 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="21-Dec-2018"
                         android:id="@+id/date"
                         android:layout_marginTop="8dp"
-                        android:fontFamily="@font/regular_oxygen"
+                        android:fontFamily="@font/bold_oxygen"
                         android:textSize="16sp"
                         android:layout_gravity="center_horizontal"/>
 

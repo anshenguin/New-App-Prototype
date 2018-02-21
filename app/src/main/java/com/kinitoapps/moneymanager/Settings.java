@@ -174,7 +174,7 @@ public class Settings extends AppCompatActivity {
                         // Build notification
                         // Actions are just fake
                         Notification noti = new Notification.Builder(Settings.this)
-                                .setContentTitle("Money Manager notification is on")
+                                .setContentTitle("Money Manager")
                                 .setContentText("Click to add an entry").setSmallIcon(R.drawable.noti_wallet)
                                 .setContentIntent(pIntent)
                                 .setOngoing(true)
@@ -199,10 +199,10 @@ public class Settings extends AppCompatActivity {
                                 );
 
                         String id = "enter_channel";
-                        NotificationChannel mChannel = new NotificationChannel(id, "Money Manager notification is ON", NotificationManager.IMPORTANCE_HIGH);
+                        NotificationChannel mChannel = new NotificationChannel(id, "Money Manager", NotificationManager.IMPORTANCE_HIGH);
                         mChannel.setDescription("Click here to add an entry");
                         android.support.v4.app.NotificationCompat.Builder mBuilder = new android.support.v4.app.NotificationCompat.Builder(Settings.this,id)
-                                .setContentTitle("Money Manager notification is on")
+                                .setContentTitle("Money Manager")
                                 .setContentText("Click to add an entry").setSmallIcon(R.drawable.noti_wallet)
                                 .setOngoing(true);
                         mBuilder.setContentIntent(resultPendingIntent);

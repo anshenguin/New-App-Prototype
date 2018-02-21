@@ -15,7 +15,6 @@
 
     <TextView
         android:layout_width="wrap_content"
-        android:text="You Received"
         android:layout_marginTop="16dp"
         android:fontFamily="@font/regular_oxygen"
         android:id="@+id/status"
@@ -26,7 +25,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/value"
-        android:text="24000"
         android:fontFamily="@font/bold_oxygen"
         android:textColor="#388E3C"
         android:layout_marginLeft="8dp"
@@ -41,7 +39,6 @@
         android:layout_marginLeft="24dp"
         android:textSize="16sp"
         android:layout_marginRight="24dp"
-        android:text="Do cup chai"
         android:fontFamily="@font/regular_oxygen"
         android:id="@+id/desc"
         android:textColor="#388E3C"
@@ -69,7 +66,6 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="21 Dec 1998, 05:30 am"
             android:id="@+id/timedatetext"
             android:fontFamily="@font/regular_oxygen"
             android:gravity="center"
