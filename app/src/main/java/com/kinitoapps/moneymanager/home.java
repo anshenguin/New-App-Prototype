@@ -64,6 +64,7 @@ public class home extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         String extStore = System.getenv("EXTERNAL_STORAGE");
         File file = new File(extStore+File.separator+"Money Manager"+File.separator+
                 "Database");
@@ -86,10 +87,24 @@ public class home extends AppCompatActivity
         SharedPreferences sharedPreferences = getSharedPreferences("SWITCH_NOTIFICATION", Context.MODE_PRIVATE);
         SharedPreferences firstRun = getSharedPreferences("com.example.lockscreentest",Context.MODE_PRIVATE);
         SharedPreferences sh = getSharedPreferences("LIMIT",Context.MODE_PRIVATE);
-        navigationView = (NavigationView) findViewById(R.id.nav_view);
-
+        navigationView = findViewById(R.id.nav_view);
+        navigationView.getMenu().findItem(R.id.nav_today).setChecked(true);
+        navigationView.setNavigationItemSelectedListener(this);
         if(firstRun.getBoolean("firstrun",true)) {
-
+            Intent shortcutIntent = new Intent(getApplicationContext(),
+                    EnterValueActivity.class);
+            shortcutIntent.setAction(Intent.ACTION_MAIN);
+            Intent addIntent = new Intent();
+            addIntent
+                    .putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
+            addIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, "Enter Value");
+            addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE,
+                    Intent.ShortcutIconResource.fromContext(getApplicationContext(),
+                            R.mipmap.ic_shortcut));
+            addIntent
+                    .setAction("com.android.launcher.action.INSTALL_SHORTCUT");
+            addIntent.putExtra("duplicate", false);  //may it's already there so don't duplicate
+            getApplicationContext().sendBroadcast(addIntent);
             firstRun.edit().putBoolean("firstrun",false).commit();
             sh.edit().putFloat("limit_today",0).commit();
             sh.edit().putFloat("limit_month",0).commit();
@@ -429,10 +444,18 @@ public class home extends AppCompatActivity
 
     }
 
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        Toast.makeText(this,"onResume",Toast.LENGTH_SHORT).show();
+//    }
+
 
     @Override
     protected void onPostResume() {
         super.onPostResume();
+//        Toast.makeText(this,"onPostResume",Toast.LENGTH_SHORT).show();
+
         android.support.v4.app.Fragment fragment = null;
         Class fragmentClass = null;
 //        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

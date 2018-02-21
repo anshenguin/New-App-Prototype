@@ -37,7 +37,6 @@
 
         <activity android:name=".EditActivity" />
         <activity android:name=".SingleValueDetails" />
-        <activity android:name=".PermDeniedActivity"></activity>
     </application>
 
 </manifest>

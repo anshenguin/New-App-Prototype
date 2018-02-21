@@ -68,7 +68,7 @@
                         android:layout_height="wrap_content"
                         android:text="YESTERDAY"
                         android:layout_marginTop="8dp"
-                        android:fontFamily="@font/regular_oxygen"
+                        android:fontFamily="@font/bold_oxygen"
                         android:textSize="16sp"
                         android:layout_gravity="center_horizontal"/>
 
