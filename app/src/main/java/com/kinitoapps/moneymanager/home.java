@@ -73,17 +73,6 @@ public class home extends AppCompatActivity
         setContentView(R.layout.activity_home);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        android.support.v4.app.Fragment fragment = null;
-        Class fragmentClass = null;
-        fragmentClass = TodayFragment.class;
-        try {
-            fragment = (android.support.v4.app.Fragment) fragmentClass.newInstance();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
         SharedPreferences sharedPreferences = getSharedPreferences("SWITCH_NOTIFICATION", Context.MODE_PRIVATE);
         SharedPreferences firstRun = getSharedPreferences("com.example.lockscreentest",Context.MODE_PRIVATE);
         SharedPreferences sh = getSharedPreferences("LIMIT",Context.MODE_PRIVATE);
@@ -113,7 +102,7 @@ public class home extends AppCompatActivity
 
         if(sharedPreferences.getBoolean("SWITCH_NOTIFICATION",true))
             createNotification();
-        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer = findViewById(R.id.drawer_layout);
 
         toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -410,8 +399,7 @@ public class home extends AppCompatActivity
                     .build();
             NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
             // hide the notification after its selected
-//        noti.flags = Notification.FLAG_NO_CLEAR|Notification.FLAG_ONGOING_EVENT;
-
+        noti.flags = Notification.FLAG_NO_CLEAR|Notification.FLAG_ONGOING_EVENT;
             notificationManager.notify(0, noti);
         }
         else{
