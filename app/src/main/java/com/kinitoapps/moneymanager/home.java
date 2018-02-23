@@ -12,19 +12,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.TaskStackBuilder;
-import android.support.v7.app.NotificationCompat;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -33,23 +27,16 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.CalendarView;
 import android.widget.DatePicker;
-import android.widget.EditText;
-import android.widget.Toast;
 
 import java.io.File;
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
-
-import static android.content.Context.NOTIFICATION_SERVICE;
 
 public class home extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, TodayFragment.OnFragmentInteractionListener,YesterdayFragment.OnFragmentInteractionListener,ThisYearFragment.OnFragmentInteractionListener,ThisMonthFragment.OnFragmentInteractionListener, SelectedDateFragment.OnFragmentInteractionListener, DatePickerDialog.OnDateSetListener {
+        implements NavigationView.OnNavigationItemSelectedListener, TodayFragment.OnFragmentInteractionListener,YesterdayFragment.OnFragmentInteractionListener,ThisYearFragment.OnFragmentInteractionListener,ThisMonthFragment.OnFragmentInteractionListener, SelectedDateFragment.OnFragmentInteractionListener, DatePickerDialog.OnDateSetListener{
     boolean mDrawerItemClicked = false;
     short clicked = 0;
     short selected = 1;
@@ -131,8 +118,6 @@ public class home extends AppCompatActivity
                         isDateSelected = false;
                     if (clicked == 8)
                         startActivity(new Intent(home.this, Settings.class));
-//                    else if (clicked == 6)
-//                        startActivity(new Intent(home.this,AboutActivity.class));
                     else if (clicked == 1) {
                         selected = 1;
                         fragmentClass = TodayFragment.class;
@@ -143,7 +128,7 @@ public class home extends AppCompatActivity
                         }
                         FragmentManager fragmentManager = getSupportFragmentManager();
 
-                        fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left).replace(R.id.flContent, fragment).commit();
+                        fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_left).replace(R.id.flContent, fragment).commit();
                     }
 
                     else if (clicked == 2){
@@ -155,7 +140,7 @@ public class home extends AppCompatActivity
                             e.printStackTrace();
                         }
                         FragmentManager fragmentManager = getSupportFragmentManager();
-                        fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left).replace(R.id.flContent, fragment).commit();
+                        fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_left).replace(R.id.flContent, fragment).commit();
                     }
 
                     else if(clicked == 3){
@@ -168,7 +153,7 @@ public class home extends AppCompatActivity
                             e.printStackTrace();
                         }
                         FragmentManager fragmentManager = getSupportFragmentManager();
-                        fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left).replace(R.id.flContent, fragment).commit();
+                        fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_left).replace(R.id.flContent, fragment).commit();
 
                     }
                     else if(clicked == 4){
@@ -181,7 +166,7 @@ public class home extends AppCompatActivity
                             e.printStackTrace();
                         }
                         FragmentManager fragmentManager = getSupportFragmentManager();
-                        fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left).replace(R.id.flContent, fragment).commit();
+                        fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_left).replace(R.id.flContent, fragment).commit();
 
                     }
                     else if(clicked==5){
@@ -246,7 +231,7 @@ public class home extends AppCompatActivity
                                         e.printStackTrace();
                                     }
                                     FragmentManager fragmentManager = getSupportFragmentManager();
-                                    fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left).replace(R.id.flContent, fragment,"date_fragment").commit();
+                                    fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_left).replace(R.id.flContent, fragment,"date_fragment").commit();
 
                                 }
                             });
@@ -278,6 +263,7 @@ public class home extends AppCompatActivity
 
 
                     }
+
 
                     clicked = 0;
                     mDrawerItemClicked = false;
@@ -367,6 +353,7 @@ public class home extends AppCompatActivity
             if(Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1)
             selected = 5;
         }
+
         if(!cancelledCalendar) {
             mDrawerItemClicked = true;
             drawer.closeDrawer(GravityCompat.START);
@@ -478,7 +465,7 @@ public class home extends AppCompatActivity
                 e.printStackTrace();
             }
             FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left).replace(R.id.flContent, fragment).commit();
+            fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_left).replace(R.id.flContent, fragment).commit();
         }
         else if(selected == 2){
             fragmentClass = YesterdayFragment.class;
@@ -488,7 +475,7 @@ public class home extends AppCompatActivity
                 e.printStackTrace();
             }
             FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left).replace(R.id.flContent, fragment).commit();
+            fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_left).replace(R.id.flContent, fragment).commit();
         }
 
         else if(selected == 3){
@@ -499,7 +486,7 @@ public class home extends AppCompatActivity
                 e.printStackTrace();
             }
             FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left).replace(R.id.flContent, fragment).commit();
+            fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_left).replace(R.id.flContent, fragment).commit();
         }
         else if(selected == 4){
             fragmentClass = ThisYearFragment.class;
@@ -509,7 +496,7 @@ public class home extends AppCompatActivity
                 e.printStackTrace();
             }
             FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left).replace(R.id.flContent, fragment).commit();
+            fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_left).replace(R.id.flContent, fragment).commit();
         }
 //        else if(selected == 5){
 //            navigationView.getMenu().findItem(R.id.nav_cal).setChecked(false);
@@ -521,7 +508,7 @@ public class home extends AppCompatActivity
 //                e.printStackTrace();
 //            }
 //            FragmentManager fragmentManager = getSupportFragmentManager();
-//            fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left).replace(R.id.flContent, fragment).commit();
+//            fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_left).replace(R.id.flContent, fragment).commit();
 //        }
         else if(selected == 5 && isDateSelected) {
 
@@ -537,9 +524,10 @@ public class home extends AppCompatActivity
                         e.printStackTrace();
                     }
                     FragmentManager fragmentManager = getSupportFragmentManager();
-                    fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left).replace(R.id.flContent, fragment, "date_fragment").commit();
+                    fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_left).replace(R.id.flContent, fragment, "date_fragment").commit();
 
         }
+
     }
 
     public void disableDrawer(){
@@ -603,7 +591,7 @@ public class home extends AppCompatActivity
             e.printStackTrace();
         }
         FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left).replace(R.id.flContent, fragment,"date_fragment").commit();
+        fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_left).replace(R.id.flContent, fragment,"date_fragment").commit();
 
     }
 

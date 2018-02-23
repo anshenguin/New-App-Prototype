@@ -745,7 +745,7 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
         }
         FragmentManager fragmentManager = getFragmentManager();
 
-        fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left).replace(R.id.flContent, fragment).commit();
+        fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_left).replace(R.id.flContent, fragment).commit();
         // Close the activity
     }
 
