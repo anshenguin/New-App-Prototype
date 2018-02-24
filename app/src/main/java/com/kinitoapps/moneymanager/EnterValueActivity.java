@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Spinner;
@@ -56,21 +58,42 @@ public class EnterValueActivity extends AppCompatActivity {
         setContentView(R.layout.activity_enter_value);
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-        spent = (RadioButton) findViewById(R.id.spent);
-        received = (RadioButton) findViewById(R.id.received);
+        spent =  findViewById(R.id.spent);
+        received = findViewById(R.id.received);
+        if(spent.isChecked()) {
+            spent.setTextColor(Color.parseColor("#FFFFFF"));
+            received.setTextColor(Color.parseColor("#424242"));
+        }
+        else{
+            received.setTextColor(Color.parseColor("#FFFFFF"));
+            spent.setTextColor(Color.parseColor("#424242"));
+        }
         sharedPreferences = getSharedPreferences("LIMIT", Context.MODE_PRIVATE);
         SharedPreferences canCallNow = getSharedPreferences("CALL", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = canCallNow.edit();
         editor.putBoolean("CALL",false);
         editor.commit();
         mDbHelper = new MoneyDbHelper(this);
-        mDescEditText = (EditText) findViewById(R.id.edit_desc);
-        mValueEditText = (EditText) findViewById(R.id.edit_value);
-        mSaveButton = (Button) findViewById(R.id.saveValue);
+        mDescEditText = findViewById(R.id.edit_desc);
+        mValueEditText = findViewById(R.id.edit_value);
+        mSaveButton = findViewById(R.id.saveValue);
         mSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 insertValue();
+            }
+        });
+        spent.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if(spent.isChecked()) {
+                    spent.setTextColor(Color.parseColor("#FFFFFF"));
+                    received.setTextColor(Color.parseColor("#424242"));
+                }
+                else{
+                    received.setTextColor(Color.parseColor("#FFFFFF"));
+                    spent.setTextColor(Color.parseColor("#424242"));
+                }
             }
         });
 

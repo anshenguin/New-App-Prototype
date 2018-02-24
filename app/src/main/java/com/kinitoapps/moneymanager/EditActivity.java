@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.net.Uri;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -21,6 +22,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Spinner;
@@ -56,17 +58,38 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
         sharedPreferences = getSharedPreferences("LIMIT", Context.MODE_PRIVATE);
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-        spent = (RadioButton) findViewById(R.id.spent);
-        received = (RadioButton) findViewById(R.id.received);
-        mDescEditText = (EditText) findViewById(R.id.edit_desc);
-        save = (Button) findViewById(R.id.saveValue);
+        spent = findViewById(R.id.spent);
+        received = findViewById(R.id.received);
+        if(spent.isChecked()) {
+            spent.setTextColor(Color.parseColor("#FFFFFF"));
+            received.setTextColor(Color.parseColor("#424242"));
+        }
+        else{
+            received.setTextColor(Color.parseColor("#FFFFFF"));
+            spent.setTextColor(Color.parseColor("#424242"));
+        }
+        mDescEditText = findViewById(R.id.edit_desc);
+        save = findViewById(R.id.saveValue);
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 editValue();
             }
         });
-        mValueEditText = (EditText) findViewById(R.id.edit_value);
+        mValueEditText = findViewById(R.id.edit_value);
+        spent.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if(spent.isChecked()) {
+                    spent.setTextColor(Color.parseColor("#FFFFFF"));
+                    received.setTextColor(Color.parseColor("#424242"));
+                }
+                else{
+                    received.setTextColor(Color.parseColor("#FFFFFF"));
+                    spent.setTextColor(Color.parseColor("#424242"));
+                }
+            }
+        });
         getSupportLoaderManager().initLoader(EXISTING_MONEY_LOADER, null, this);
     }
 

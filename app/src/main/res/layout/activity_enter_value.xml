@@ -60,7 +60,11 @@
             android:text="Spent"
             android:checked="true"
             android:id="@+id/spent"
+            android:background="@drawable/radio_bg"
+            android:button="@android:color/transparent"
             android:layout_weight="1"
+            android:gravity="center"
+            android:padding="8dp"
             android:layout_height="wrap_content" />
 
         <RadioButton
@@ -68,17 +72,31 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="Received"
+            android:textColor="#424242"
+            android:padding="8dp"
+            android:gravity="center"
+            android:background="@drawable/radio_bg"
+            android:button="@android:color/transparent"
             android:id="@+id/received"
              />
     </RadioGroup>
 
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="SAVE"
-        android:layout_marginTop="8dp"
+        android:id="@+id/saveValue"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/gradient_save"
+        android:drawablePadding="4dp"
         android:fontFamily="@font/bold_oxygen"
-        android:id="@+id/saveValue"/>
+        android:text="SAVE"
+        android:paddingLeft="24dp"
+        android:paddingRight="48dp"
+        android:drawableLeft="@drawable/ic_check"
+        android:textColor="#212121"
+        android:drawableStart="@drawable/ic_check"
+        android:paddingStart="24dp"
+        android:paddingEnd="48dp" />
 
 
 </LinearLayout>
