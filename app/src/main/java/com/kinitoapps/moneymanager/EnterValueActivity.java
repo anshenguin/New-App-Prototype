@@ -7,12 +7,14 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import android.text.TextUtils;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -62,11 +64,11 @@ public class EnterValueActivity extends AppCompatActivity {
         received = findViewById(R.id.received);
         if(spent.isChecked()) {
             spent.setTextColor(Color.parseColor("#FFFFFF"));
-            received.setTextColor(Color.parseColor("#424242"));
+            received.setTextColor(Color.parseColor("#9E9E9E"));
         }
         else{
             received.setTextColor(Color.parseColor("#FFFFFF"));
-            spent.setTextColor(Color.parseColor("#424242"));
+            spent.setTextColor(Color.parseColor("#9E9E9E"));
         }
         sharedPreferences = getSharedPreferences("LIMIT", Context.MODE_PRIVATE);
         SharedPreferences canCallNow = getSharedPreferences("CALL", Context.MODE_PRIVATE);
@@ -77,22 +79,48 @@ public class EnterValueActivity extends AppCompatActivity {
         mDescEditText = findViewById(R.id.edit_desc);
         mValueEditText = findViewById(R.id.edit_value);
         mSaveButton = findViewById(R.id.saveValue);
-        mSaveButton.setOnClickListener(new View.OnClickListener() {
+        mSaveButton.setOnTouchListener(new View.OnTouchListener() {
+            private Rect rect;
             @Override
-            public void onClick(View view) {
-                insertValue();
+            public boolean onTouch(View v, MotionEvent motionEvent) {
+
+                switch (motionEvent.getAction()){
+                    case MotionEvent.ACTION_DOWN:
+                        rect = new Rect(v.getLeft(), v.getTop(), v.getRight(), v.getBottom());
+                        mSaveButton.setBackgroundResource(R.drawable.gradient_save_two);
+                        mSaveButton.setTextColor(Color.parseColor("#FAFAFA"));
+
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        if(rect.contains(v.getLeft() + (int) motionEvent.getX(), v.getTop() + (int) motionEvent.getY())){
+                            mSaveButton.performClick();
+                            mSaveButton.setBackgroundResource(R.drawable.gradient_save);
+
+                            insertValue();
+                        }
+
+                        return true;
+                    case MotionEvent.ACTION_MOVE:
+                        if(!rect.contains(v.getLeft() + (int) motionEvent.getX(), v.getTop() + (int) motionEvent.getY())){
+                            // User moved outside bounds
+                            mSaveButton.setBackgroundResource(R.drawable.gradient_save);
+                            mSaveButton.setTextColor(Color.parseColor("#53aade"));
+                        }
+                }
+                return false;
             }
         });
+
         spent.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if(spent.isChecked()) {
                     spent.setTextColor(Color.parseColor("#FFFFFF"));
-                    received.setTextColor(Color.parseColor("#424242"));
+                    received.setTextColor(Color.parseColor("#9E9E9E"));
                 }
                 else{
                     received.setTextColor(Color.parseColor("#FFFFFF"));
-                    spent.setTextColor(Color.parseColor("#424242"));
+                    spent.setTextColor(Color.parseColor("#9E9E9E"));
                 }
             }
         });

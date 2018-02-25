@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -18,14 +19,12 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.RadioButton;
-import android.widget.Spinner;
 import android.widget.Toast;
 import com.kinitoapps.moneymanager.data.MoneyContract;
 import com.kinitoapps.moneymanager.data.MoneyDbHelper;
@@ -70,10 +69,34 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
         }
         mDescEditText = findViewById(R.id.edit_desc);
         save = findViewById(R.id.saveValue);
-        save.setOnClickListener(new View.OnClickListener() {
+        save.setOnTouchListener(new View.OnTouchListener() {
+            private Rect rect;
             @Override
-            public void onClick(View view) {
-                editValue();
+            public boolean onTouch(View v, MotionEvent motionEvent) {
+
+                switch (motionEvent.getAction()){
+                    case MotionEvent.ACTION_DOWN:
+                        rect = new Rect(v.getLeft(), v.getTop(), v.getRight(), v.getBottom());
+                        save.setBackgroundResource(R.drawable.gradient_save_two);
+                        save.setTextColor(Color.parseColor("#FAFAFA"));
+
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        if(rect.contains(v.getLeft() + (int) motionEvent.getX(), v.getTop() + (int) motionEvent.getY())){
+                            save.performClick();
+                            save.setBackgroundResource(R.drawable.gradient_save);
+                            editValue();
+                        }
+
+                        return true;
+                    case MotionEvent.ACTION_MOVE:
+                        if(!rect.contains(v.getLeft() + (int) motionEvent.getX(), v.getTop() + (int) motionEvent.getY())){
+                            // User moved outside bounds
+                            save.setBackgroundResource(R.drawable.gradient_save);
+                            save.setTextColor(Color.parseColor("#53aade"));
+                        }
+                }
+                return false;
             }
         });
         mValueEditText = findViewById(R.id.edit_value);
@@ -306,4 +329,5 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
         finish();
 
     }
+
 }

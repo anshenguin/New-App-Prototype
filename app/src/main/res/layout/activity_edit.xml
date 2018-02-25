@@ -11,11 +11,11 @@
      limitations under the License.
 -->
 <!-- Layout for the editor -->
-<LinearLayout
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:padding="16dp"
     tools:context=".EditActivity">
@@ -52,6 +52,7 @@
         android:layout_width="match_parent"
         android:orientation="horizontal"
         android:weightSum="2"
+
         android:layout_marginTop="8dp"
         android:layout_height="wrap_content">
 
@@ -60,6 +61,7 @@
             android:text="Spent"
             android:checked="true"
             android:id="@+id/spent"
+
             android:background="@drawable/radio_bg"
             android:button="@android:color/transparent"
             android:layout_weight="1"
@@ -87,16 +89,12 @@
         android:layout_height="44dp"
         android:layout_marginTop="16dp"
         android:background="@drawable/gradient_save"
-        android:drawablePadding="4dp"
-        android:fontFamily="@font/bold_oxygen"
+        android:fontFamily="@font/regular_oxygen"
         android:text="SAVE"
-        android:paddingLeft="24dp"
-        android:paddingRight="48dp"
-        android:drawableLeft="@drawable/ic_check"
-        android:textColor="#212121"
-        android:drawableStart="@drawable/ic_check"
-        android:paddingStart="24dp"
-        android:paddingEnd="48dp" />
+        style="?android:attr/borderlessButtonStyle"
+        android:textColor="#53aade"
+        android:elevation="0dp"
+        />
 
 
 </LinearLayout>
