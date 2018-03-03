@@ -85,6 +85,7 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
                         if(rect.contains(v.getLeft() + (int) motionEvent.getX(), v.getTop() + (int) motionEvent.getY())){
                             save.performClick();
                             save.setBackgroundResource(R.drawable.gradient_save);
+                            save.setTextColor(Color.parseColor("#53aade"));
                             editValue();
                         }
 

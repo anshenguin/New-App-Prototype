@@ -95,7 +95,7 @@ public class EnterValueActivity extends AppCompatActivity {
                         if(rect.contains(v.getLeft() + (int) motionEvent.getX(), v.getTop() + (int) motionEvent.getY())){
                             mSaveButton.performClick();
                             mSaveButton.setBackgroundResource(R.drawable.gradient_save);
-
+                            mSaveButton.setTextColor(Color.parseColor("#53aade"));
                             insertValue();
                         }
 

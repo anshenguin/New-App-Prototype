@@ -36,10 +36,10 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class home extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, TodayFragment.OnFragmentInteractionListener,YesterdayFragment.OnFragmentInteractionListener,ThisYearFragment.OnFragmentInteractionListener,ThisMonthFragment.OnFragmentInteractionListener, SelectedDateFragment.OnFragmentInteractionListener, DatePickerDialog.OnDateSetListener{
+        implements NavigationView.OnNavigationItemSelectedListener, TodayFragment.OnFragmentInteractionListener,YesterdayFragment.OnFragmentInteractionListener,ThisYearFragment.OnFragmentInteractionListener,ThisMonthFragment.OnFragmentInteractionListener, SelectedDateFragment.OnFragmentInteractionListener,OverviewFragment.OnFragmentInteractionListener, DatePickerDialog.OnDateSetListener{
     boolean mDrawerItemClicked = false;
     short clicked = 0;
-    short selected = 1;
+    short selected = 6;
     boolean cancelledCalendar = false;
     boolean changedDate;
     int LAST_SELECTED = R.id.nav_today;
@@ -118,6 +118,18 @@ public class home extends AppCompatActivity
                         isDateSelected = false;
                     if (clicked == 8)
                         startActivity(new Intent(home.this, Settings.class));
+                    else if (clicked == 6) {
+                        selected = 6;
+                        fragmentClass = OverviewFragment.class;
+                        try {
+                            fragment = (android.support.v4.app.Fragment) fragmentClass.newInstance();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        FragmentManager fragmentManager = getSupportFragmentManager();
+
+                        fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_left).replace(R.id.flContent, fragment).commit();
+                    }
                     else if (clicked == 1) {
                         selected = 1;
                         fragmentClass = TodayFragment.class;
@@ -277,7 +289,7 @@ public class home extends AppCompatActivity
 
             }
         });
-        navigationView.getMenu().findItem(R.id.nav_today).setChecked(true);
+        navigationView.getMenu().findItem(R.id.nav_overview).setChecked(true);
         navigationView.setNavigationItemSelectedListener(this);
     }
 
@@ -352,6 +364,10 @@ public class home extends AppCompatActivity
             clicked = 5;
             if(Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1)
             selected = 5;
+        }
+        else if(id == R.id.nav_overview){
+            clicked = 6;
+            selected = 6;
         }
 
         if(!cancelledCalendar) {
@@ -527,6 +543,17 @@ public class home extends AppCompatActivity
                     fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_left).replace(R.id.flContent, fragment, "date_fragment").commit();
 
         }
+        else if (selected == 6) {
+            fragmentClass = OverviewFragment.class;
+            try {
+                fragment = (android.support.v4.app.Fragment) fragmentClass.newInstance();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            FragmentManager fragmentManager = getSupportFragmentManager();
+
+            fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_left).replace(R.id.flContent, fragment).commit();
+        }
 
     }
 
@@ -592,8 +619,6 @@ public class home extends AppCompatActivity
         }
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_left).replace(R.id.flContent, fragment,"date_fragment").commit();
-
     }
-
 }
 

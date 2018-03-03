@@ -326,8 +326,6 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
                 }, 50);
 
             }
-
-
         });
 
         pg.animateToGoalValues();

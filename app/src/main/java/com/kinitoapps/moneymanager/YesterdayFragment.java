@@ -794,7 +794,6 @@ public class YesterdayFragment extends Fragment implements LoaderManager.LoaderC
         return str;
     }
 
-    //TODO: CHECKING FOR YESTERDAYS WONT WORK ON START OF A NEW MONTH, PLEASE WRITE BETTER CODE DUMBASS
     public String getSumReceived() {
         String date;
         String year;
