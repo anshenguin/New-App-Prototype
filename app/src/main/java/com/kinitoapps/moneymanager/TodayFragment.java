@@ -48,6 +48,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.ads.AdSize;
+import com.facebook.ads.AdView;
 import com.kinitoapps.moneymanager.data.MoneyContract;
 import com.kinitoapps.moneymanager.data.MoneyDbHelper;
 import com.kinitoapps.moneymanager.piechart.PieGraph;
@@ -72,6 +74,7 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
     // TODO: Rename parameter arguments, choose names that match
     private static final int MONEY_LOADER = 0;
     private static ArrayList<Long> mSelectedItemIds;
+    private AdView adView;
     MoneyCursorAdapter mCursorAdapter;
     private NonScrollListView moneyListView;
     private boolean isActionModeOn = false;
@@ -250,15 +253,8 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_today, container, false);
-        FloatingActionButton fab = root.findViewById(R.id.fab);
-        fab.bringToFront();
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(getActivity(),EnterValueActivity.class));
-            }
-        });
+        final View root = inflater.inflate(R.layout.fragment_today, container, false);
+
 
 //        // Inflate the layout for this fragment
 //        // Create and/or open a database to read from it
@@ -285,6 +281,8 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
 ////                null,
 ////                null
 ////        );
+
+
         mSelectedItemIds = new ArrayList<>();
         moneyListView = root.findViewById(R.id.list);
         //        Toolbar toolbar = root.findViewById(R.id.toolbar);
@@ -324,6 +322,20 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
                         moneyListView.startAnimation(slide);
                     }
                 }, 50);
+
+                handler.postDelayed(new Runnable() {
+                    public void run() {
+                        adView = new AdView(getActivity(), "174139459886109_174180053215383", AdSize.BANNER_HEIGHT_50);
+                        // Find the Ad Container
+                        LinearLayout adContainer = root.findViewById(R.id.banner_container);
+
+                        // Add the ad view to your activity layout
+                        adContainer.addView(adView);
+
+                        // Request an ad
+                        adView.loadAd();
+                    }
+                }, 200);
 
             }
         });
@@ -503,7 +515,16 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
 
     }
 
-//    @Override
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (adView != null) {
+            adView.destroy();
+        }
+        super.onDestroy();
+    }
+
+    //    @Override
 //    public void onResume() {
 //        super.onResume();
 //
