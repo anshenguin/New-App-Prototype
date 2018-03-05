@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FAFAFA"
     android:scrollbars="none"
     android:focusable="true">
-
-
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -18,21 +19,18 @@
             android:visibility="gone"
             android:id="@+id/empty_view"
             android:layout_height="match_parent">
-
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="40dp"
                 android:gravity="center"
                 android:layout_gravity="center">
-
                 <ImageView
                     android:id="@+id/empty_image"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:src="@drawable/emptylistview_one"/>
-
                 <TextView
                     android:id="@+id/empty_title_text"
                     android:layout_width="wrap_content"
@@ -43,26 +41,22 @@
                     android:text="No entries exist for yesterday!"
                     android:textAppearance="?android:textAppearanceMedium"/>
             </RelativeLayout>
-
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:descendantFocusability="blocksDescendants"
             android:orientation="vertical">
-
             <LinearLayout
                 android:id="@+id/pie_chart"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:orientation="vertical"
                     android:background="#E0E0E0"
                     android:layout_height="wrap_content">
-
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -174,6 +168,7 @@
                 <com.kinitoapps.moneymanager.NonScrollListView
                     android:id="@+id/list"
                     android:visibility="gone"
+                    android:layout_marginBottom="60dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="#FAFAFA" />
@@ -219,4 +214,12 @@
 
     </RelativeLayout>
     <!--</android.support.v4.widget.NestedScrollView>-->
-</ScrollView>
+    </android.support.v4.widget.NestedScrollView>
+    <LinearLayout
+        android:id="@+id/banner_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical"
+        />
+</RelativeLayout>

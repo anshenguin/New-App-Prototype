@@ -47,6 +47,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.ads.AdSize;
+import com.facebook.ads.AdView;
 import com.kinitoapps.moneymanager.data.MoneyContract;
 import com.kinitoapps.moneymanager.data.MoneyDbHelper;
 import com.kinitoapps.moneymanager.piechart.PieGraph;
@@ -74,6 +76,7 @@ public class SelectedDateFragment extends Fragment implements LoaderManager.Load
     MoneyCursorAdapter mCursorAdapter;
     private NonScrollListView moneyListView;
     private boolean isActionModeOn = false;
+    private AdView adView;
     private android.view.ActionMode mActionMode;
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -249,7 +252,7 @@ public class SelectedDateFragment extends Fragment implements LoaderManager.Load
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         currentDate = getArguments().getString("Date");
-        View root = inflater.inflate(R.layout.fragment_selected_date, container, false);
+        final View root = inflater.inflate(R.layout.fragment_selected_date, container, false);
 
 
 //        // Inflate the layout for this fragment
@@ -319,6 +322,20 @@ public class SelectedDateFragment extends Fragment implements LoaderManager.Load
                         moneyListView.startAnimation(slide);
                     }
                 }, 50);
+
+                handler.postDelayed(new Runnable() {
+                    public void run() {
+                        adView = new AdView(getActivity(), "174139459886109_174180053215383", AdSize.BANNER_HEIGHT_50);
+                        // Find the Ad Container
+                        LinearLayout adContainer = root.findViewById(R.id.banner_container);
+
+                        // Add the ad view to your activity layout
+                        adContainer.addView(adView);
+
+                        // Request an ad
+                        adView.loadAd();
+                    }
+                }, 200);
 
             }
 
@@ -742,6 +759,14 @@ public class SelectedDateFragment extends Fragment implements LoaderManager.Load
 
         fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_left).replace(R.id.flContent, fragment).commit();
         // Close the activity
+    }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (adView != null) {
+            adView.destroy();
+        }
+        super.onDestroy();
     }
 
     private void showDeleteConfirmationDialog() {

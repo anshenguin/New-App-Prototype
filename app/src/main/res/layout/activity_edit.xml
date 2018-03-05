@@ -91,11 +91,19 @@
         android:background="@drawable/gradient_save"
         android:fontFamily="@font/bold_oxygen"
         android:text="SAVE"
-
         style="?android:attr/borderlessButtonStyle"
         android:textColor="#53aade"
         android:elevation="0dp"
         />
+
+    <LinearLayout
+        android:id="@+id/native_ad_container"
+        android:layout_width="250dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="16dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical"/>
 
 
 </LinearLayout>

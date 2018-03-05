@@ -42,7 +42,7 @@ public class home extends AppCompatActivity
     short selected = 6;
     boolean cancelledCalendar = false;
     boolean changedDate;
-    int LAST_SELECTED = R.id.nav_today;
+    int LAST_SELECTED = R.id.nav_overview;
     ActionBarDrawerToggle toggle;
     DrawerLayout drawer;
     String currentDate;
@@ -259,7 +259,6 @@ public class home extends AppCompatActivity
                                 }
                             });
                             builder.show();
-                            //TODO: DATE PICKER FOR PRE MARSHMALLOW
                         }
                         else{
                             if (!isDateSelected) {
@@ -613,6 +612,75 @@ public class home extends AppCompatActivity
         try {
             fragment = (android.support.v4.app.Fragment) fragmentClass.newInstance();
             fragment.setArguments(bundle);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_left).replace(R.id.flContent, fragment,"date_fragment").commit();
+    }
+
+    public void replaceFragmentToToday(){
+        android.support.v4.app.Fragment fragment;
+        navigationView.getMenu().findItem(R.id.nav_overview).setChecked(false);
+        navigationView.getMenu().findItem(R.id.nav_today).setChecked(true);
+        LAST_SELECTED = R.id.nav_today;
+        Class fragmentClass = null;
+        fragment = null;
+        fragmentClass = TodayFragment.class;
+        try {
+            fragment = (android.support.v4.app.Fragment) fragmentClass.newInstance();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_left).replace(R.id.flContent, fragment,"date_fragment").commit();
+    }
+    public void replaceFragmentToYesterday(){
+        android.support.v4.app.Fragment fragment;
+        navigationView.getMenu().findItem(R.id.nav_overview).setChecked(false);
+        navigationView.getMenu().findItem(R.id.nav_yesterday).setChecked(true);
+        LAST_SELECTED = R.id.nav_yesterday;
+        Class fragmentClass = null;
+        fragment = null;
+        fragmentClass = YesterdayFragment.class;
+        try {
+            fragment = (android.support.v4.app.Fragment) fragmentClass.newInstance();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_left).replace(R.id.flContent, fragment,"date_fragment").commit();
+    }
+    public void replaceFragmentToThisMonth(){
+        android.support.v4.app.Fragment fragment;
+        navigationView.getMenu().findItem(R.id.nav_overview).setChecked(false);
+        navigationView.getMenu().findItem(R.id.nav_this_month).setChecked(true);
+        LAST_SELECTED = R.id.nav_this_month;
+        Class fragmentClass = null;
+        fragment = null;
+        fragmentClass = ThisMonthFragment.class;
+        try {
+            fragment = (android.support.v4.app.Fragment) fragmentClass.newInstance();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_left).replace(R.id.flContent, fragment,"date_fragment").commit();
+    }
+    public void replaceFragmentToThisYear(){
+        android.support.v4.app.Fragment fragment;
+        navigationView.getMenu().findItem(R.id.nav_overview).setChecked(false);
+        navigationView.getMenu().findItem(R.id.nav_year).setChecked(true);
+        LAST_SELECTED = R.id.nav_year;
+        Class fragmentClass = null;
+        fragment = null;
+        fragmentClass = ThisYearFragment.class;
+        try {
+            fragment = (android.support.v4.app.Fragment) fragmentClass.newInstance();
 
         } catch (Exception e) {
             e.printStackTrace();

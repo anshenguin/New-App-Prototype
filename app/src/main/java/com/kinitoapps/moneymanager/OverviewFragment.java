@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatTextView;
+import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -55,7 +56,7 @@ public class OverviewFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private NativeAd nativeAd;
-    private LinearLayout nativeAdContainer;
+    private CardView nativeAdContainer;
     private LinearLayout  adView;
     View root;
 
@@ -76,43 +77,50 @@ public class OverviewFragment extends Fragment {
                 }
 
                 // Add the Ad view into the ad container.
-                nativeAdContainer = (LinearLayout) root.findViewById(R.id.native_ad_container);
-                LayoutInflater inflater = LayoutInflater.from(getActivity());
-                // Inflate the Ad view.  The layout referenced should be the one you created in the last step.
-                adView = (LinearLayout) inflater.inflate(R.layout.native_ad_layout, nativeAdContainer, false);
-                nativeAdContainer.addView(adView);
+                try {
+                    if(getActivity()!=null) {
+                        nativeAdContainer = (CardView) root.findViewById(R.id.native_ad_container);
+                        LayoutInflater inflater = LayoutInflater.from(getActivity());
+                        // Inflate the Ad view.  The layout referenced should be the one you created in the last step.
+                        adView = (LinearLayout) inflater.inflate(R.layout.native_ad_card_layout, nativeAdContainer, false);
 
-                // Create native UI using the ad metadata.
-                ImageView nativeAdIcon = (ImageView) adView.findViewById(R.id.native_ad_icon);
-                TextView nativeAdTitle = (TextView) adView.findViewById(R.id.native_ad_title);
-                MediaView nativeAdMedia = (MediaView) adView.findViewById(R.id.native_ad_media);
-                TextView nativeAdSocialContext = (TextView) adView.findViewById(R.id.native_ad_social_context);
-                TextView nativeAdBody = (TextView) adView.findViewById(R.id.native_ad_body);
-                Button nativeAdCallToAction = (Button) adView.findViewById(R.id.native_ad_call_to_action);
+                        nativeAdContainer.addView(adView);
 
-                // Set the Text.
-                nativeAdTitle.setText(nativeAd.getAdTitle());
-                nativeAdSocialContext.setText(nativeAd.getAdSocialContext());
-                nativeAdBody.setText(nativeAd.getAdBody());
-                nativeAdCallToAction.setText(nativeAd.getAdCallToAction());
+                        // Create native UI using the ad metadata.
+                        ImageView nativeAdIcon = (ImageView) adView.findViewById(R.id.native_ad_icon);
+                        TextView nativeAdTitle = (TextView) adView.findViewById(R.id.native_ad_title);
+                        MediaView nativeAdMedia = (MediaView) adView.findViewById(R.id.native_ad_media);
+                        TextView nativeAdSocialContext = (TextView) adView.findViewById(R.id.native_ad_social_context);
+                        TextView nativeAdBody = (TextView) adView.findViewById(R.id.native_ad_body);
+                        Button nativeAdCallToAction = (Button) adView.findViewById(R.id.native_ad_call_to_action);
 
-                // Download and display the ad icon.
-                NativeAd.Image adIcon = nativeAd.getAdIcon();
-                NativeAd.downloadAndDisplayImage(adIcon, nativeAdIcon);
+                        // Set the Text.
+                        nativeAdTitle.setText(nativeAd.getAdTitle());
+                        nativeAdSocialContext.setText(nativeAd.getAdSocialContext());
+                        nativeAdBody.setText(nativeAd.getAdBody());
+                        nativeAdCallToAction.setText(nativeAd.getAdCallToAction());
 
-                // Download and display the cover image.
-                nativeAdMedia.setNativeAd(nativeAd);
+                        // Download and display the ad icon.
+                        NativeAd.Image adIcon = nativeAd.getAdIcon();
+                        NativeAd.downloadAndDisplayImage(adIcon, nativeAdIcon);
 
-                // Add the AdChoices icon
-                LinearLayout adChoicesContainer = (LinearLayout) root.findViewById(R.id.ad_choices_container);
-                AdChoicesView adChoicesView = new AdChoicesView(getActivity(), nativeAd, true);
-                adChoicesContainer.addView(adChoicesView);
+                        // Download and display the cover image.
+                        nativeAdMedia.setNativeAd(nativeAd);
 
-                // Register the Title and CTA button to listen for clicks.
-                List<View> clickableViews = new ArrayList<>();
-                clickableViews.add(nativeAdTitle);
-                clickableViews.add(nativeAdCallToAction);
-                nativeAd.registerViewForInteraction(nativeAdContainer,clickableViews);
+                        // Add the AdChoices icon
+                        LinearLayout adChoicesContainer = (LinearLayout) root.findViewById(R.id.ad_choices_container);
+                        AdChoicesView adChoicesView = new AdChoicesView(getActivity(), nativeAd, true);
+                        adChoicesContainer.addView(adChoicesView);
+
+                        // Register the Title and CTA button to listen for clicks.
+                        List<View> clickableViews = new ArrayList<>();
+                        clickableViews.add(nativeAdTitle);
+                        clickableViews.add(nativeAdCallToAction);
+                        nativeAd.registerViewForInteraction(nativeAdContainer, clickableViews);
+                    }
+                }catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
 
             @Override
@@ -127,7 +135,7 @@ public class OverviewFragment extends Fragment {
         });
 
         // Request an ad
-        nativeAd.loadAd();
+        nativeAd.loadAd(NativeAd.MediaCacheFlag.ALL);
     }
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -189,6 +197,42 @@ public class OverviewFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(getActivity(),EnterValueActivity.class));
+            }
+        });
+
+        CardView card_today = root.findViewById(R.id.card_today);
+        CardView card_yesterday = root.findViewById(R.id.card_yesterday);
+        CardView card_this_month = root.findViewById(R.id.card_month);
+        CardView card_this_year = root.findViewById(R.id.card_year);
+
+        card_this_year.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((home)getActivity()).replaceFragmentToThisYear();
+
+            }
+        });
+
+        card_this_month.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((home)getActivity()).replaceFragmentToThisMonth();
+
+            }
+        });
+
+        card_yesterday.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((home)getActivity()).replaceFragmentToYesterday();
+
+            }
+        });
+
+        card_today.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((home)getActivity()).replaceFragmentToToday();
             }
         });
         sum_spent = root.findViewById(R.id.sum_spent1);

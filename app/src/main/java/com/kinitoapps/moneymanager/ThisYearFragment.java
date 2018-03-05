@@ -36,6 +36,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.ads.Ad;
+import com.facebook.ads.AdSize;
+import com.facebook.ads.AdView;
 import com.kinitoapps.moneymanager.data.MoneyContract;
 import com.kinitoapps.moneymanager.data.MoneyDbHelper;
 import com.kinitoapps.moneymanager.piechart.PieGraph;
@@ -61,6 +64,7 @@ public class ThisYearFragment extends Fragment implements LoaderManager.LoaderCa
     private static final int MONEY_LOADER = 0;
     private static ArrayList<Long> mSelectedItemIds;
     MoneyCursorAdapter mCursorAdapter;
+    private AdView adView;
     private NonScrollListView moneyListView;
     private boolean isActionModeOn = false;
     private android.view.ActionMode mActionMode;
@@ -95,6 +99,15 @@ public class ThisYearFragment extends Fragment implements LoaderManager.LoaderCa
         args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (adView != null) {
+            adView.destroy();
+        }
+        super.onDestroy();
     }
 
     @Override
@@ -238,7 +251,7 @@ public class ThisYearFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_this_year, container, false);
+        final View root = inflater.inflate(R.layout.fragment_this_year, container, false);
         // Inflate the layout for this fragment
         // Create and/or open a database to read from it
 
@@ -302,6 +315,20 @@ public class ThisYearFragment extends Fragment implements LoaderManager.LoaderCa
                         moneyListView.startAnimation(slide);
                     }
                 }, 50);
+
+                handler.postDelayed(new Runnable() {
+                    public void run() {
+                        adView = new AdView(getActivity(), "174139459886109_174180053215383", AdSize.BANNER_HEIGHT_50);
+                        // Find the Ad Container
+                        LinearLayout adContainer = root.findViewById(R.id.banner_container);
+
+                        // Add the ad view to your activity layout
+                        adContainer.addView(adView);
+
+                        // Request an ad
+                        adView.loadAd();
+                    }
+                }, 200);
 
             }
 
