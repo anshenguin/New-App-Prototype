@@ -2,8 +2,10 @@ package com.kinitoapps.moneymanager;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -11,17 +13,21 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 
+import com.kinitoapps.moneymanager.tutorialviews.IntroActivity;
+
 /**
  * Created by HP INDIA on 18-Feb-18.
  */
 
 public class SplashActivity extends AppCompatActivity {
     private static final int WRITE_EXT_STORAGE = 100;
-
+    SharedPreferences firstRun;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        firstRun = getSharedPreferences("com.example.lockscreentest", Context.MODE_PRIVATE);
+
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
@@ -29,9 +35,16 @@ public class SplashActivity extends AppCompatActivity {
         }
 
         else{
-            Intent intent = new Intent(this, home.class);
-            startActivity(intent);
-            finish();
+            if(firstRun.getBoolean("firstrun",true)) {
+                Intent intent = new Intent(this, IntroActivity.class);
+                startActivity(intent);
+                finish();
+            }
+            else {
+                Intent intent = new Intent(this, home.class);
+                startActivity(intent);
+                finish();
+            }
         }
 
     }
@@ -45,9 +58,16 @@ public class SplashActivity extends AppCompatActivity {
 
                     // permission was granted, yay! Do the
                     // contacts-related task you need to do.
-                    Intent intent = new Intent(this, home.class);
-                    startActivity(intent);
-                    finish();
+                    if(firstRun.getBoolean("firstrun",true)) {
+                        Intent intent = new Intent(this, IntroActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
+                    else {
+                        Intent intent = new Intent(this, home.class);
+                        startActivity(intent);
+                        finish();
+                    }
 
                 } else {
 

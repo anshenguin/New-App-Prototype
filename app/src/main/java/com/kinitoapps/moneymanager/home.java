@@ -1,5 +1,7 @@
 package com.kinitoapps.moneymanager;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -12,12 +14,17 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -29,29 +36,57 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.CalendarView;
 import android.widget.DatePicker;
+import android.widget.Toast;
 
 import java.io.File;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
 
 public class home extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, TodayFragment.OnFragmentInteractionListener,YesterdayFragment.OnFragmentInteractionListener,ThisYearFragment.OnFragmentInteractionListener,ThisMonthFragment.OnFragmentInteractionListener, SelectedDateFragment.OnFragmentInteractionListener,OverviewFragment.OnFragmentInteractionListener, DatePickerDialog.OnDateSetListener{
     boolean mDrawerItemClicked = false;
     short clicked = 0;
-    short selected = 6;
+    short selected;
     boolean cancelledCalendar = false;
     boolean changedDate;
-    int LAST_SELECTED = R.id.nav_overview;
+    int LAST_SELECTED ;
     ActionBarDrawerToggle toggle;
     DrawerLayout drawer;
+    private static final int WRITE_EXT_STORAGE = 100;
+
     String currentDate;
+    String CHANNEL_ID = "Quick Entry";
     boolean isDateSelected = false;
     NavigationView navigationView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = getString(R.string.channel_entry);
+            String description = getString(R.string.channel_entry_description);
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, importance);
+            mChannel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = (NotificationManager) getSystemService(
+                    NOTIFICATION_SERVICE);
+            notificationManager.createNotificationChannel(mChannel);
 
+            name = getString(R.string.channel_daily_monthly);
+            description = getString(R.string.channel_daily_monthly_description);
+            importance = NotificationManager.IMPORTANCE_HIGH;
+            mChannel = new NotificationChannel("Daily and Monthly Limit", name, importance);
+            mChannel.setDescription(description);
+            mChannel.setVibrationPattern(new long[] { 1000, 1000});
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            notificationManager = (NotificationManager) getSystemService(
+                    NOTIFICATION_SERVICE);
+            notificationManager.createNotificationChannel(mChannel);
+        }
         String extStore = System.getenv("EXTERNAL_STORAGE");
         File file = new File(extStore+File.separator+"Money Manager"+File.separator+
                 "Database");
@@ -73,10 +108,10 @@ public class home extends AppCompatActivity
             Intent addIntent = new Intent();
             addIntent
                     .putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
-            addIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, "Enter Value");
+            addIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, "Create New Entry");
             addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE,
                     Intent.ShortcutIconResource.fromContext(getApplicationContext(),
-                            R.mipmap.ic_shortcut));
+                            R.mipmap.ic_shortcut_2));
             addIntent
                     .setAction("com.android.launcher.action.INSTALL_SHORTCUT");
             addIntent.putExtra("duplicate", false);  //may it's already there so don't duplicate
@@ -84,7 +119,27 @@ public class home extends AppCompatActivity
             firstRun.edit().putBoolean("firstrun",false).commit();
             sh.edit().putFloat("limit_today",0).commit();
             sh.edit().putFloat("limit_month",0).commit();
-            sharedPreferences.edit().putBoolean("SWITCH_NOTIFICATION",true).commit();
+            sharedPreferences.edit().putBoolean("SWITCH_NOTIFICATION",false).commit();
+        }
+
+        Intent i = getIntent();
+        Bundle b = i.getExtras();
+        if(b!=null){
+            if(b.getString("dailyormonthly").equals("daily")){
+                replaceFragmentToToday();
+                navigationView.getMenu().findItem(R.id.nav_overview).setChecked(false);
+                navigationView.getMenu().findItem(R.id.nav_today).setChecked(true);
+            }
+            else{
+                replaceFragmentToThisMonth();
+                navigationView.getMenu().findItem(R.id.nav_overview).setChecked(false);
+                navigationView.getMenu().findItem(R.id.nav_this_month).setChecked(true);
+            }
+        }
+        else{
+            LAST_SELECTED = R.id.nav_overview;
+            selected = 6;
+            navigationView.getMenu().findItem(R.id.nav_overview).setChecked(true);
         }
 
         if(sharedPreferences.getBoolean("SWITCH_NOTIFICATION",true))
@@ -114,8 +169,20 @@ public class home extends AppCompatActivity
 //                    Toast.makeText(home.this,"this is being called",Toast.LENGTH_LONG).show();
                     android.support.v4.app.Fragment fragment = null;
                     Class fragmentClass = null;
-                    if(clicked!=5 && clicked !=8)
+                    if(clicked!=5 && clicked !=8 && clicked !=7 && clicked !=9)
                         isDateSelected = false;
+                    if(clicked == 9)
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://kinitoapps.com/moneymanager/privacy.html")));
+
+                    if (clicked ==7){
+                        //TODO: SHARE ACTION
+                        Intent intent = new Intent(android.content.Intent.ACTION_SEND);
+                        intent.setType("text/plain");
+                        String shareBodyText = "Hey there! I use Money Manager for Android to manage my expenses efficiently. I recommend you to use it as well. Download link: https://bit.ly/2GEypBS";
+//                        intent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Subject/Title");
+                        intent.putExtra(android.content.Intent.EXTRA_TEXT, shareBodyText);
+                        startActivity(Intent.createChooser(intent, "Share app with others"));
+                    }
                     if (clicked == 8)
                         startActivity(new Intent(home.this, Settings.class));
                     else if (clicked == 6) {
@@ -288,7 +355,6 @@ public class home extends AppCompatActivity
 
             }
         });
-        navigationView.getMenu().findItem(R.id.nav_overview).setChecked(true);
         navigationView.setNavigationItemSelectedListener(this);
     }
 
@@ -298,8 +364,31 @@ public class home extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+
+            if(LAST_SELECTED == R.id.nav_overview)
+                super.onBackPressed();
+            else
+            {
+                android.support.v4.app.Fragment fragment = null;
+                Class fragmentClass = null;
+                fragmentClass = OverviewFragment.class;
+                try {
+                    fragment = (android.support.v4.app.Fragment) fragmentClass.newInstance();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_left).replace(R.id.flContent, fragment).commit();
+                clicked = 6;
+                selected = 6;
+                navigationView.getMenu().findItem(LAST_SELECTED).setChecked(false);
+                navigationView.getMenu().findItem(R.id.nav_overview).setChecked(true);
+                LAST_SELECTED = R.id.nav_overview;
+
+
+            }
         }
+
     }
 //workaround because opening settings does some weird stuff to today tab
 //    @Override
@@ -334,7 +423,7 @@ public class home extends AppCompatActivity
 //        // Handle navigation view item clicks here.
         int id = item.getItemId();
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        if(id!=R.id.nav_cal&&id!=R.id.nav_settings)
+        if(id!=R.id.nav_cal&&id!=R.id.nav_settings&&id!=R.id.nav_share)
         LAST_SELECTED = id;
         if (id == R.id.nav_today) {
             clicked = 1;
@@ -368,7 +457,11 @@ public class home extends AppCompatActivity
             clicked = 6;
             selected = 6;
         }
-
+        else if(id==R.id.nav_share){
+            clicked = 7;
+        }
+        else if(id==R.id.nav_priv)
+            clicked = 9;
         if(!cancelledCalendar) {
             mDrawerItemClicked = true;
             drawer.closeDrawer(GravityCompat.START);
@@ -387,51 +480,63 @@ public class home extends AppCompatActivity
         // Prepare intent which is triggered if the
         // notification is selected
 
-        if(Build.VERSION.SDK_INT< Build.VERSION_CODES.O) {
-            Intent intent = new Intent(this, EnterValueActivity.class);
-            PendingIntent pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, 0);
+//        if(Build.VERSION.SDK_INT< Build.VERSION_CODES.O) {
+//            Intent intent = new Intent(this, EnterValueActivity.class);
+//            PendingIntent pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, 0);
+//
+//            // Build notification
+//            // Actions are just fake
+//            Notification noti = new Notification.Builder(this)
+//                    .setContentTitle("Money Manager")
+//                    .setContentText("Click to add an entry").setSmallIcon(R.drawable.noti_wallet)
+//                    .setContentIntent(pIntent)
+//                    .setOngoing(true)
+//                    .build();
+//            NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+//            // hide the notification after its selected
+//        noti.flags = Notification.FLAG_NO_CLEAR|Notification.FLAG_ONGOING_EVENT;
+//            notificationManager.notify(0, noti);
+//        }
+//        else{
+//            NotificationManager mNotificationManager =
+//                    (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+//            Intent resultIntent = new Intent(this, EnterValueActivity.class);
+//            TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+//            stackBuilder.addParentStack(EnterValueActivity.class);
+//            stackBuilder.addNextIntent(resultIntent);
+//            PendingIntent resultPendingIntent =
+//                    stackBuilder.getPendingIntent(
+//                            0,
+//                            PendingIntent.FLAG_UPDATE_CURRENT
+//                    );
+//
+//            String id = "enter_channel";
+//            NotificationChannel mChannel = new NotificationChannel(id, "Money Manager", NotificationManager.IMPORTANCE_HIGH);
+//            mChannel.setDescription("Click here to add an entry");
+//            android.support.v4.app.NotificationCompat.Builder mBuilder = new android.support.v4.app.NotificationCompat.Builder(this,id)
+//                    .setContentTitle("Money Manager")
+//                    .setContentText("Click to add an entry").setSmallIcon(R.drawable.noti_wallet)
+//                    .setOngoing(true);
+//            mBuilder.setContentIntent(resultPendingIntent);
+//            mNotificationManager.notify(0, mBuilder.build());
+//
+//
+//
+//
+//        }
 
-            // Build notification
-            // Actions are just fake
-            Notification noti = new Notification.Builder(this)
-                    .setContentTitle("Money Manager")
-                    .setContentText("Click to add an entry").setSmallIcon(R.drawable.noti_wallet)
-                    .setContentIntent(pIntent)
-                    .setOngoing(true)
-                    .build();
-            NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-            // hide the notification after its selected
-        noti.flags = Notification.FLAG_NO_CLEAR|Notification.FLAG_ONGOING_EVENT;
-            notificationManager.notify(0, noti);
-        }
-        else{
-            NotificationManager mNotificationManager =
-                    (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-            Intent resultIntent = new Intent(this, EnterValueActivity.class);
-            TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-            stackBuilder.addParentStack(EnterValueActivity.class);
-            stackBuilder.addNextIntent(resultIntent);
-            PendingIntent resultPendingIntent =
-                    stackBuilder.getPendingIntent(
-                            0,
-                            PendingIntent.FLAG_UPDATE_CURRENT
-                    );
-
-            String id = "enter_channel";
-            NotificationChannel mChannel = new NotificationChannel(id, "Money Manager", NotificationManager.IMPORTANCE_HIGH);
-            mChannel.setDescription("Click here to add an entry");
-            android.support.v4.app.NotificationCompat.Builder mBuilder = new android.support.v4.app.NotificationCompat.Builder(this,id)
-                    .setContentTitle("Money Manager")
-                    .setContentText("Click to add an entry").setSmallIcon(R.drawable.noti_wallet)
-                    .setOngoing(true);
-            mBuilder.setContentIntent(resultPendingIntent);
-            mNotificationManager.notify(0, mBuilder.build());
-
-
-
-
-        }
-
+        Intent intent = new Intent(this, EnterValueActivity.class);
+//        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this,"Quick Entry")
+                .setSmallIcon(R.drawable.noti_wallet)
+                .setContentTitle("Quick Entry Notification")
+                .setContentText("Click to add an entry")
+                .setOngoing(true)
+                .setContentIntent(pendingIntent)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        notificationManager.notify(100, mBuilder.build());
     }
 
 //    @Override
@@ -471,6 +576,7 @@ public class home extends AppCompatActivity
 //            }
 //        });
 //        Toast.makeText(home.this,"isDateSelected="+isDateSelected,Toast.LENGTH_LONG).show();
+
 
         if(selected == 1){
             fragmentClass = TodayFragment.class;
@@ -627,6 +733,7 @@ public class home extends AppCompatActivity
         LAST_SELECTED = R.id.nav_today;
         Class fragmentClass = null;
         fragment = null;
+        selected = 1;
         fragmentClass = TodayFragment.class;
         try {
             fragment = (android.support.v4.app.Fragment) fragmentClass.newInstance();
@@ -638,6 +745,7 @@ public class home extends AppCompatActivity
         fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_left).replace(R.id.flContent, fragment,"date_fragment").commit();
     }
     public void replaceFragmentToYesterday(){
+        selected = 2;
         android.support.v4.app.Fragment fragment;
         navigationView.getMenu().findItem(R.id.nav_overview).setChecked(false);
         navigationView.getMenu().findItem(R.id.nav_yesterday).setChecked(true);
@@ -655,6 +763,7 @@ public class home extends AppCompatActivity
         fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_left).replace(R.id.flContent, fragment,"date_fragment").commit();
     }
     public void replaceFragmentToThisMonth(){
+        selected = 3;
         android.support.v4.app.Fragment fragment;
         navigationView.getMenu().findItem(R.id.nav_overview).setChecked(false);
         navigationView.getMenu().findItem(R.id.nav_this_month).setChecked(true);
@@ -672,6 +781,7 @@ public class home extends AppCompatActivity
         fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_left).replace(R.id.flContent, fragment,"date_fragment").commit();
     }
     public void replaceFragmentToThisYear(){
+        selected = 4;
         android.support.v4.app.Fragment fragment;
         navigationView.getMenu().findItem(R.id.nav_overview).setChecked(false);
         navigationView.getMenu().findItem(R.id.nav_year).setChecked(true);
@@ -687,6 +797,19 @@ public class home extends AppCompatActivity
         }
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_left).replace(R.id.flContent, fragment,"date_fragment").commit();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    WRITE_EXT_STORAGE);
+
+            Toast.makeText(this, "not allowed", Toast.LENGTH_SHORT).show();
+        }
+
     }
 }
 

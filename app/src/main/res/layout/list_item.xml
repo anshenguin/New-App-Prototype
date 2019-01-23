@@ -64,15 +64,6 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!--<TextView-->
-            <!--android:id="@+id/status"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:fontFamily="sans-serif-medium"-->
-            <!--android:text="Received"-->
-            <!--android:layout_gravity="end"-->
-            <!--android:textAppearance="?android:textAppearanceMedium"-->
-            <!--android:textColor="#2B3D4D" />-->
 
         <TextView
             android:id="@+id/date"

@@ -40,6 +40,17 @@
                 android:id="@+id/nav_settings"
                 android:icon="@drawable/ic_settings_black"
                 android:title="Settings" />
+
+    <item
+        android:id="@+id/nav_share"
+        android:icon="@drawable/ic_share_black_24dp"
+        android:title="Share this app" />
+
+
+    <item
+        android:id="@+id/nav_priv"
+        android:icon="@drawable/ic_share_black_24dp"
+        android:title="Privacy Policy" />
             <!--<item-->
                 <!--android:id="@+id/nav_about"-->
                 <!--android:icon="@drawable/ic_info_black_24dp"-->

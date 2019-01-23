@@ -1,6 +1,7 @@
 package com.kinitoapps.moneymanager;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.ContentValues;
 import android.content.Context;
@@ -11,7 +12,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.net.Uri;
+import android.os.Build;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
@@ -139,6 +143,31 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = getString(R.string.channel_entry);
+            String description = getString(R.string.channel_entry_description);
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel mChannel = new NotificationChannel("Quick Entry", name, importance);
+            mChannel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = (NotificationManager) getSystemService(
+                    NOTIFICATION_SERVICE);
+            notificationManager.createNotificationChannel(mChannel);
+
+            name = getString(R.string.channel_daily_monthly);
+            description = getString(R.string.channel_daily_monthly_description);
+            importance = NotificationManager.IMPORTANCE_HIGH;
+            mChannel = new NotificationChannel("Daily and Monthly Limit", name, importance);
+            mChannel.setVibrationPattern(new long[] { 1000, 1000});
+
+            mChannel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            notificationManager = (NotificationManager) getSystemService(
+                    NOTIFICATION_SERVICE);
+            notificationManager.createNotificationChannel(mChannel);
+        }
         mDbHelper = new MoneyDbHelper(this);
         sharedPreferences = getSharedPreferences("LIMIT", Context.MODE_PRIVATE);
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
@@ -392,27 +421,25 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
         if(limit_today<= getDailySumSpent()&&limit_today>0&&(getDailySumSpent()+oldValue-currentVal)<limit_today){
             // Build notification
             // Actions are just fake
-            Notification noti = new Notification.Builder(this)
+            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(EditActivity.this,"Daily and Monthly Limit")
+                    .setSmallIcon(R.drawable.noti_wallet)
                     .setContentTitle("DAILY LIMIT WARNING")
-                    .setContentText("You have exceeded your daily limit").setSmallIcon(R.drawable.noti_wallet)
-                    .setPriority(Notification.PRIORITY_HIGH)
-                    .setDefaults(Notification.DEFAULT_VIBRATE)
-                    .build();
-            NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-            // hide the notification after its selected
-            notificationManager.notify(1, noti);
+                    .setContentText("You have exceeded your daily limit")
+                    .setAutoCancel(true)
+                    .setPriority(NotificationCompat.PRIORITY_HIGH);
+            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(EditActivity.this);
+            notificationManager.notify(101, mBuilder.build());
         }
 
         if(limit_month<=getMonthlySumSpent()&&limit_month>0&&(getMonthlySumSpent()+oldValue-currentVal)<limit_month){
-            Notification noti = new Notification.Builder(this)
+            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(EditActivity.this,"Daily and Monthly Limit")
+                    .setSmallIcon(R.drawable.noti_wallet)
                     .setContentTitle("MONTHLY LIMIT WARNING")
-                    .setContentText("You have exceeded your monthly limit").setSmallIcon(R.drawable.noti_wallet)
-                    .setPriority(Notification.PRIORITY_HIGH)
-                    .setDefaults(Notification.DEFAULT_VIBRATE)
-                    .build();
-            NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-            // hide the notification after its selected
-            notificationManager.notify(2, noti);
+                    .setContentText("You have exceeded your monthly limit")
+                    .setAutoCancel(true)
+                    .setPriority(NotificationCompat.PRIORITY_HIGH);
+            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(EditActivity.this);
+            notificationManager.notify(102, mBuilder.build());
         }
 
         finish();

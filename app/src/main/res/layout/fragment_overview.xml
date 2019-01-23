@@ -34,8 +34,11 @@
             android:layout_marginRight="8dp"
             android:id="@+id/card_today"
             android:layout_marginBottom="16dp"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:clickable="true"
             app:cardCornerRadius="4dp"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:focusable="true">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -145,9 +148,12 @@
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             app:cardCornerRadius="4dp"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:clickable="true"
             android:id="@+id/card_yesterday"
             android:layout_marginBottom="16dp"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:focusable="true">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -258,8 +264,11 @@
             android:layout_marginRight="8dp"
             android:id="@+id/card_month"
             app:cardMaxElevation="2dp"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:clickable="true"
             android:layout_marginBottom="16dp"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:focusable="true">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -368,10 +377,13 @@
             android:layout_width="match_parent"
             app:cardMaxElevation="2dp"
             android:layout_marginBottom="16dp"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:clickable="true"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:id="@+id/card_year"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:focusable="true">
 
             <LinearLayout
                 android:layout_width="match_parent"

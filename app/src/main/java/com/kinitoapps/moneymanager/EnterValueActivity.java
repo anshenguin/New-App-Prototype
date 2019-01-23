@@ -1,14 +1,26 @@
 package com.kinitoapps.moneymanager;
+import android.Manifest;
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.net.Uri;
+import android.os.Build;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -37,6 +49,7 @@ import com.facebook.ads.MediaView;
 import com.facebook.ads.NativeAd;
 import com.kinitoapps.moneymanager.data.MoneyContract;
 import com.kinitoapps.moneymanager.data.MoneyDbHelper;
+import com.kinitoapps.moneymanager.tutorialviews.IntroActivity;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -64,6 +77,8 @@ public class EnterValueActivity extends AppCompatActivity {
     private NativeAd nativeAd;
     private LinearLayout nativeAdContainer;
     private LinearLayout  adView;
+    private static final int WRITE_EXT_STORAGE = 100;
+
     private int mStatus = MoneyContract.MoneyEntry.STATUS_UNKNOWN;
 
     private void showNativeAd() {
@@ -140,7 +155,31 @@ public class EnterValueActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = getString(R.string.channel_entry);
+            String description = getString(R.string.channel_entry_description);
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel mChannel = new NotificationChannel("Quick Entry", name, importance);
+            mChannel.setDescription(description);
 
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = (NotificationManager) getSystemService(
+                    NOTIFICATION_SERVICE);
+            notificationManager.createNotificationChannel(mChannel);
+
+            name = getString(R.string.channel_daily_monthly);
+            description = getString(R.string.channel_daily_monthly_description);
+            importance = NotificationManager.IMPORTANCE_HIGH;
+            mChannel = new NotificationChannel("Daily and Monthly Limit", name, importance);
+            mChannel.setDescription(description);
+            mChannel.setVibrationPattern(new long[] { 1000, 1000});
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            notificationManager = (NotificationManager) getSystemService(
+                    NOTIFICATION_SERVICE);
+            notificationManager.createNotificationChannel(mChannel);
+        }
         setContentView(R.layout.activity_enter_value);
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -159,7 +198,14 @@ public class EnterValueActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = canCallNow.edit();
         editor.putBoolean("CALL",false);
         editor.commit();
-        mDbHelper = new MoneyDbHelper(this);
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    WRITE_EXT_STORAGE);
+        }
+        else {
+            mDbHelper = new MoneyDbHelper(this);
+        }
         mDescEditText = findViewById(R.id.edit_desc);
         mValueEditText = findViewById(R.id.edit_value);
         mSaveButton = findViewById(R.id.saveValue);
@@ -268,33 +314,44 @@ public class EnterValueActivity extends AppCompatActivity {
     }
 
     private void checkForLimit(double currentVal){
-        //TODO: DONT CHECK FOR LIMIT IF ALREADY CHECKED TODAY
         float limit_today = sharedPreferences.getFloat("limit_today",0);
         float limit_month = sharedPreferences.getFloat("limit_month",0);
         if(limit_today<= getDailySumSpent()&&limit_today>0&&(getDailySumSpent()-currentVal)<limit_today){
             // Build notification
             // Actions are just fake
-            Notification noti = new Notification.Builder(this)
+            Intent intent = new Intent(this, home.class);
+            intent.putExtra("dailyormonthly","daily");
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(EnterValueActivity.this,"Daily and Monthly Limit")
+                    .setSmallIcon(R.drawable.noti_wallet)
                     .setContentTitle("DAILY LIMIT WARNING")
-                    .setContentText("You have exceeded your daily limit").setSmallIcon(R.drawable.noti_wallet)
-                    .setPriority(Notification.PRIORITY_HIGH)
-                    .setDefaults(Notification.DEFAULT_VIBRATE)
-                    .build();
-            NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-            // hide the notification after its selected
-            notificationManager.notify(1, noti);
+                    .setContentText("You have exceeded your daily limit")
+                    .setContentIntent(pendingIntent)
+                    .setAutoCancel(true)
+                    .setVibrate(new long[] { 1000, 1000})
+                    .setPriority(NotificationManagerCompat.IMPORTANCE_MAX);
+            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(EnterValueActivity.this);
+            notificationManager.notify(101, mBuilder.build());
+
         }
 
         if(limit_month<=getMonthlySumSpent()&&limit_month>0&&(getMonthlySumSpent()-currentVal)<limit_month){
-            Notification noti = new Notification.Builder(this)
+            Intent intent = new Intent(this, home.class);
+            intent.putExtra("dailyormonthly","monthly");
+
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(EnterValueActivity.this,"Daily and Monthly Limit")
+                    .setSmallIcon(R.drawable.noti_wallet)
                     .setContentTitle("MONTHLY LIMIT WARNING")
-                    .setContentText("You have exceeded your monthly limit").setSmallIcon(R.drawable.noti_wallet)
-                    .setPriority(Notification.PRIORITY_HIGH)
-                    .setDefaults(Notification.DEFAULT_VIBRATE)
-                    .build();
-            NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-            // hide the notification after its selected
-            notificationManager.notify(2, noti);
+                    .setContentText("You have exceeded your monthly limit")
+                    .setAutoCancel(true)
+                    .setVibrate(new long[] { 1000, 1000})
+                    .setContentIntent(pendingIntent)
+                    .setPriority(NotificationManagerCompat.IMPORTANCE_MAX);
+            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(EnterValueActivity.this);
+            notificationManager.notify(102, mBuilder.build());
         }
 
         finish();
@@ -369,5 +426,51 @@ public class EnterValueActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String permissions[], @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case WRITE_EXT_STORAGE: {
+                if (!(grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+                    android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(EnterValueActivity.this);
+                    builder.setTitle("Warning");
+                    builder.setMessage("Please allow Money Manager to save its database on your device to proceed...");
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            // User clicked OK button
+                            if (ContextCompat.checkSelfPermission(EnterValueActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                                ActivityCompat.requestPermissions(EnterValueActivity.this,
+                                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                        WRITE_EXT_STORAGE);
+                            }
+                        }
+                    });
+                    builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialogInterface) {
+                            if (ContextCompat.checkSelfPermission(EnterValueActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                                ActivityCompat.requestPermissions(EnterValueActivity.this,
+                                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                        WRITE_EXT_STORAGE);
+                            }
+                        }
+                    });
+                    builder.show();
+
+                }
+
+                else{
+                    mDbHelper = new MoneyDbHelper(this);
+                }
+
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request.
+        }
     }
 }

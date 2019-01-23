@@ -13,5 +13,9 @@
 
     <!-- Subtitle text for the empty view that prompts the user to add a pet [CHAR LIMIT=50] -->
     <string name="empty_view_subtitle_text">Tap the button below to add an entry&#8230;</string>
+    <string name="channel_entry">Quick Entry Notification</string>
+    <string name="channel_entry_description">Show entry notification on status bar</string>
+    <string name="channel_daily_monthly">Daily and Monthly Limit Warnings</string>
+    <string name="channel_daily_monthly_description">Show a notification when daily or monthly limit is exceeded</string>
 
 </resources>

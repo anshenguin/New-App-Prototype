@@ -9,10 +9,16 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ShortcutInfo;
+import android.content.pm.ShortcutManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.drawable.Icon;
 import android.os.Build;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.support.v4.content.pm.ShortcutManagerCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SwitchCompat;
@@ -29,6 +35,7 @@ import android.widget.Toast;
 
 import com.kinitoapps.moneymanager.data.MoneyContract;
 import com.kinitoapps.moneymanager.data.MoneyDbHelper;
+import com.kinitoapps.moneymanager.tutorialviews.IntroActivity;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -44,7 +51,31 @@ public class Settings extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         android.support.v7.app.ActionBar ab = getSupportActionBar();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = getString(R.string.channel_entry);
+            String description = getString(R.string.channel_entry_description);
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel mChannel = new NotificationChannel("Quick Entry", name, importance);
+            mChannel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = (NotificationManager) getSystemService(
+                    NOTIFICATION_SERVICE);
+            notificationManager.createNotificationChannel(mChannel);
 
+            name = getString(R.string.channel_daily_monthly);
+            description = getString(R.string.channel_daily_monthly_description);
+            importance = NotificationManager.IMPORTANCE_HIGH;
+            mChannel = new NotificationChannel("Daily and Monthly Limit", name, importance);
+            mChannel.setDescription(description);
+            mChannel.setVibrationPattern(new long[] { 1000, 1000});
+
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            notificationManager = (NotificationManager) getSystemService(
+                    NOTIFICATION_SERVICE);
+            notificationManager.createNotificationChannel(mChannel);
+        }
         setContentView(R.layout.activity_settings);
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
@@ -53,10 +84,16 @@ public class Settings extends AppCompatActivity {
         final SwitchCompat switch_notification = findViewById(R.id.switch_notification);
         LinearLayout createShortcut = findViewById(R.id.create_shortcut);
         LinearLayout setDailyLimit = findViewById(R.id.set_daily_limit);
-        LinearLayout setMonthlyLimit =
-
-
-                findViewById(R.id.set_monthly_limit);
+        LinearLayout setMonthlyLimit = findViewById(R.id.set_monthly_limit);
+        LinearLayout viewTutorial = findViewById(R.id.view_intro);
+        viewTutorial.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(Settings.this, IntroActivity.class);
+                i.putExtra("openedFromSettings","yes");
+                startActivity(i);
+            }
+        });
         sharedPreferences = getSharedPreferences("LIMIT", Context.MODE_PRIVATE);
 
 
@@ -167,58 +204,67 @@ public class Settings extends AppCompatActivity {
                 if(switch_notification.isChecked()){
                     editor.putBoolean("SWITCH_NOTIFICATION",true);
                     editor.commit();
-                    if(Build.VERSION.SDK_INT< Build.VERSION_CODES.O) {
-                        Intent intent = new Intent(Settings.this, EnterValueActivity.class);
-                        PendingIntent pIntent = PendingIntent.getActivity(Settings.this, (int) System.currentTimeMillis(), intent, 0);
+//                    if(Build.VERSION.SDK_INT< Build.VERSION_CODES.O) {
+//                        Intent intent = new Intent(Settings.this, EnterValueActivity.class);
+//                        PendingIntent pIntent = PendingIntent.getActivity(Settings.this, (int) System.currentTimeMillis(), intent, 0);
+//
+//                        // Build notification
+//                        // Actions are just fake
+//                        Notification noti = new Notification.Builder(Settings.this)
+//                                .setContentTitle("Money Manager")
+//                                .setContentText("Click to add an entry").setSmallIcon(R.drawable.noti_wallet)
+//                                .setContentIntent(pIntent)
+//                                .setOngoing(true)
+//                                .build();
+//                        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+//                        // hide the notification after its selected
+//        noti.flags = Notification.FLAG_NO_CLEAR|Notification.FLAG_ONGOING_EVENT;
+//
+//                        notificationManager.notify(0, noti);
+//                    }
+//                    else{
+//                        NotificationManager mNotificationManager =
+//                                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+//                        Intent resultIntent = new Intent(Settings.this, EnterValueActivity.class);
+//                        TaskStackBuilder stackBuilder = TaskStackBuilder.create(Settings.this);
+//                        stackBuilder.addParentStack(EnterValueActivity.class);
+//                        stackBuilder.addNextIntent(resultIntent);
+//                        PendingIntent resultPendingIntent =
+//                                stackBuilder.getPendingIntent(
+//                                        0,
+//                                        PendingIntent.FLAG_UPDATE_CURRENT
+//                                );
+//
+//                        String id = "enter_channel";
+//                        NotificationChannel mChannel = new NotificationChannel(id, "Money Manager", NotificationManager.IMPORTANCE_HIGH);
+//                        mChannel.setDescription("Click here to add an entry");
+//                        android.support.v4.app.NotificationCompat.Builder mBuilder = new android.support.v4.app.NotificationCompat.Builder(Settings.this,id)
+//                                .setContentTitle("Money Manager")
+//                                .setContentText("Click to add an entry").setSmallIcon(R.drawable.noti_wallet)
+//                                .setOngoing(true);
+//                        mBuilder.setContentIntent(resultPendingIntent);
+//                        mNotificationManager.notify(0, mBuilder.build());
 
-                        // Build notification
-                        // Actions are just fake
-                        Notification noti = new Notification.Builder(Settings.this)
-                                .setContentTitle("Money Manager")
-                                .setContentText("Click to add an entry").setSmallIcon(R.drawable.noti_wallet)
-                                .setContentIntent(pIntent)
-                                .setOngoing(true)
-                                .build();
-                        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-                        // hide the notification after its selected
-        noti.flags = Notification.FLAG_NO_CLEAR|Notification.FLAG_ONGOING_EVENT;
+                    Intent intent = new Intent(Settings.this, EnterValueActivity.class);
+//                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    PendingIntent pendingIntent = PendingIntent.getActivity(Settings.this, 0, intent, 0);
+                    NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(Settings.this,"Quick Entry")
+                            .setSmallIcon(R.drawable.noti_wallet)
+                            .setContentTitle("Quick Entry Notification")
+                            .setContentText("Click to add an entry")
+                            .setOngoing(true)
+                            .setContentIntent(pendingIntent)
+                            .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+                    NotificationManagerCompat notificationManager = NotificationManagerCompat.from(Settings.this);
+                    notificationManager.notify(100, mBuilder.build());
 
-                        notificationManager.notify(0, noti);
+
                     }
-                    else{
-                        NotificationManager mNotificationManager =
-                                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-                        Intent resultIntent = new Intent(Settings.this, EnterValueActivity.class);
-                        TaskStackBuilder stackBuilder = TaskStackBuilder.create(Settings.this);
-                        stackBuilder.addParentStack(EnterValueActivity.class);
-                        stackBuilder.addNextIntent(resultIntent);
-                        PendingIntent resultPendingIntent =
-                                stackBuilder.getPendingIntent(
-                                        0,
-                                        PendingIntent.FLAG_UPDATE_CURRENT
-                                );
-
-                        String id = "enter_channel";
-                        NotificationChannel mChannel = new NotificationChannel(id, "Money Manager", NotificationManager.IMPORTANCE_HIGH);
-                        mChannel.setDescription("Click here to add an entry");
-                        android.support.v4.app.NotificationCompat.Builder mBuilder = new android.support.v4.app.NotificationCompat.Builder(Settings.this,id)
-                                .setContentTitle("Money Manager")
-                                .setContentText("Click to add an entry").setSmallIcon(R.drawable.noti_wallet)
-                                .setOngoing(true);
-                        mBuilder.setContentIntent(resultPendingIntent);
-                        mNotificationManager.notify(0, mBuilder.build());
-
-
-
-
-                    }
-                }
-
                 else{
                     editor.putBoolean("SWITCH_NOTIFICATION",false);
                     editor.commit();
-                    NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-                    notificationManager.cancel(0);
+                    NotificationManagerCompat notificationManager = NotificationManagerCompat.from(Settings.this);
+                    notificationManager.cancel(100);
                 }
             }
         });
@@ -242,23 +288,49 @@ public class Settings extends AppCompatActivity {
 
     private void createEnterValueActivityShortcut() {
 
-        Intent shortcutIntent = new Intent(getApplicationContext(),
-                EnterValueActivity.class);
-        shortcutIntent.setAction(Intent.ACTION_MAIN);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            ShortcutManager mShortcutManager =
+                    getApplicationContext().getSystemService(ShortcutManager.class);
+            if (mShortcutManager.isRequestPinShortcutSupported()) {
 
-        Intent addIntent = new Intent();
-        addIntent
-                .putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
-        addIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, "Enter Value");
-        addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE,
-                Intent.ShortcutIconResource.fromContext(getApplicationContext(),
-                        R.mipmap.ic_shortcut));
+                ShortcutInfo pinShortcutInfo = new ShortcutInfo.Builder(getApplicationContext(), "entry-shortcut")
+                        .setIcon(Icon.createWithResource(getApplicationContext(), R.mipmap.ic_shortcut_2))
 
-        addIntent
-                .setAction("com.android.launcher.action.INSTALL_SHORTCUT");
-        addIntent.putExtra("duplicate", false);  //may it's already there so don't duplicate
-        getApplicationContext().sendBroadcast(addIntent);
-    }
+                        .setShortLabel("Create New Entry")
+                        .setIntent(new Intent(this, EnterValueActivity.class).setAction(Intent.ACTION_MAIN))
+                        .build();
+                Intent pinnedShortcutCallbackIntent =
+                        mShortcutManager.createShortcutResultIntent(pinShortcutInfo);
+                PendingIntent successCallback = PendingIntent.getBroadcast(getApplicationContext(), 0,
+                        pinnedShortcutCallbackIntent, 0);
+                mShortcutManager.requestPinShortcut(pinShortcutInfo,
+                        successCallback.getIntentSender());
+            }
+        }
+        else {
+            Intent shortcutIntent = new Intent(getApplicationContext(),
+                    EnterValueActivity.class);
+            shortcutIntent.setAction(Intent.ACTION_MAIN);
+
+            Intent addIntent = new Intent();
+            addIntent
+                    .putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
+            addIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, "Create New Entry");
+            addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE,
+                    Intent.ShortcutIconResource.fromContext(getApplicationContext(),
+                            R.mipmap.ic_shortcut_2));
+
+            addIntent
+                    .setAction("com.android.launcher.action.INSTALL_SHORTCUT");
+            addIntent.putExtra("duplicate", false);  //may it's already there so don't duplicate
+            getApplicationContext().sendBroadcast(addIntent);
+        }
+
+
+
+        }
+
+
 
     /**
      * Created by HP INDIA on 04-Jan-18.

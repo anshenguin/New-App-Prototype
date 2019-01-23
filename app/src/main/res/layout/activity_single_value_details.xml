@@ -105,7 +105,7 @@
         android:drawablePadding="4dp"
         android:paddingLeft="16dp"
         android:paddingRight="36dp"
-        android:text="EDIT VALUES"
+        android:text="EDIT THIS ENTRY"
         android:fontFamily="@font/bold_oxygen"
         android:textColor="#212121"
         android:drawableLeft="@drawable/ic_action_edit"

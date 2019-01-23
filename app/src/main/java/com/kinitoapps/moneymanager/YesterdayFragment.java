@@ -303,6 +303,8 @@ public class YesterdayFragment extends Fragment implements LoaderManager.LoaderC
 //        pg.setInterpolator(new DecelerateInterpolator());
         pg.setDuration(1000);//default if unspecified is 300 ms
         final Animation slide = AnimationUtils.loadAnimation(getActivity(), R.anim.enter_from_left);
+        slide.setDuration(700);
+
         pg.setAnimationListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
@@ -317,17 +319,24 @@ public class YesterdayFragment extends Fragment implements LoaderManager.LoaderC
 
                 handler.postDelayed(new Runnable() {
                     public void run() {
-                        adView = new AdView(getActivity(), "174139459886109_174180053215383", AdSize.BANNER_HEIGHT_50);
-                        // Find the Ad Container
-                        LinearLayout adContainer = root.findViewById(R.id.banner_container);
+                        try {
+                            if(getActivity()!=null) {
+                                adView = new AdView(getActivity(), "174139459886109_174180053215383", AdSize.BANNER_HEIGHT_50);
+                                // Find the Ad Container
+                                LinearLayout adContainer = root.findViewById(R.id.banner_container);
 
-                        // Add the ad view to your activity layout
-                        adContainer.addView(adView);
+                                // Add the ad view to your activity layout
+                                adContainer.addView(adView);
 
-                        // Request an ad
-                        adView.loadAd();
+                                // Request an ad
+                                adView.loadAd();
+                            }
+                        }catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 }, 200);
+
 
             }
 
