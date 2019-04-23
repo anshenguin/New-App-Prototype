@@ -11,7 +11,7 @@
         <item
             android:id="@+id/nav_today"
             android:icon="@drawable/ic_today"
-            android:title="Today" />
+            android:title="Daily" />
         <item
             android:id="@+id/nav_yesterday"
             android:icon="@drawable/ic_yesterday"
@@ -19,17 +19,17 @@
         <item
             android:id="@+id/nav_this_month"
             android:icon="@drawable/ic_this_month"
-            android:title="This Month" />
+            android:title="Monthly" />
 
             <item
                 android:id="@+id/nav_year"
                 android:icon="@drawable/ic_this_year"
-                android:title="This Year" />
+                android:title="Yearly" />
 
             <item
                 android:id="@+id/nav_cal"
                 android:icon="@drawable/ic_date_range_black_24dp"
-                android:title="Select a Date" />
+                android:title="Select Time Frame" />
         </item>
 
     </group>
@@ -49,7 +49,7 @@
 
     <item
         android:id="@+id/nav_priv"
-        android:icon="@drawable/ic_share_black_24dp"
+        android:icon="@drawable/ic_format_align_left_black_24dp"
         android:title="Privacy Policy" />
             <!--<item-->
                 <!--android:id="@+id/nav_about"-->
