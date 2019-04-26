@@ -1,12 +1,10 @@
 package com.kinitoapps.moneymanager;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -18,21 +16,20 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
-import android.support.v4.app.TaskStackBuilder;
-import android.support.v4.content.ContextCompat;
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.FragmentManager;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import com.google.android.material.navigation.NavigationView;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.CalendarView;
 import android.widget.DatePicker;
@@ -42,7 +39,6 @@ import java.io.File;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Objects;
 
 public class home extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, TodayFragment.OnFragmentInteractionListener,YesterdayFragment.OnFragmentInteractionListener,ThisYearFragment.OnFragmentInteractionListener,ThisMonthFragment.OnFragmentInteractionListener, SelectedDateFragment.OnFragmentInteractionListener,OverviewFragment.OnFragmentInteractionListener, DatePickerDialog.OnDateSetListener{
@@ -167,7 +163,8 @@ public class home extends AppCompatActivity
 
                 if(mDrawerItemClicked) {
 //                    Toast.makeText(home.this,"this is being called",Toast.LENGTH_LONG).show();
-                    android.support.v4.app.Fragment fragment = null;
+                    androidx.fragment.app.Fragment
+                            fragment = null;
                     Class fragmentClass = null;
                     if(clicked!=5 && clicked !=8 && clicked !=7 && clicked !=9)
                         isDateSelected = false;
@@ -189,7 +186,7 @@ public class home extends AppCompatActivity
                         selected = 6;
                         fragmentClass = OverviewFragment.class;
                         try {
-                            fragment = (android.support.v4.app.Fragment) fragmentClass.newInstance();
+                            fragment = (androidx.fragment.app.Fragment) fragmentClass.newInstance();
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -201,7 +198,7 @@ public class home extends AppCompatActivity
                         selected = 1;
                         fragmentClass = TodayFragment.class;
                         try {
-                            fragment = (android.support.v4.app.Fragment) fragmentClass.newInstance();
+                            fragment = (androidx.fragment.app.Fragment) fragmentClass.newInstance();
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -214,7 +211,7 @@ public class home extends AppCompatActivity
                         selected = 2;
                         fragmentClass = YesterdayFragment.class;
                         try {
-                            fragment = (android.support.v4.app.Fragment) fragmentClass.newInstance();
+                            fragment = (androidx.fragment.app.Fragment) fragmentClass.newInstance();
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -226,7 +223,7 @@ public class home extends AppCompatActivity
                         selected = 3;
                         fragmentClass = ThisMonthFragment.class;
                         try {
-                            fragment = (android.support.v4.app.Fragment) fragmentClass.newInstance();
+                            fragment = (androidx.fragment.app.Fragment) fragmentClass.newInstance();
 
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -239,7 +236,7 @@ public class home extends AppCompatActivity
                         selected = 4;
                         fragmentClass = ThisYearFragment.class;
                         try {
-                            fragment = (android.support.v4.app.Fragment) fragmentClass.newInstance();
+                            fragment = (androidx.fragment.app.Fragment) fragmentClass.newInstance();
 
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -253,6 +250,7 @@ public class home extends AppCompatActivity
                         if(Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
                             AlertDialog.Builder builder = new AlertDialog.Builder(home.this);
                             builder.setTitle("Select a Date");
+
                             builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
                                 @Override
                                 public void onDismiss(DialogInterface dialogInterface) {
@@ -300,10 +298,10 @@ public class home extends AppCompatActivity
                                     Bundle bundle = new Bundle();
                                     bundle.putString("Date", currentDate);
                                     Class fragmentClass = null;
-                                    android.support.v4.app.Fragment fragment = null;
+                                    androidx.fragment.app.Fragment fragment = null;
                                     fragmentClass = SelectedDateFragment.class;
                                     try {
-                                        fragment = (android.support.v4.app.Fragment) fragmentClass.newInstance();
+                                        fragment = (androidx.fragment.app.Fragment) fragmentClass.newInstance();
                                         fragment.setArguments(bundle);
 
                                     } catch (Exception e) {
@@ -369,11 +367,11 @@ public class home extends AppCompatActivity
                 super.onBackPressed();
             else
             {
-                android.support.v4.app.Fragment fragment = null;
+                androidx.fragment.app.Fragment fragment = null;
                 Class fragmentClass = null;
                 fragmentClass = OverviewFragment.class;
                 try {
-                    fragment = (android.support.v4.app.Fragment) fragmentClass.newInstance();
+                    fragment = (androidx.fragment.app.Fragment) fragmentClass.newInstance();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -551,7 +549,7 @@ public class home extends AppCompatActivity
         super.onPostResume();
 //        Toast.makeText(this,"onPostResume",Toast.LENGTH_SHORT).show();
 
-        android.support.v4.app.Fragment fragment = null;
+        androidx.fragment.app.Fragment fragment = null;
         Class fragmentClass = null;
 //        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 //        drawer.addDrawerListener(new DrawerLayout.DrawerListener() {
@@ -581,7 +579,7 @@ public class home extends AppCompatActivity
         if(selected == 1){
             fragmentClass = TodayFragment.class;
             try {
-                fragment = (android.support.v4.app.Fragment) fragmentClass.newInstance();
+                fragment = (androidx.fragment.app.Fragment) fragmentClass.newInstance();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -591,7 +589,7 @@ public class home extends AppCompatActivity
         else if(selected == 2){
             fragmentClass = YesterdayFragment.class;
             try {
-                fragment = (android.support.v4.app.Fragment) fragmentClass.newInstance();
+                fragment = (androidx.fragment.app.Fragment) fragmentClass.newInstance();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -602,7 +600,7 @@ public class home extends AppCompatActivity
         else if(selected == 3){
             fragmentClass = ThisMonthFragment.class;
             try {
-                fragment = (android.support.v4.app.Fragment) fragmentClass.newInstance();
+                fragment = (androidx.fragment.app.Fragment) fragmentClass.newInstance();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -612,7 +610,7 @@ public class home extends AppCompatActivity
         else if(selected == 4){
             fragmentClass = ThisYearFragment.class;
             try {
-                fragment = (android.support.v4.app.Fragment) fragmentClass.newInstance();
+                fragment = (androidx.fragment.app.Fragment) fragmentClass.newInstance();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -638,7 +636,7 @@ public class home extends AppCompatActivity
                     fragment = null;
                     fragmentClass = SelectedDateFragment.class;
                     try {
-                        fragment = (android.support.v4.app.Fragment) fragmentClass.newInstance();
+                        fragment = (androidx.fragment.app.Fragment) fragmentClass.newInstance();
                         fragment.setArguments(bundle);
 
                     } catch (Exception e) {
@@ -651,7 +649,7 @@ public class home extends AppCompatActivity
         else if (selected == 6) {
             fragmentClass = OverviewFragment.class;
             try {
-                fragment = (android.support.v4.app.Fragment) fragmentClass.newInstance();
+                fragment = (androidx.fragment.app.Fragment) fragmentClass.newInstance();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -664,7 +662,7 @@ public class home extends AppCompatActivity
 
     public void disableDrawer(){
         drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-        toggle.onDrawerStateChanged(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        toggle.onDrawerStateChanged(DrawerLayout.STATE_IDLE);
         toggle.setDrawerIndicatorEnabled(false);
         toggle.syncState();
     }
@@ -709,14 +707,14 @@ public class home extends AppCompatActivity
         if (((month + 1) / 10) < 1)
             monthS = "0" + monthS;
         currentDate = dayS + "-" + monthS + "-" + year;
-        android.support.v4.app.Fragment fragment;
+        androidx.fragment.app.Fragment fragment;
         Bundle bundle = new Bundle();
         bundle.putString("Date", currentDate);
         Class fragmentClass = null;
         fragment = null;
         fragmentClass = SelectedDateFragment.class;
         try {
-            fragment = (android.support.v4.app.Fragment) fragmentClass.newInstance();
+            fragment = (androidx.fragment.app.Fragment) fragmentClass.newInstance();
             fragment.setArguments(bundle);
 
         } catch (Exception e) {
@@ -727,7 +725,7 @@ public class home extends AppCompatActivity
     }
 
     public void replaceFragmentToToday(){
-        android.support.v4.app.Fragment fragment;
+        androidx.fragment.app.Fragment fragment;
         navigationView.getMenu().findItem(R.id.nav_overview).setChecked(false);
         navigationView.getMenu().findItem(R.id.nav_today).setChecked(true);
         LAST_SELECTED = R.id.nav_today;
@@ -736,7 +734,7 @@ public class home extends AppCompatActivity
         selected = 1;
         fragmentClass = TodayFragment.class;
         try {
-            fragment = (android.support.v4.app.Fragment) fragmentClass.newInstance();
+            fragment = (androidx.fragment.app.Fragment) fragmentClass.newInstance();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -746,7 +744,7 @@ public class home extends AppCompatActivity
     }
     public void replaceFragmentToYesterday(){
         selected = 2;
-        android.support.v4.app.Fragment fragment;
+        androidx.fragment.app.Fragment fragment;
         navigationView.getMenu().findItem(R.id.nav_overview).setChecked(false);
         navigationView.getMenu().findItem(R.id.nav_yesterday).setChecked(true);
         LAST_SELECTED = R.id.nav_yesterday;
@@ -754,7 +752,7 @@ public class home extends AppCompatActivity
         fragment = null;
         fragmentClass = YesterdayFragment.class;
         try {
-            fragment = (android.support.v4.app.Fragment) fragmentClass.newInstance();
+            fragment = (androidx.fragment.app.Fragment) fragmentClass.newInstance();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -764,7 +762,7 @@ public class home extends AppCompatActivity
     }
     public void replaceFragmentToThisMonth(){
         selected = 3;
-        android.support.v4.app.Fragment fragment;
+        androidx.fragment.app.Fragment fragment;
         navigationView.getMenu().findItem(R.id.nav_overview).setChecked(false);
         navigationView.getMenu().findItem(R.id.nav_this_month).setChecked(true);
         LAST_SELECTED = R.id.nav_this_month;
@@ -772,7 +770,7 @@ public class home extends AppCompatActivity
         fragment = null;
         fragmentClass = ThisMonthFragment.class;
         try {
-            fragment = (android.support.v4.app.Fragment) fragmentClass.newInstance();
+            fragment = (androidx.fragment.app.Fragment) fragmentClass.newInstance();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -782,7 +780,7 @@ public class home extends AppCompatActivity
     }
     public void replaceFragmentToThisYear(){
         selected = 4;
-        android.support.v4.app.Fragment fragment;
+        androidx.fragment.app.Fragment fragment;
         navigationView.getMenu().findItem(R.id.nav_overview).setChecked(false);
         navigationView.getMenu().findItem(R.id.nav_year).setChecked(true);
         LAST_SELECTED = R.id.nav_year;
@@ -790,7 +788,7 @@ public class home extends AppCompatActivity
         fragment = null;
         fragmentClass = ThisYearFragment.class;
         try {
-            fragment = (android.support.v4.app.Fragment) fragmentClass.newInstance();
+            fragment = (androidx.fragment.app.Fragment) fragmentClass.newInstance();
 
         } catch (Exception e) {
             e.printStackTrace();

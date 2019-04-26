@@ -10,35 +10,29 @@ import android.content.Intent;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteException;
 import android.graphics.Color;
-import android.opengl.Visibility;
 import android.os.Handler;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.LoaderManager;
+import androidx.fragment.app.FragmentManager;
+import androidx.loader.app.LoaderManager;
 import android.content.Context;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
+import androidx.loader.content.CursorLoader;
+import androidx.loader.content.Loader;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.AppCompatTextView;
-import android.support.v7.widget.RecyclerView;
+import androidx.fragment.app.Fragment;
+import androidx.appcompat.widget.AppCompatTextView;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.ads.AdSize;
@@ -759,12 +753,12 @@ public class ThisMonthFragment extends Fragment implements LoaderManager.LoaderC
 
         mActionMode.finish();
 
-        android.support.v4.app.Fragment fragment = null;
+        androidx.fragment.app.Fragment fragment = null;
         Class fragmentClass = null;
 
         fragmentClass = ThisMonthFragment.class;
         try {
-            fragment = (android.support.v4.app.Fragment) fragmentClass.newInstance();
+            fragment = (androidx.fragment.app.Fragment) fragmentClass.newInstance();
         } catch (Exception e) {
             e.printStackTrace();
         }

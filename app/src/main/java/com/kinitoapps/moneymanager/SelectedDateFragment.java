@@ -7,43 +7,33 @@ import android.app.AlertDialog;
 import android.content.ContentUris;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteException;
 import android.graphics.Color;
-import android.opengl.Visibility;
 import android.os.Handler;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.LoaderManager;
+import androidx.fragment.app.FragmentManager;
+import androidx.loader.app.LoaderManager;
 import android.content.Context;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
+import androidx.loader.content.CursorLoader;
+import androidx.loader.content.Loader;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v7.view.ActionMode;
-import android.support.v7.widget.AppCompatTextView;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.appcompat.view.ActionMode;
+import androidx.appcompat.widget.AppCompatTextView;
+import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
-import android.util.SparseBooleanArray;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.animation.DecelerateInterpolator;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -55,10 +45,7 @@ import com.kinitoapps.moneymanager.piechart.PieGraph;
 import com.kinitoapps.moneymanager.piechart.PieSlice;
 
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
 
 
 /**
@@ -753,12 +740,12 @@ public class SelectedDateFragment extends Fragment implements LoaderManager.Load
 
         mActionMode.finish();
 
-        android.support.v4.app.Fragment fragment = null;
+        androidx.fragment.app.Fragment fragment = null;
         Class fragmentClass = null;
 
         fragmentClass = TodayFragment.class;
         try {
-            fragment = (android.support.v4.app.Fragment) fragmentClass.newInstance();
+            fragment = (androidx.fragment.app.Fragment) fragmentClass.newInstance();
         } catch (Exception e) {
             e.printStackTrace();
         }

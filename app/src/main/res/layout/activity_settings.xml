@@ -23,7 +23,7 @@
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
                 android:orientation="horizontal">
-                <android.support.v7.widget.SwitchCompat
+                <androidx.appcompat.widget.SwitchCompat
                     android:layout_width="match_parent"
                     android:text="Quick Entry Notification"
                     android:layout_gravity="center_vertical"

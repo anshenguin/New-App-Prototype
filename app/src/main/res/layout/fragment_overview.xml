@@ -7,7 +7,7 @@
 
     <!-- TODO: Update blank fragment layout -->
 
-    <android.support.v4.widget.NestedScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
     <RelativeLayout
@@ -28,7 +28,7 @@
     android:textSize="20sp"
     android:gravity="center"/>
 
-        <android.support.v7.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
@@ -80,7 +80,7 @@
 
                             android:fontFamily="@font/bold_oxygen" />
 
-                        <android.support.v7.widget.AppCompatTextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:layout_width="match_parent"
                             android:layout_height="32dp"
                             android:text="100000000"
@@ -123,7 +123,7 @@
                             android:textColor="#E02E2E"
                             android:fontFamily="@font/bold_oxygen"/>
 
-                        <android.support.v7.widget.AppCompatTextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:layout_width="match_parent"
                             android:layout_height="32dp"
                             android:id="@+id/sum_spent1"
@@ -140,9 +140,9 @@
                 </LinearLayout>
 
             </LinearLayout>
-        </android.support.v7.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
-        <android.support.v7.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             app:cardMaxElevation="2dp"
             android:layout_marginLeft="8dp"
@@ -195,7 +195,7 @@
 
                             android:fontFamily="@font/bold_oxygen" />
 
-                        <android.support.v7.widget.AppCompatTextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:layout_width="match_parent"
                             android:layout_height="32dp"
                             android:text="100000000"
@@ -238,7 +238,7 @@
                             android:textColor="#E02E2E"
                             android:fontFamily="@font/bold_oxygen"/>
 
-                        <android.support.v7.widget.AppCompatTextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:layout_width="match_parent"
                             android:layout_height="32dp"
                             android:id="@+id/sum_spent2"
@@ -255,9 +255,9 @@
                 </LinearLayout>
 
             </LinearLayout>
-        </android.support.v7.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
-        <android.support.v7.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             app:cardCornerRadius="4dp"
             android:layout_marginLeft="8dp"
@@ -310,7 +310,7 @@
 
                             android:fontFamily="@font/bold_oxygen" />
 
-                        <android.support.v7.widget.AppCompatTextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:layout_width="match_parent"
                             android:layout_height="32dp"
                             android:text="100000000"
@@ -353,8 +353,7 @@
                             android:textColor="#E02E2E"
                             android:fontFamily="@font/bold_oxygen"/>
 
-                        <android.support.v7.widget.AppCompatTextView
-                            android:layout_width="match_parent"
+                        <androidx.appcompat.widget.AppCompatTextView                            android:layout_width="match_parent"
                             android:layout_height="32dp"
                             android:id="@+id/sum_spent3"
                             android:text="10000"
@@ -370,9 +369,9 @@
                 </LinearLayout>
 
             </LinearLayout>
-        </android.support.v7.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
-        <android.support.v7.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             app:cardCornerRadius="4dp"
             android:layout_width="match_parent"
             app:cardMaxElevation="2dp"
@@ -426,8 +425,7 @@
 
                             android:fontFamily="@font/bold_oxygen" />
 
-                        <android.support.v7.widget.AppCompatTextView
-                            android:layout_width="match_parent"
+                        <androidx.appcompat.widget.AppCompatTextView                            android:layout_width="match_parent"
                             android:layout_height="32dp"
                             android:text="100000000"
                             android:autoSizeMaxTextSize="16sp"
@@ -469,8 +467,7 @@
                             android:textColor="#E02E2E"
                             android:fontFamily="@font/bold_oxygen"/>
 
-                        <android.support.v7.widget.AppCompatTextView
-                            android:layout_width="match_parent"
+                        <androidx.appcompat.widget.AppCompatTextView                            android:layout_width="match_parent"
                             android:layout_height="32dp"
                             android:id="@+id/sum_spent4"
                             android:text="10000"
@@ -486,9 +483,9 @@
                 </LinearLayout>
 
             </LinearLayout>
-        </android.support.v7.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
-            <android.support.v7.widget.CardView
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/native_ad_container"
                 android:layout_width="match_parent"
                 android:layout_marginBottom="16dp"
@@ -504,8 +501,8 @@
     </LinearLayout>
 
 </RelativeLayout>
-    </android.support.v4.widget.NestedScrollView>
-    <android.support.design.widget.FloatingActionButton
+    </androidx.core.widget.NestedScrollView>
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:layout_width="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"

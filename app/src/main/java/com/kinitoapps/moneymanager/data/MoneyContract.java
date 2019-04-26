@@ -58,7 +58,7 @@ public final class MoneyContract{
          *
          * Type: TEXT
          */
-        public final static String COLUMN_MONEY_DESC = "desc";
+        public final static String COLUMN_MONEY_DESC = "'desc'";
 
         /**
          * Gender of the pet.

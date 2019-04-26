@@ -31,7 +31,6 @@
                     android:host="kinitoapps.com" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity" />
         <activity
             android:name=".home"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -53,9 +52,6 @@
             android:label="Welcome to Money Manager"
             android:theme="@style/AppTheme.Intro" />
         <activity android:name=".PermissionDenied" />
-        <activity android:name=".DailyStatsActivity">
-
-        </activity>
     </application>
 
 </manifest>

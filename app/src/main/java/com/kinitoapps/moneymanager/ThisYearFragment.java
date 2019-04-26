@@ -11,18 +11,17 @@ import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteException;
 import android.graphics.Color;
 import android.os.Handler;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.LoaderManager;
+import androidx.fragment.app.FragmentManager;
+import androidx.loader.app.LoaderManager;
 import android.content.Context;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
+import androidx.loader.content.CursorLoader;
+import androidx.loader.content.Loader;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.widget.AppCompatTextView;
+import androidx.fragment.app.Fragment;
+import androidx.appcompat.widget.AppCompatTextView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -33,10 +32,8 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.facebook.ads.Ad;
 import com.facebook.ads.AdSize;
 import com.facebook.ads.AdView;
 import com.kinitoapps.moneymanager.data.MoneyContract;
@@ -756,12 +753,12 @@ public class ThisYearFragment extends Fragment implements LoaderManager.LoaderCa
 
         mActionMode.finish();
 
-        android.support.v4.app.Fragment fragment = null;
+        androidx.fragment.app.Fragment fragment = null;
         Class fragmentClass = null;
 
         fragmentClass = ThisYearFragment.class;
         try {
-            fragment = (android.support.v4.app.Fragment) fragmentClass.newInstance();
+            fragment = (androidx.fragment.app.Fragment) fragmentClass.newInstance();
         } catch (Exception e) {
             e.printStackTrace();
         }

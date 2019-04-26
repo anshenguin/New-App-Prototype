@@ -7,7 +7,7 @@
     android:background="#FAFAFA"
     android:scrollbars="none"
     android:focusable="true">
-    <android.support.v4.widget.NestedScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
     <RelativeLayout
@@ -92,7 +92,7 @@
                                 android:text="RECEIVED"
                                 android:fontFamily="@font/bold_oxygen" />
 
-                            <android.support.v7.widget.AppCompatTextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/sum_received"
                                 android:layout_width="match_parent"
                                 android:layout_height="32dp"
@@ -119,7 +119,7 @@
                                 android:layout_marginTop="8dp"
                                 android:fontFamily="@font/bold_oxygen"/>
 
-                            <android.support.v7.widget.AppCompatTextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/total"
                                 android:layout_width="match_parent"
                                 android:layout_height="36dp"
@@ -147,7 +147,7 @@
                                 android:text="SPENT"
                                 android:fontFamily="@font/bold_oxygen"/>
 
-                            <android.support.v7.widget.AppCompatTextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/sum_spent"
                                 android:layout_width="match_parent"
                                 android:layout_height="32dp"
@@ -214,7 +214,7 @@
 
     </RelativeLayout>
     <!--</android.support.v4.widget.NestedScrollView>-->
-    </android.support.v4.widget.NestedScrollView>
+    </androidx.core.widget.NestedScrollView>
     <LinearLayout
         android:id="@+id/banner_container"
         android:layout_width="match_parent"

@@ -1,9 +1,13 @@
 package com.kinitoapps.moneymanager;
 import android.Manifest;
-import android.app.Notification;
+import android.app.AlertDialog;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.TimePickerDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -14,14 +18,13 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.Rect;
-import android.net.Uri;
 import android.os.Build;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 
 import android.text.TextUtils;
@@ -29,16 +32,15 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
-import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.facebook.ads.Ad;
@@ -49,8 +51,8 @@ import com.facebook.ads.MediaView;
 import com.facebook.ads.NativeAd;
 import com.kinitoapps.moneymanager.data.MoneyContract;
 import com.kinitoapps.moneymanager.data.MoneyDbHelper;
-import com.kinitoapps.moneymanager.tutorialviews.IntroActivity;
 
+import java.sql.Time;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -60,7 +62,7 @@ import java.util.List;
 import java.util.Locale;
 
 
-public class EnterValueActivity extends AppCompatActivity {
+public class EnterValueActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
 
     private EditText mDescEditText;
     private String currentDate;
@@ -72,9 +74,15 @@ public class EnterValueActivity extends AppCompatActivity {
     /** EditText field to enter the pet's gender */
     private Button mSaveButton;
     private MoneyDbHelper mDbHelper;
+    private static short selection;
+    public String dateSelected;
+    public String timeselected;
+    public short timeselection;
     private RadioButton spent;
     private RadioButton received;
     private NativeAd nativeAd;
+    private TextView dateValue;
+    private TextView timeValue;
     private LinearLayout nativeAdContainer;
     private LinearLayout  adView;
     private static final int WRITE_EXT_STORAGE = 100;
@@ -151,10 +159,85 @@ public class EnterValueActivity extends AppCompatActivity {
         // Request an ad
         nativeAd.loadAd(NativeAd.MediaCacheFlag.ALL);
     }
+
+    @Override
+    public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+        String dayS = String.valueOf(day);
+        String monthS = String.valueOf(month+1);
+        if ((day / 10) < 1)
+            dayS = "0" + dayS;
+        if (((month) / 10) < 1)
+            monthS = "0" + monthS;
+        dateSelected = dayS+"-"+monthS+"-"+year;
+            dateValue.setText(dateSelected);
+        Toast.makeText(EnterValueActivity.this, dateSelected, Toast.LENGTH_SHORT).show();
+        selection = 1;
+    }
+
+    @Override
+    public void onTimeSet(TimePicker timePicker, int hour, int minute) {
+        String hourS;
+        String ampm = "am";
+        String minuteS;
+        if(hour>12) {
+            hour = hour - 12;
+            hourS = "0"+hour;
+            ampm = "pm";
+        }
+        else if(hour == 0) {
+            hourS = "12";
+            ampm = "am";
+        }
+        else if(hour<10) {
+            hourS = "0" + hour;
+            ampm = "am";
+        }
+        else if(hour!=12){
+            hourS = String.valueOf(hour);
+            ampm = "am";
+        }
+        else{
+            hourS = String.valueOf(hour);
+            ampm = "pm";
+        }
+        if(minute<10)
+            minuteS = "0"+minute;
+        else
+            minuteS = String.valueOf(minute);
+        timeselected = hourS+":"+minuteS+" "+ampm;
+        timeValue.setText(timeselected);
+        if(timeselected.substring(0,1).equals("0"))
+            timeselected = timeselected.substring(1);
+        Toast.makeText(EnterValueActivity.this, timeselected, Toast.LENGTH_SHORT).show();
+        timeselection = 1;
+    }
+
+
+    public static class TimePickerFragment extends DialogFragment
+            implements TimePickerDialog.OnTimeSetListener {
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Use the current time as the default values for the picker
+            final Calendar c = Calendar.getInstance();
+            int hour = c.get(Calendar.HOUR_OF_DAY);
+            int minute = c.get(Calendar.MINUTE);
+
+            // Create a new instance of TimePickerDialog and return it
+            return new TimePickerDialog(getActivity(), this, hour, minute,
+                    false);
+        }
+
+        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+            // Do something with the time chosen by the user
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = getString(R.string.channel_entry);
             String description = getString(R.string.channel_entry_description);
@@ -181,8 +264,76 @@ public class EnterValueActivity extends AppCompatActivity {
             notificationManager.createNotificationChannel(mChannel);
         }
         setContentView(R.layout.activity_enter_value);
-        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+
+        androidx.appcompat.app.ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
+        Button changeDate = findViewById(R.id.change_date);
+        dateValue = findViewById(R.id.datevalue);
+        timeValue = findViewById(R.id.timevalue);
+        Button changeTime = findViewById(R.id.change_time);
+        selection = 0;
+        changeDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(EnterValueActivity.this, "PRESSED", Toast.LENGTH_SHORT).show();
+                AlertDialog.Builder builder = new AlertDialog.Builder(EnterValueActivity.this);
+                builder.setTitle("Choose Date")
+                        .setItems(R.array.dateSelection, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                if(which==0) {
+                                    dateValue.setText("Current Date");
+                                    selection = 0;
+                                }
+
+                                else{
+                                    Calendar calendar = Calendar.getInstance();
+                                    DatePickerDialog d = new DatePickerDialog(EnterValueActivity.this, EnterValueActivity.this,
+                                            calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
+                                            calendar.get(Calendar.DAY_OF_MONTH));
+                                    d.show();
+//                                    DialogFragment newFragment = new DatePickerFragment();
+//                                    newFragment.show(getFragmentManager(), "datePicker");
+
+                                }
+
+                            }
+                        });
+                builder.show();
+
+
+            }
+        });
+
+        changeTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(EnterValueActivity.this, "PRESSED", Toast.LENGTH_SHORT).show();
+                AlertDialog.Builder builder = new AlertDialog.Builder(EnterValueActivity.this);
+                builder.setTitle("Choose Date")
+                        .setItems(R.array.timeSelection, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                if(which==0) {
+                                    dateValue.setText("Current Time");
+                                    timeselection = 0;
+                                }
+
+                                else{
+                                    Calendar c = Calendar.getInstance();
+                                    TimePickerDialog d = new TimePickerDialog(EnterValueActivity.this,EnterValueActivity.this,c.get(Calendar.HOUR_OF_DAY),c.get(Calendar.MINUTE),false);
+                                    d.show();
+//                                    DialogFragment newFragment = new DatePickerFragment();
+//                                    newFragment.show(getFragmentManager(), "datePicker");
+
+                                }
+
+                            }
+                        });
+                builder.show();
+
+
+            }
+        });
+
         spent =  findViewById(R.id.spent);
         received = findViewById(R.id.received);
         if(spent.isChecked()) {
@@ -266,9 +417,23 @@ public class EnterValueActivity extends AppCompatActivity {
         if(TextUtils.isEmpty(mDescEditText.getText().toString().trim())){
             desc="No Description Given";
         }
-        String date = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
-        DateFormat df = new SimpleDateFormat("h:mm a",Locale.getDefault());
-        String time = df.format(Calendar.getInstance().getTime());
+        String date;
+        String time;
+        if(selection==0) {
+            date = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
+        }
+        else {
+            date = dateSelected;
+        }
+
+        if(timeselection==0) {
+            DateFormat df = new SimpleDateFormat("h:mm a", Locale.getDefault());
+            time = df.format(Calendar.getInstance().getTime());
+        }
+        else{
+            time = timeselected;
+        }
+        Toast.makeText(this, time, Toast.LENGTH_SHORT).show();
 
             if (!TextUtils.isEmpty(mValueEditText.getText().toString().trim())) {
                 if(Double.parseDouble(mValueEditText.getText().toString().trim())>9999999){
@@ -436,7 +601,7 @@ public class EnterValueActivity extends AppCompatActivity {
 
                     // permission was granted, yay! Do the
                     // contacts-related task you need to do.
-                    android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(EnterValueActivity.this);
+                    androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(EnterValueActivity.this);
                     builder.setTitle("Warning");
                     builder.setMessage("Please allow Money Manager to save its database on your device to proceed...");
                     builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {

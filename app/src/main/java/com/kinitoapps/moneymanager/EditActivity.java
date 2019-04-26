@@ -1,10 +1,14 @@
 package com.kinitoapps.moneymanager;
 
-import android.app.Notification;
+import android.app.AlertDialog;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -13,12 +17,12 @@ import android.graphics.Color;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Build;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
-import android.support.v7.app.AppCompatActivity;
+import androidx.loader.app.LoaderManager;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.loader.content.CursorLoader;
+import androidx.loader.content.Loader;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -28,6 +32,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -46,6 +51,7 @@ import com.kinitoapps.moneymanager.data.MoneyDbHelper;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -57,6 +63,8 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
     private EditText mValueEditText;
     private RadioButton spent;
     private RadioButton received;
+    private short selection;
+    public static String dateSelected;
     private EditText mDescEditText;
     private MoneyDbHelper mDbHelper;
     private Button save;
@@ -99,6 +107,7 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
                 TextView nativeAdBody = (TextView) adView.findViewById(R.id.native_ad_body);
                 Button nativeAdCallToAction = (Button) adView.findViewById(R.id.native_ad_call_to_action);
 
+
                 // Set the Text.
                 nativeAdTitle.setText(nativeAd.getAdTitle());
                 nativeAdSocialContext.setText(nativeAd.getAdSocialContext());
@@ -139,11 +148,12 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
         nativeAd.loadAd(NativeAd.MediaCacheFlag.ALL);
     }
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = getString(R.string.channel_entry);
             String description = getString(R.string.channel_entry_description);
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
@@ -170,7 +180,7 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
         }
         mDbHelper = new MoneyDbHelper(this);
         sharedPreferences = getSharedPreferences("LIMIT", Context.MODE_PRIVATE);
-        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+        androidx.appcompat.app.ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         spent = findViewById(R.id.spent);
         received = findViewById(R.id.received);
@@ -255,6 +265,7 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
                 null,
                 null);
     }
+
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
@@ -443,6 +454,10 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
         }
 
         finish();
+
+    }
+
+    public void showDatePickerDialog(View v) {
 
     }
 
