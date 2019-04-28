@@ -40,6 +40,8 @@ public class SingleValueDetails extends AppCompatActivity implements LoaderManag
     private static final int EXISTING_MONEY_LOADER = 0;
 
     private TextView valueTextView;
+    private String setDate;
+    private String setTime;
     private TextView descTextView;
     private TextView statusTextView;
     private Button delete;
@@ -151,6 +153,8 @@ public class SingleValueDetails extends AppCompatActivity implements LoaderManag
                 Intent i = getIntent();
                 Uri currentEntryUri = i.getData();
                 intent.setData(currentEntryUri);
+                intent.putExtra("date",setDate);
+                intent.putExtra("time",setTime);
                 startActivity(intent);
             }
         });
@@ -215,6 +219,8 @@ public class SingleValueDetails extends AppCompatActivity implements LoaderManag
             String desc = cursor.getString(descColumnIndex);
             int status = cursor.getInt(statusColumnIndex);
             String str = String.valueOf(value);
+            setDate = date;
+            setTime = time;
             String datentime = date + ", " + time;
             valueTextView.setText(str);
             descTextView.setText(desc);

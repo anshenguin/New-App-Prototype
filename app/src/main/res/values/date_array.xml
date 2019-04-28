@@ -1,12 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    
+
     <string-array name="dateSelection">
         <item>Current Date</item>
         <item>Select Date</item>
     </string-array>
     <string-array name="timeSelection">
         <item>Current Time</item>
+        <item>Select Time</item>
+    </string-array>
+    <string-array name="dateEditSelection">
+    <item>Original Date</item>
+    <item>Select Date</item>
+</string-array>
+    <string-array name="timeEditSelection">
+        <item>Original Time</item>
         <item>Select Time</item>
     </string-array>
 </resources>

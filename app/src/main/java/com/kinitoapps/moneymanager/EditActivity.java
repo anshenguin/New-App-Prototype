@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.TimePickerDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -38,6 +39,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.facebook.ads.Ad;
@@ -48,7 +50,6 @@ import com.facebook.ads.MediaView;
 import com.facebook.ads.NativeAd;
 import com.kinitoapps.moneymanager.data.MoneyContract;
 import com.kinitoapps.moneymanager.data.MoneyDbHelper;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -57,25 +58,30 @@ import java.util.List;
 import java.util.Locale;
 
 
-public class EditActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
+public class EditActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>,DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener{
     private static final int EXISTING_MONEY_LOADER = 0;
 
     private EditText mValueEditText;
     private RadioButton spent;
     private RadioButton received;
     private short selection;
-    public static String dateSelected;
+    public String timeselected="";
+    public short timeselection;
+    public String dateSelected;
     private EditText mDescEditText;
     private MoneyDbHelper mDbHelper;
     private Button save;
     private SharedPreferences sharedPreferences;
+    public String originalDate;
+    public String originalTime;
     private double oldValue;
     private String currentDate;
     private int mStatus = MoneyContract.MoneyEntry.STATUS_UNKNOWN;
     private NativeAd nativeAd;
     private LinearLayout nativeAdContainer;
     private LinearLayout  adView;
-
+    private TextView dateValue;
+    private TextView timeValue;
     private void showNativeAd() {
         nativeAd = new NativeAd(EditActivity.this, "174139459886109_174366406530081");
         nativeAd.setAdListener(new AdListener() {
@@ -152,6 +158,9 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Intent intent = getIntent();
+        originalDate = intent.getStringExtra("date");
+        originalTime = intent.getStringExtra("time");
         setContentView(R.layout.activity_edit);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = getString(R.string.channel_entry);
@@ -182,6 +191,69 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
         sharedPreferences = getSharedPreferences("LIMIT", Context.MODE_PRIVATE);
         androidx.appcompat.app.ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
+        Button changeDate = findViewById(R.id.change_date);
+        dateValue = findViewById(R.id.datevalue);
+        timeValue = findViewById(R.id.timevalue);
+        dateValue.setText(originalDate);
+        timeValue.setText(originalTime);
+        Button changeTime = findViewById(R.id.change_time);
+        selection = 0;
+        changeDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(EditActivity.this);
+                builder.setTitle("Choose Date")
+                        .setItems(R.array.dateEditSelection, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                if(which==0) {
+                                    dateValue.setText(originalDate);
+                                    selection = 0;
+                                }
+
+                                else{
+                                    Calendar calendar = Calendar.getInstance();
+                                    DatePickerDialog d = new DatePickerDialog(EditActivity.this, EditActivity.this,
+                                            calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
+                                            calendar.get(Calendar.DAY_OF_MONTH));
+                                    d.show();
+                                }
+
+                            }
+                        });
+                builder.show();
+
+
+            }
+        });
+
+        changeTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(EditActivity.this);
+                builder.setTitle("Choose Date")
+                        .setItems(R.array.timeEditSelection, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                if(which==0) {
+                                    timeValue.setText(originalTime);
+                                    timeselection = 0;
+                                }
+
+                                else{
+                                    Calendar c = Calendar.getInstance();
+                                    TimePickerDialog d = new TimePickerDialog(EditActivity.this,EditActivity.this,c.get(Calendar.HOUR_OF_DAY),c.get(Calendar.MINUTE),false);
+                                    d.show();
+//                                    DialogFragment newFragment = new DatePickerFragment();
+//                                    newFragment.show(getFragmentManager(), "datePicker");
+
+                                }
+
+                            }
+                        });
+                builder.show();
+
+
+            }
+        });
         spent = findViewById(R.id.spent);
         received = findViewById(R.id.received);
         if(spent.isChecked()) {
@@ -312,6 +384,9 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
         if(TextUtils.isEmpty(mDescEditText.getText().toString().trim())){
             desc="No Description Given";
         }
+        String date = dateSelected;
+        String time = timeselected;
+
         double value = 0;
 
         if(spent.isChecked())
@@ -332,6 +407,12 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
 
                         values.put(MoneyContract.MoneyEntry.COLUMN_MONEY_VALUE, value);
                         values.put(MoneyContract.MoneyEntry.COLUMN_MONEY_DESC, desc);
+                        if(selection==1) {
+                            values.put(MoneyContract.MoneyEntry.COLUMN_MONEY_DATE, date);
+                        }
+                        if(timeselection==1) {
+                            values.put(MoneyContract.MoneyEntry.COLUMN_MONEY_TIME, time);
+                        }
                         values.put(MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS, mStatus);
 
                         // Insert a new row for Toto in the database, returning the ID of that new row.
@@ -457,8 +538,53 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
 
     }
 
-    public void showDatePickerDialog(View v) {
-
+    @Override
+    public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+        String dayS = String.valueOf(day);
+        String monthS = String.valueOf(month+1);
+        if ((day / 10) < 1)
+            dayS = "0" + dayS;
+        if (((month) / 10) < 1)
+            monthS = "0" + monthS;
+        dateSelected = dayS+"-"+monthS+"-"+year;
+        dateValue.setText(dateSelected);
+        selection = 1;
     }
 
+    @Override
+    public void onTimeSet(TimePicker timePicker, int hour, int minute) {
+        String hourS;
+        String ampm;
+        String minuteS;
+        if(hour>12) {
+            hour = hour - 12;
+            hourS = "0"+hour;
+            ampm = "pm";
+        }
+        else if(hour == 0) {
+            hourS = "12";
+            ampm = "am";
+        }
+        else if(hour<10) {
+            hourS = "0" + hour;
+            ampm = "am";
+        }
+        else if(hour!=12){
+            hourS = String.valueOf(hour);
+            ampm = "am";
+        }
+        else{
+            hourS = String.valueOf(hour);
+            ampm = "pm";
+        }
+        if(minute<10)
+            minuteS = "0"+minute;
+        else
+            minuteS = String.valueOf(minute);
+        timeselected = hourS+":"+minuteS+" "+ampm;
+        timeValue.setText(timeselected);
+        if(timeselected.substring(0,1).equals("0"))
+            timeselected = timeselected.substring(1);
+        timeselection = 1;
+    }
 }

@@ -169,15 +169,14 @@ public class EnterValueActivity extends AppCompatActivity implements DatePickerD
         if (((month) / 10) < 1)
             monthS = "0" + monthS;
         dateSelected = dayS+"-"+monthS+"-"+year;
-            dateValue.setText(dateSelected);
-        Toast.makeText(EnterValueActivity.this, dateSelected, Toast.LENGTH_SHORT).show();
+        dateValue.setText(dateSelected);
         selection = 1;
     }
 
     @Override
     public void onTimeSet(TimePicker timePicker, int hour, int minute) {
         String hourS;
-        String ampm = "am";
+        String ampm;
         String minuteS;
         if(hour>12) {
             hour = hour - 12;
@@ -208,30 +207,9 @@ public class EnterValueActivity extends AppCompatActivity implements DatePickerD
         timeValue.setText(timeselected);
         if(timeselected.substring(0,1).equals("0"))
             timeselected = timeselected.substring(1);
-        Toast.makeText(EnterValueActivity.this, timeselected, Toast.LENGTH_SHORT).show();
         timeselection = 1;
     }
 
-
-    public static class TimePickerFragment extends DialogFragment
-            implements TimePickerDialog.OnTimeSetListener {
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            // Use the current time as the default values for the picker
-            final Calendar c = Calendar.getInstance();
-            int hour = c.get(Calendar.HOUR_OF_DAY);
-            int minute = c.get(Calendar.MINUTE);
-
-            // Create a new instance of TimePickerDialog and return it
-            return new TimePickerDialog(getActivity(), this, hour, minute,
-                    false);
-        }
-
-        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-            // Do something with the time chosen by the user
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -272,10 +250,10 @@ public class EnterValueActivity extends AppCompatActivity implements DatePickerD
         timeValue = findViewById(R.id.timevalue);
         Button changeTime = findViewById(R.id.change_time);
         selection = 0;
+        timeselection = 0;
         changeDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(EnterValueActivity.this, "PRESSED", Toast.LENGTH_SHORT).show();
                 AlertDialog.Builder builder = new AlertDialog.Builder(EnterValueActivity.this);
                 builder.setTitle("Choose Date")
                         .setItems(R.array.dateSelection, new DialogInterface.OnClickListener() {
@@ -291,9 +269,6 @@ public class EnterValueActivity extends AppCompatActivity implements DatePickerD
                                             calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
                                             calendar.get(Calendar.DAY_OF_MONTH));
                                     d.show();
-//                                    DialogFragment newFragment = new DatePickerFragment();
-//                                    newFragment.show(getFragmentManager(), "datePicker");
-
                                 }
 
                             }
@@ -307,13 +282,12 @@ public class EnterValueActivity extends AppCompatActivity implements DatePickerD
         changeTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(EnterValueActivity.this, "PRESSED", Toast.LENGTH_SHORT).show();
                 AlertDialog.Builder builder = new AlertDialog.Builder(EnterValueActivity.this);
-                builder.setTitle("Choose Date")
+                builder.setTitle("Choose Time")
                         .setItems(R.array.timeSelection, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 if(which==0) {
-                                    dateValue.setText("Current Time");
+                                    timeValue.setText("Current Time");
                                     timeselection = 0;
                                 }
 
@@ -433,7 +407,6 @@ public class EnterValueActivity extends AppCompatActivity implements DatePickerD
         else{
             time = timeselected;
         }
-        Toast.makeText(this, time, Toast.LENGTH_SHORT).show();
 
             if (!TextUtils.isEmpty(mValueEditText.getText().toString().trim())) {
                 if(Double.parseDouble(mValueEditText.getText().toString().trim())>9999999){
