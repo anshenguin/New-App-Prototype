@@ -160,6 +160,8 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
         super.onCreate(savedInstanceState);
         Intent intent = getIntent();
         originalDate = intent.getStringExtra("date");
+        Toast.makeText(this, originalDate, Toast.LENGTH_SHORT).show();
+
         originalTime = intent.getStringExtra("time");
         setContentView(R.layout.activity_edit);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -207,6 +209,7 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
                             public void onClick(DialogInterface dialog, int which) {
                                 if(which==0) {
                                     dateValue.setText(originalDate);
+                                    dateSelected = originalDate;
                                     selection = 0;
                                 }
 
@@ -235,6 +238,7 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
                             public void onClick(DialogInterface dialog, int which) {
                                 if(which==0) {
                                     timeValue.setText(originalTime);
+                                    timeselected = originalTime;
                                     timeselection = 0;
                                 }
 
@@ -348,13 +352,19 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
             int valueColumnIndex = cursor.getColumnIndex(MoneyContract.MoneyEntry.COLUMN_MONEY_VALUE);
             int descColumnIndex = cursor.getColumnIndex(MoneyContract.MoneyEntry.COLUMN_MONEY_DESC);
             int statusColumnIndex = cursor.getColumnIndex(MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS);
+            int timeColumnIndex = cursor.getColumnIndex(MoneyContract.MoneyEntry.COLUMN_MONEY_TIME);
+            int dateColumnIndex = cursor.getColumnIndex(MoneyContract.MoneyEntry.COLUMN_MONEY_DATE);
             double value = cursor.getDouble(valueColumnIndex);
             String desc = cursor.getString(descColumnIndex);
             int status = cursor.getInt(statusColumnIndex);
+            String timee = cursor.getString(timeColumnIndex);
+            String datee = cursor.getString(dateColumnIndex);
             String str = String.valueOf(value);
             oldValue = value;
             mValueEditText.setText(str);
             mDescEditText.setText(desc);
+            dateValue.setText(datee);
+            timeValue.setText(timee);
             if(status == MoneyContract.MoneyEntry.STATUS_SPENT)
                 spent.setChecked(true);
             else
@@ -379,16 +389,17 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
     private void editValue(){
         Intent intent = getIntent();
         Uri currentEntryUri = intent.getData();
-
         String desc = mDescEditText.getText().toString().trim();
         if(TextUtils.isEmpty(mDescEditText.getText().toString().trim())){
             desc="No Description Given";
         }
         String date = dateSelected;
+        if(selection==0)
+            date = originalDate;
         String time = timeselected;
-
+        if(timeselection==0)
+            time = originalTime;
         double value = 0;
-
         if(spent.isChecked())
             mStatus = MoneyContract.MoneyEntry.STATUS_SPENT;
         else
@@ -402,18 +413,15 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
                         Toast.makeText(EditActivity.this, "Description cannot have more than 140 characters", Toast.LENGTH_LONG).show();
                     else {
                         value = Double.parseDouble(mValueEditText.getText().toString().trim());
-                        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+//                        SQLiteDatabase db = mDbHelper.getWritableDatabase();
                         ContentValues values = new ContentValues();
-
                         values.put(MoneyContract.MoneyEntry.COLUMN_MONEY_VALUE, value);
                         values.put(MoneyContract.MoneyEntry.COLUMN_MONEY_DESC, desc);
-                        if(selection==1) {
-                            values.put(MoneyContract.MoneyEntry.COLUMN_MONEY_DATE, date);
-                        }
-                        if(timeselection==1) {
-                            values.put(MoneyContract.MoneyEntry.COLUMN_MONEY_TIME, time);
-                        }
                         values.put(MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS, mStatus);
+                        values.put(MoneyContract.MoneyEntry.COLUMN_MONEY_TIME, time);
+                        values.put(MoneyContract.MoneyEntry.COLUMN_MONEY_DATE, date);
+
+
 
                         // Insert a new row for Toto in the database, returning the ID of that new row.
                         // The first argument for db.insert() is the pets table name.
@@ -423,7 +431,7 @@ public class EditActivity extends AppCompatActivity implements LoaderManager.Loa
                         // there are no values).
                         // The third argument is the ContentValues object containing the info for Toto.
                         int rowsAffected = getContentResolver().update(currentEntryUri, values, null, null);
-                        db.insert(MoneyContract.MoneyEntry.TABLE_NAME, null, values);
+//                        db.insert(MoneyContract.MoneyEntry.TABLE_NAME, null, values);
                         if (rowsAffected == 0) {
                             // If no rows were affected, then there was an error with the update.
                             Toast.makeText(this, "Error: Entry Not Updated",

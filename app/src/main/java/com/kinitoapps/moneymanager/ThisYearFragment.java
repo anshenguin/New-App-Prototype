@@ -583,27 +583,36 @@ public class ThisYearFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+//        currentDate = currentDateWithSlashes.substring(0, 2) + "-"
+//                + currentDateWithSlashes.substring(3, 5) + "-"
+//                + currentDateWithSlashes.substring(6);
+
         currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
+
 //        String date = String.valueOf(Integer.parseInt(currentDate.substring(0,2))-1);
         String year = currentDate.substring(5);
         String SELECTION = MoneyContract.MoneyEntry.COLUMN_MONEY_DATE+" LIKE?";
         String[] ARGS = {"%"+year};
-        Log.v("date",MoneyContract.MoneyEntry.COLUMN_MONEY_DATE);
         String[] projection = {
                 MoneyContract.MoneyEntry._ID,
                 MoneyContract.MoneyEntry.COLUMN_MONEY_VALUE,
                 MoneyContract.MoneyEntry.COLUMN_MONEY_DESC,
                 MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS,
                 MoneyContract.MoneyEntry.COLUMN_MONEY_TIME,
-                MoneyContract.MoneyEntry.COLUMN_MONEY_DATE
+                MoneyContract.MoneyEntry.COLUMN_MONEY_DATE,
+                "CASE WHEN LENGTH(time)=8 THEN time ELSE '0'||time END AS TWELVEHR",
+                "substr(date,7,4)||'-'||substr(date,4,2)||'-'||substr(date,1,2) AS sortabledate"
+
+
         };
 
+        String sortorder = "sortabledate desc, case when substr(TWELVEHR,1,2)='12' then substr(TWELVEHR,7)||'00'||substr(TWELVEHR,3) else substr(TWELVEHR,7)||substr(TWELVEHR, 1, 5) end DESC";
         return new CursorLoader(getActivity(),
                 MoneyContract.MoneyEntry.CONTENT_URI,
                 projection,
                 SELECTION,
                 ARGS,
-                "_id DESC");
+                sortorder);
     }
 
     @Override
@@ -691,7 +700,7 @@ public class ThisYearFragment extends Fragment implements LoaderManager.LoaderCa
                         + MoneyContract.MoneyEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                         + MoneyContract.MoneyEntry.COLUMN_MONEY_VALUE + " DOUBLE NOT NULL, "
                         + MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS + " INTEGER NOT NULL DEFAULT 0, "
-                        + MoneyContract.MoneyEntry.COLUMN_MONEY_DESC + " TEXT, "
+                        + "\""+MoneyContract.MoneyEntry.COLUMN_MONEY_DESC +"\""+ " TEXT, "
                         + MoneyContract.MoneyEntry.COLUMN_MONEY_DATE + " TEXT, "
                         + MoneyContract.MoneyEntry.COLUMN_MONEY_TIME + " TEXT);";
 
@@ -769,8 +778,6 @@ public class ThisYearFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     private void showDeleteConfirmationDialog() {
-        // Create an AlertDialog.Builder and set the message, and click listeners
-        // for the postivie and negative buttons on the dialog.
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         if(mSelectedItemIds.size()>1)
             builder.setMessage("Do you want to delete these entries?");
