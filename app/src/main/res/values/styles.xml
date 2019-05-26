@@ -15,7 +15,10 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
 
+
     </style>
+
+
 
     <style name="AppTheme.Intro">
         <item name="windowNoTitle">true</item>
@@ -45,6 +48,10 @@
         <!-- Background color when SELECTED -->
         <item name="colorControlHighlight">@color/highlighted_background</item>
 
+    </style>
+
+    <style name="MyDatePicker" parent="@android:style/Widget.DatePicker">
+        <item name="android:calendarViewShown">false</item>
     </style>
 
     <color name="text_and_icon">#7DA4AD</color>

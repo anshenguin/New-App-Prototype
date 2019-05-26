@@ -4,14 +4,18 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.content.ContentUris;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteException;
 import android.graphics.Color;
 import android.os.Handler;
 
+import androidx.core.view.NestedScrollingChild;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.FragmentManager;
 import androidx.loader.app.LoaderManager;
 import android.content.Context;
@@ -34,7 +38,10 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
+import android.widget.DatePicker;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.ads.AdSize;
@@ -45,8 +52,10 @@ import com.kinitoapps.moneymanager.piechart.PieGraph;
 import com.kinitoapps.moneymanager.piechart.PieSlice;
 
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -59,14 +68,22 @@ import java.util.Locale;
  * Use the {@link TodayFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class TodayFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
+public class TodayFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>,DatePickerDialog.OnDateSetListener{
     // TODO: Rename parameter arguments, choose names that match
     private static final int MONEY_LOADER = 0;
     private static ArrayList<Long> mSelectedItemIds;
     private AdView adView;
     MoneyCursorAdapter mCursorAdapter;
     private NonScrollListView moneyListView;
+    Animation slide;
     private boolean isActionModeOn = false;
+    ImageView nextDate,previousDate,dropDown;
+    TextView curDate;
+    NestedScrollView pieChart;
+    PieGraph pg;
+    View emptyView;
+    AppCompatTextView sum_spent,sum_received, sum_total;
+    String currentDate;
 
     private android.view.ActionMode mActionMode;
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -76,7 +93,6 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-    private String currentDate;
     private OnFragmentInteractionListener mListener;
 
     public TodayFragment() {
@@ -114,168 +130,125 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
 
     }
 
-//
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//        Toast.makeText(getActivity(),"onResume",Toast.LENGTH_LONG).show();
-//
-//    }
-//
-//    @Override
-//    public void onPause() {
-//        super.onPause();
-//        Toast.makeText(getActivity(),"onPause",Toast.LENGTH_LONG).show();
-//
-//    }
-//    @Override
-//    public void onStart(){
-//        super.onStart();
-//        Toast.makeText(getActivity(),"onStart",Toast.LENGTH_LONG).show();
-//
-//    }
-//
-//    @Override
-//    public void onStop(){
-//        super.onStop();
-//        Toast.makeText(getActivity(),"onStop",Toast.LENGTH_LONG).show();
-//    }
-//
-//    @Override
-//    public void onDestroyView(){
-//        super.onDestroyView();
-//        Toast.makeText(getActivity(),"onDestroyView",Toast.LENGTH_LONG).show();
-//
-//    }
 
-
-    //        // Inflate the layout for this fragment
-//        MoneyDbHelper mDbHelper = new MoneyDbHelper(getActivity());
-//
-//        // Create and/or open a database to read from it
-//
-//        // Perform this raw SQL query "SELECT * FROM pets"
-//        // to get a Cursor that contains all rows from the pets table.
-////        Cursor cursor = db.rawQuery("SELECT * FROM " + MoneyContract.MoneyEntry.TABLE_NAME, null);
-//
-////        String[] projection = {
-////                MoneyContract.MoneyEntry._ID,
-////                MoneyContract.MoneyEntry.COLUMN_MONEY_VALUE,
-////                MoneyContract.MoneyEntry.COLUMN_MONEY_DESC,
-////                MoneyContract.MoneyEntry.COLUMN_MONEY_DATE,
-////                MoneyContract.MoneyEntry.COLUMN_MONEY_TIME,
-////                MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS
-////        };
-////
-////        Cursor cursor = db.query(
-////                MoneyContract.MoneyEntry.TABLE_NAME,
-////                projection,
-////                null,
-////                null,
-////                null,
-////                null,
-////                null
-////        );
-//        Toast.makeText(getActivity(),"onResume",Toast.LENGTH_LONG).show();
-//        ListView moneyListView = getView().findViewById(R.id.list);
-//        View emptyView = getView().findViewById(R.id.empty_view);
-//        moneyListView.setEmptyView(emptyView);
-////        MoneyCursorAdapter adapter = new MoneyCursorAdapter(getActivity(), cursor);
-////        moneyListView.setAdapter(adapter);
-//////        TextView displayView = root.findViewById(R.id.root);
-//////
-//////        try {
-//////            // Create a header in the Text View that looks like this:
-//////            //
-//////            // The pets table contains <number of rows in Cursor> pets.
-//////            // _id - name - breed - gender - weight
-//////            //
-//////            // In the while loop below, iterate through the rows of the cursor and display
-//////            // the information from each column in this order.
-//////            displayView.setText("The pets table contains " + cursor.getCount() + " pets.\n\n");
-//////            displayView.append(MoneyContract.MoneyEntry._ID + " - " +
-//////                                        MoneyContract.MoneyEntry.COLUMN_MONEY_VALUE + " - " +
-//////                                        MoneyContract.MoneyEntry.COLUMN_MONEY_DESC + " - " +
-//////                                        MoneyContract.MoneyEntry.COLUMN_MONEY_DATE + " - " +
-//////                                        MoneyContract.MoneyEntry.COLUMN_MONEY_TIME + " - " +
-//////                                        MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS + "\n");
-//////
-//////            // Figure out the index of each column
-//////            int idColumnIndex = cursor.getColumnIndex(MoneyContract.MoneyEntry._ID);
-//////                        int valueColumnIndex = cursor.getColumnIndex(MoneyContract.MoneyEntry.COLUMN_MONEY_VALUE);
-//////                        int descColumnIndex = cursor.getColumnIndex(MoneyContract.MoneyEntry.COLUMN_MONEY_DESC);
-//////                        int dateColumnIndex = cursor.getColumnIndex(MoneyContract.MoneyEntry.COLUMN_MONEY_DATE);
-//////                        int timeColumnIndex = cursor.getColumnIndex(MoneyContract.MoneyEntry.COLUMN_MONEY_TIME);
-//////                        int statusColumnIndex = cursor.getColumnIndex(MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS);
-//////
-//////
-//////            // Iterate through all the returned rows in the cursor
-//////            while (cursor.moveToNext()) {
-//////                                // Use that index to extract the String or Int value of the word
-//////                               // at the current row the cursor is on.
-//////                               int currentID = cursor.getInt(idColumnIndex);
-//////                                int currentValue = cursor.getInt(valueColumnIndex);
-//////                                String currentDesc = cursor.getString(descColumnIndex);
-//////                                String currentDate = cursor.getString(dateColumnIndex);
-//////                                String currentTime = cursor.getString(timeColumnIndex);
-//////                                String currentStatus = cursor.getString(statusColumnIndex);
-//////
-//////                // Display the values from each column of the current row in the cursor in the TextView
-//////                                displayView.append(("\n" + currentID + " - " +
-//////                              currentValue + " - " +
-//////                                        currentDesc + " - " +
-//////                                        currentDate + " - " +
-//////                                        currentTime + " - " +
-//////                                        currentStatus));
-//////                            }
-//////        } finally {
-//////            // Always close the cursor when you're done reading from it. This releases all its
-//////            // resources and makes it invalid.0
-//////            cursor.close();
-//////        }
-//        mCursorAdapter = new MoneyCursorAdapter(getActivity(),null);
-//        moneyListView.setAdapter(mCursorAdapter);
-//        getLoaderManager().initLoader(MONEY_LOADER,null,this);
-//
-//    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final View root = inflater.inflate(R.layout.fragment_today, container, false);
 
-
-//        // Inflate the layout for this fragment
-//        // Create and/or open a database to read from it
-//
-//        // Perform this raw SQL query "SELECT * FROM pets"
-//        // to get a Cursor that contains all rows from the pets table.
-////        Cursor cursor = db.rawQuery("SELECT * FROM " + MoneyContract.MoneyEntry.TABLE_NAME, null);
-//
-////        String[] projection = {
-////                MoneyContract.MoneyEntry._ID,
-////                MoneyContract.MoneyEntry.COLUMN_MONEY_VALUE,
-////                MoneyContract.MoneyEntry.COLUMN_MONEY_DESC,
-////                MoneyContract.MoneyEntry.COLUMN_MONEY_DATE,
-////                MoneyContract.MoneyEntry.COLUMN_MONEY_TIME,
-////                MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS
-////        };
-////
-////        Cursor cursor = db.query(
-////                MoneyContract.MoneyEntry.TABLE_NAME,
-////                projection,
-////                null,
-////                null,
-////                null,
-////                null,
-////                null
-////        );
-
-
+        currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
+        curDate = root.findViewById(R.id.currentDate);
+        curDate.setText(currentDate);
         mSelectedItemIds = new ArrayList<>();
+        pieChart = root.findViewById(R.id.pie_graph);
         moneyListView = root.findViewById(R.id.list);
+        nextDate = root.findViewById(R.id.imageViewRight);
+        previousDate = root.findViewById(R.id.imageViewLeft);
         //        Toolbar toolbar = root.findViewById(R.id.toolbar);
-        final PieGraph pg = root.findViewById(R.id.graph);
+        pg = root.findViewById(R.id.graph);
+        sum_total = root.findViewById(R.id.total);
+        emptyView = root.findViewById(R.id.empty_view);
+        sum_spent = root.findViewById(R.id.sum_spent);
+        sum_received = root.findViewById(R.id.sum_received);
+        dropDown = root.findViewById(R.id.imageViewDrop);
+        try {
+            startMainThread();
+        }finally {
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                public void run() {
+                    try {
+                        if (getActivity() != null) {
+                            adView = new AdView(getActivity(), "174139459886109_174180053215383", AdSize.BANNER_HEIGHT_50);
+                            // Find the Ad Container
+                            // Add the ad view to your activity layout
+                            LinearLayout adContainer = root.findViewById(R.id.banner_container);
+                            adContainer.addView(adView);
+
+                            // Request an ad
+                            adView.loadAd();
+                        }
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+            }, 1500);
+            pg.setAnimationListener(new AnimatorListenerAdapter() {
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    super.onAnimationEnd(animation);
+                    Toast.makeText(getActivity(), "ANIMATION ENDED", Toast.LENGTH_SHORT).show();
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        public void run() {
+                            moneyListView.setVisibility(View.VISIBLE);
+                            moneyListView.startAnimation(slide);
+                        }
+                    }, 50);
+
+                }
+
+                @Override
+                public void onAnimationStart(Animator animation) {
+                    super.onAnimationStart(animation);
+                    Toast.makeText(getActivity(), "ANIMATION STARTED", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+
+        }
+        nextDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                incDecDate(1);
+            }
+        });
+
+        previousDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                incDecDate(-1);
+            }
+        });
+
+        curDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DatePickerDialog d = new DatePickerDialog(getActivity(),AlertDialog.THEME_HOLO_LIGHT, TodayFragment.this,
+                        Integer.parseInt(currentDate.substring(6)), Integer.parseInt(currentDate.substring(3,5))-1,
+                        Integer.parseInt(currentDate.substring(0,2)));
+                d.show();
+            }
+        });
+
+        dropDown.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DatePickerDialog d = new DatePickerDialog(getActivity(),AlertDialog.THEME_HOLO_LIGHT, TodayFragment.this,
+                        Integer.parseInt(currentDate.substring(6)), Integer.parseInt(currentDate.substring(3,5))-1,
+                        Integer.parseInt(currentDate.substring(0,2)));
+                d.show();
+            }
+        });
+        emptyView = root.findViewById(R.id.empty_view);
+        if(noEntriesExist()) {
+            pieChart.setVisibility(View.GONE);
+            emptyView.setVisibility(View.VISIBLE);
+        }
+        else {
+            pieChart.setVisibility(View.VISIBLE);
+            emptyView.setVisibility(View.GONE);
+        }
+
+        return root;
+
+    }
+
+    private void startMainThread() {
+        moneyListView.setVisibility(View.GONE);
+        pg.removeSlices();
         pg.setInnerCircleRatio(160);
         boolean purpleValueGreater = false;
         PieSlice slice;
@@ -291,51 +264,13 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
         slice.setValue(purpleValueGreater? (float) (Double.parseDouble(getSumReceived()) + Double.parseDouble(getSumSpent())) :0);
         slice.setGoalValue((float) Double.parseDouble(getSumReceived()));
         pg.addSlice(slice);
-        final AppCompatTextView sum_spent = root.findViewById(R.id.sum_spent);
         sum_spent.setText("0");
-        final AppCompatTextView sum_received = root.findViewById(R.id.sum_received);
         sum_received.setText("0");
-        final AppCompatTextView sum_total = root.findViewById(R.id.total);
         sum_total.setText("0");
 //        pg.setInterpolator(new DecelerateInterpolator());
         pg.setDuration(1000);//default if unspecified is 300 ms
-        final Animation slide = AnimationUtils.loadAnimation(getActivity(), R.anim.enter_from_left);
+        slide = AnimationUtils.loadAnimation(getActivity(), R.anim.enter_from_left);
         slide.setDuration(700);
-
-        pg.setAnimationListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    public void run() {
-                        moneyListView.setVisibility(View.VISIBLE);
-                        moneyListView.startAnimation(slide);
-                    }
-                }, 50);
-
-                handler.postDelayed(new Runnable() {
-                    public void run() {
-                        try {
-                            if(getActivity()!=null) {
-                                adView = new AdView(getActivity(), "174139459886109_174180053215383", AdSize.BANNER_HEIGHT_50);
-                                // Find the Ad Container
-                                LinearLayout adContainer = root.findViewById(R.id.banner_container);
-
-                                // Add the ad view to your activity layout
-                                adContainer.addView(adView);
-
-                                // Request an ad
-                                adView.loadAd();
-                            }
-                        }catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }, 200);
-
-            }
-        });
 
         pg.animateToGoalValues();
         ValueAnimator valueAnimator = ValueAnimator.ofFloat(0, (float) Double.parseDouble(getSumSpent()));
@@ -381,9 +316,8 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
             }
         });
         valueAnimator_three.start();
-        View emptyView = root.findViewById(R.id.empty_view);
+
 //        moneyListView.setEmptyView(emptyView);
-        LinearLayout pieChart = root.findViewById(R.id.pie_chart);
         if(noEntriesExist()) {
             pieChart.setVisibility(View.GONE);
             emptyView.setVisibility(View.VISIBLE);
@@ -395,61 +329,9 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
 
 
 
-//        MoneyCursorAdapter adapter = new MoneyCursorAdapter(getActivity(), cursor);
-//        moneyListView.setAdapter(adapter);
-////        TextView displayView = root.findViewById(R.id.root);
-////
-////        try {
-////            // Create a header in the Text View that looks like this:
-////            //
-////            // The pets table contains <number of rows in Cursor> pets.
-////            // _id - name - breed - gender - weight
-////            //
-////            // In the while loop below, iterate through the rows of the cursor and display
-////            // the information from each column in this order.
-////            displayView.setText("The pets table contains " + cursor.getCount() + " pets.\n\n");
-////            displayView.append(MoneyContract.MoneyEntry._ID + " - " +
-////                                        MoneyContract.MoneyEntry.COLUMN_MONEY_VALUE + " - " +
-////                                        MoneyContract.MoneyEntry.COLUMN_MONEY_DESC + " - " +
-////                                        MoneyContract.MoneyEntry.COLUMN_MONEY_DATE + " - " +
-////                                        MoneyContract.MoneyEntry.COLUMN_MONEY_TIME + " - " +
-////                                        MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS + "\n");
-////
-////            // Figure out the index of each column
-////            int idColumnIndex = cursor.getColumnIndex(MoneyContract.MoneyEntry._ID);
-////                        int valueColumnIndex = cursor.getColumnIndex(MoneyContract.MoneyEntry.COLUMN_MONEY_VALUE);
-////                        int descColumnIndex = cursor.getColumnIndex(MoneyContract.MoneyEntry.COLUMN_MONEY_DESC);
-////                        int dateColumnIndex = cursor.getColumnIndex(MoneyContract.MoneyEntry.COLUMN_MONEY_DATE);
-////                        int timeColumnIndex = cursor.getColumnIndex(MoneyContract.MoneyEntry.COLUMN_MONEY_TIME);
-////                        int statusColumnIndex = cursor.getColumnIndex(MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS);
-////
-////
-////            // Iterate through all the returned rows in the cursor
-////            while (cursor.moveToNext()) {
-////                                // Use that index to extract the String or Int value of the word
-////                               // at the current row the cursor is on.
-////                               int currentID = cursor.getInt(idColumnIndex);
-////                                int currentValue = cursor.getInt(valueColumnIndex);
-////                                String currentDesc = cursor.getString(descColumnIndex);
-////                                String currentDate = cursor.getString(dateColumnIndex);
-////                                String currentTime = cursor.getString(timeColumnIndex);
-////                                String currentStatus = cursor.getString(statusColumnIndex);
-////
-////                // Display the values from each column of the current row in the cursor in the TextView
-////                                displayView.append(("\n" + currentID + " - " +
-////                              currentValue + " - " +
-////                                        currentDesc + " - " +
-////                                        currentDate + " - " +
-////                                        currentTime + " - " +
-////                                        currentStatus));
-////                            }
-////        } finally {
-////            // Always close the cursor when you're done reading from it. This releases all its
-////            // resources and makes it invalid.0
-////            cursor.close();
-////        }
         mCursorAdapter = new MoneyCursorAdapter(getActivity(),null);
         moneyListView.setAdapter(mCursorAdapter);
+        mCursorAdapter.notifyDataSetChanged();
         moneyListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
@@ -506,9 +388,7 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
             }
         });
 //        setListViewHeightBasedOnChildren(moneyListView);
-        getLoaderManager().initLoader(MONEY_LOADER,null,this);
-
-        return root;
+        getLoaderManager().restartLoader(MONEY_LOADER,null,this);
 
     }
 
@@ -521,35 +401,13 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
         super.onDestroy();
     }
 
-    //    @Override
-//    public void onResume() {
-//        super.onResume();
-//
-//        if(getView() == null){
-//            return;
-//        }
-//
-//        getView().setFocusableInTouchMode(true);
-//        getView().requestFocus();
-//        getView().setOnKeyListener(new View.OnKeyListener() {
-//            @Override
-//            public boolean onKey(View v, int keyCode, KeyEvent event) {
-//                if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK && mSelectedItemIds.size()!=0){
-//                    // handle back button's click listener
-//                    for(int i = 0 ; i < moneyListView.getCount() ; i++){
-//                        moneyListView.getChildAt(i).setBackgroundColor(Color.TRANSPARENT);
-//                    }
-//                    mSelectedItemIds.clear();
-//                    mActionMode.finish();
-//
-//                    return true;
-//                }
-//                return false;
-//            }
-//        });
-//    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        startMainThread();
+    }
 
-        private boolean doesContainThisItem(long l, ArrayList<Long> mSelectedItemIds) {
+    private boolean doesContainThisItem(long l, ArrayList<Long> mSelectedItemIds) {
         for(Long p: mSelectedItemIds){
             if(p==l)
                 return true;
@@ -584,7 +442,6 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
         String SELECTION = MoneyContract.MoneyEntry.COLUMN_MONEY_DATE+" =?";
         String[] ARGS = {currentDate};
         Log.v("date",MoneyContract.MoneyEntry.COLUMN_MONEY_DATE);
@@ -617,8 +474,37 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
         mCursorAdapter.swapCursor(null);
     }
 
+    private void incDecDate(int i) {
+        pg.cancelAnimating();
+        Date date;
+        try {
+            SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+            date = df.parse(currentDate);
+            Calendar c = Calendar.getInstance();
+            c.setTime(date);
+            c.add(Calendar.DATE,i);
+            currentDate = df.format(c.getTime());
+            curDate.setText(currentDate);
+            startMainThread();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
+    }
 
+    @Override
+    public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+        pg.cancelAnimating();
+        String dayS = String.valueOf(day);
+        String monthS = String.valueOf(month+1);
+        if ((day / 10) < 1)
+            dayS = "0" + dayS;
+        if (((month) / 10) < 1)
+            monthS = "0" + monthS;
+        currentDate = dayS+"-"+monthS+"-"+year;
+        curDate.setText(currentDate);
+        startMainThread();
+    }
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -635,7 +521,6 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
     }
 
     public String getSumSpent(){
-        currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
         String SELECTION = MoneyContract.MoneyEntry.COLUMN_MONEY_DATE+" =? AND "+ MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS+" =?";
 
         String[] ARGS = {currentDate,"1"};
@@ -660,7 +545,6 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
     }
 
     public String getSumReceived() {
-        currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
             String SELECTION = MoneyContract.MoneyEntry.COLUMN_MONEY_DATE+" =? AND "+ MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS+" =?";
 
         String[] ARGS = {currentDate,"2"};
@@ -715,7 +599,6 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
     }
 
     public boolean noEntriesExist(){
-        currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
         String SELECTION = MoneyContract.MoneyEntry.COLUMN_MONEY_DATE+" =?";
         String[] ARGS = {currentDate};
         MoneyDbHelper mDbHelper = new MoneyDbHelper(getActivity());

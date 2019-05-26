@@ -576,17 +576,17 @@ public class home extends AppCompatActivity
 //        Toast.makeText(home.this,"isDateSelected="+isDateSelected,Toast.LENGTH_LONG).show();
 
 
-        if(selected == 1){
-            fragmentClass = TodayFragment.class;
-            try {
-                fragment = (androidx.fragment.app.Fragment) fragmentClass.newInstance();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_left).replace(R.id.flContent, fragment).commit();
-        }
-        else if(selected == 2){
+//        if(selected == 1){
+//            fragmentClass = TodayFragment.class;
+//            try {
+//                fragment = (androidx.fragment.app.Fragment) fragmentClass.newInstance();
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//            FragmentManager fragmentManager = getSupportFragmentManager();
+//            fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_left).replace(R.id.flContent, fragment).commit();
+//        }
+         if(selected == 2){
             fragmentClass = YesterdayFragment.class;
             try {
                 fragment = (androidx.fragment.app.Fragment) fragmentClass.newInstance();

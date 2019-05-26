@@ -7,4 +7,9 @@
         <item name="android:statusBarColor">@android:color/transparent</item>
 
     </style>
+
+    <style name="MyDatePicker" parent="@android:style/Widget.DatePicker">
+        <item name="android:calendarViewShown">false</item>
+        <item name="android:datePickerMode">spinner</item>
+    </style>
 </resources>
