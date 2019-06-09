@@ -14,7 +14,9 @@ import android.database.sqlite.SQLiteException;
 import android.graphics.Color;
 import android.os.Handler;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.view.NestedScrollingChild;
+import androidx.core.view.ViewCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.FragmentManager;
 import androidx.loader.app.LoaderManager;
@@ -76,6 +78,7 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
     MoneyCursorAdapter mCursorAdapter;
     private NonScrollListView moneyListView;
     Animation slide;
+    Boolean toEnd;
     private boolean isActionModeOn = false;
     ImageView nextDate,previousDate,dropDown;
     TextView curDate;
@@ -152,6 +155,8 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
         sum_spent = root.findViewById(R.id.sum_spent);
         sum_received = root.findViewById(R.id.sum_received);
         dropDown = root.findViewById(R.id.imageViewDrop);
+        ConstraintLayout coordinatorLayout = root.findViewById(R.id.topbardates);
+        ViewCompat.setElevation(coordinatorLayout,2);
         try {
             startMainThread();
         }finally {
@@ -174,28 +179,7 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
                     }
                 }
             }, 1500);
-            pg.setAnimationListener(new AnimatorListenerAdapter() {
 
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    super.onAnimationEnd(animation);
-                    Toast.makeText(getActivity(), "ANIMATION ENDED", Toast.LENGTH_SHORT).show();
-                    Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        public void run() {
-                            moneyListView.setVisibility(View.VISIBLE);
-                            moneyListView.startAnimation(slide);
-                        }
-                    }, 50);
-
-                }
-
-                @Override
-                public void onAnimationStart(Animator animation) {
-                    super.onAnimationStart(animation);
-                    Toast.makeText(getActivity(), "ANIMATION STARTED", Toast.LENGTH_SHORT).show();
-                }
-            });
 
 
         }
@@ -271,8 +255,38 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
         pg.setDuration(1000);//default if unspecified is 300 ms
         slide = AnimationUtils.loadAnimation(getActivity(), R.anim.enter_from_left);
         slide.setDuration(700);
-
+        toEnd = true;
         pg.animateToGoalValues();
+        pg.setAnimationListener(new AnimatorListenerAdapter() {
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                if(toEnd) {
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        public void run() {
+                            moneyListView.setVisibility(View.VISIBLE);
+                            moneyListView.startAnimation(slide);
+                        }
+                    }, 50);
+                }
+
+
+
+
+
+
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+                super.onAnimationCancel(animation);
+                toEnd = false;
+            }
+
+        });
+
         ValueAnimator valueAnimator = ValueAnimator.ofFloat(0, (float) Double.parseDouble(getSumSpent()));
         valueAnimator.setDuration(1000);
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -476,6 +490,8 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
 
     private void incDecDate(int i) {
         pg.cancelAnimating();
+        pg.setDuration(0);
+        moneyListView.setVisibility(View.INVISIBLE);
         Date date;
         try {
             SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
@@ -494,7 +510,6 @@ public class TodayFragment extends Fragment implements LoaderManager.LoaderCallb
 
     @Override
     public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-        pg.cancelAnimating();
         String dayS = String.valueOf(day);
         String monthS = String.valueOf(month+1);
         if ((day / 10) < 1)

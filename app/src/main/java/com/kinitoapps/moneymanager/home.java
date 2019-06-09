@@ -428,11 +428,6 @@ public class home extends AppCompatActivity
             selected = 1;
             //part of the work around
 //            navigationView.getMenu().findItem(R.id.nav_camera).setChecked(true);
-        } else if (id == R.id.nav_yesterday) {
-            clicked = 2;
-            selected = 2;
-
-
         } else if (id == R.id.nav_this_month) {
             clicked = 3;
             selected = 3;
@@ -551,85 +546,10 @@ public class home extends AppCompatActivity
 
         androidx.fragment.app.Fragment fragment = null;
         Class fragmentClass = null;
-//        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-//        drawer.addDrawerListener(new DrawerLayout.DrawerListener() {
-//            @Override
-//            public void onDrawerSlide(View drawerView, float slideOffset) {
-//
-//            }
-//
-//            @Override
-//            public void onDrawerOpened(View drawerView) {
-//
-//            }
-//
-//            @Override
-//            public void onDrawerClosed(View drawerView) {
-//
-//            }
-//
-//            @Override
-//            public void onDrawerStateChanged(int newState) {
-//
-//            }
-//        });
-//        Toast.makeText(home.this,"isDateSelected="+isDateSelected,Toast.LENGTH_LONG).show();
 
 
-//        if(selected == 1){
-//            fragmentClass = TodayFragment.class;
-//            try {
-//                fragment = (androidx.fragment.app.Fragment) fragmentClass.newInstance();
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//            FragmentManager fragmentManager = getSupportFragmentManager();
-//            fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_left).replace(R.id.flContent, fragment).commit();
-//        }
-         if(selected == 2){
-            fragmentClass = YesterdayFragment.class;
-            try {
-                fragment = (androidx.fragment.app.Fragment) fragmentClass.newInstance();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_left).replace(R.id.flContent, fragment).commit();
-        }
 
-        else if(selected == 3){
-            fragmentClass = ThisMonthFragment.class;
-            try {
-                fragment = (androidx.fragment.app.Fragment) fragmentClass.newInstance();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_left).replace(R.id.flContent, fragment).commit();
-        }
-        else if(selected == 4){
-            fragmentClass = ThisYearFragment.class;
-            try {
-                fragment = (androidx.fragment.app.Fragment) fragmentClass.newInstance();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_left).replace(R.id.flContent, fragment).commit();
-        }
-//        else if(selected == 5){
-//            navigationView.getMenu().findItem(R.id.nav_cal).setChecked(false);
-//            navigationView.getMenu().findItem(R.id.nav_today).setChecked(true);
-//            fragmentClass = TodayFragment.class;
-//            try {
-//                fragment = (android.support.v4.app.Fragment) fragmentClass.newInstance();
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//            FragmentManager fragmentManager = getSupportFragmentManager();
-//            fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_left).replace(R.id.flContent, fragment).commit();
-//        }
-        else if(selected == 5 && isDateSelected) {
+        if(selected == 5 && isDateSelected) {
 
                     Bundle bundle = new Bundle();
                     bundle.putString("Date", currentDate);
@@ -733,24 +653,6 @@ public class home extends AppCompatActivity
         fragment = null;
         selected = 1;
         fragmentClass = TodayFragment.class;
-        try {
-            fragment = (androidx.fragment.app.Fragment) fragmentClass.newInstance();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_left).replace(R.id.flContent, fragment,"date_fragment").commit();
-    }
-    public void replaceFragmentToYesterday(){
-        selected = 2;
-        androidx.fragment.app.Fragment fragment;
-        navigationView.getMenu().findItem(R.id.nav_overview).setChecked(false);
-        navigationView.getMenu().findItem(R.id.nav_yesterday).setChecked(true);
-        LAST_SELECTED = R.id.nav_yesterday;
-        Class fragmentClass = null;
-        fragment = null;
-        fragmentClass = YesterdayFragment.class;
         try {
             fragment = (androidx.fragment.app.Fragment) fragmentClass.newInstance();
 

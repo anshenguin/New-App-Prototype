@@ -1,235 +1,228 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#FAFAFA"
-    android:scrollbars="none"
-    android:focusable="true">
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone"
+        android:paddingTop="64dp"
+        android:id="@+id/empty_view"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:gravity="center"
+            android:layout_gravity="center">
+
+            <ImageView
+                android:id="@+id/empty_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/emptylistview_one"/>
+
+            <TextView
+                android:id="@+id/empty_title_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/empty_image"
+                android:layout_centerHorizontal="true"
+                android:gravity="center"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:paddingTop="16dp"
+                android:text="No entries exist for the selected year!"
+                android:textAppearance="?android:textAppearanceMedium"/>
+        </RelativeLayout>
+
+    </LinearLayout>
 
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <LinearLayout
+        android:layout_height="match_parent"
+        android:background="#FAFAFA"
+        android:scrollbars="none"
+        android:id="@+id/pie_graph"
+        android:focusable="true">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:orientation="vertical"
-            android:visibility="gone"
-            android:id="@+id/empty_view"
+            android:descendantFocusability="blocksDescendants"
+            android:paddingBottom="60dp"
             android:layout_height="match_parent">
 
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="40dp"
-                android:gravity="center"
-                android:layout_gravity="center">
 
-                <ImageView
-                    android:id="@+id/empty_image"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:src="@drawable/emptylistview_one"/>
-
-                <TextView
-                    android:id="@+id/empty_title_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/empty_image"
-                    android:layout_centerHorizontal="true"
-                    android:paddingTop="16dp"
-                    android:text="No entries exist for this year!"
-                    android:textAppearance="?android:textAppearanceMedium"/>
-            </RelativeLayout>
-
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:descendantFocusability="blocksDescendants"
-            android:orientation="vertical">
+            <com.kinitoapps.moneymanager.piechart.PieGraph
+                android:id="@+id/graph"
+                android:layout_width="match_parent"
+                android:layout_marginTop="76dp"
+                android:layout_height="200dp"
+                app:layout_constraintTop_toTopOf="parent"
+                />
 
             <LinearLayout
-                android:id="@+id/pie_chart"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="horizontal"
+                android:id="@+id/detaillayout"
+                app:layout_constraintTop_toBottomOf="@id/graph"
+                android:weightSum="13">
 
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3.5"
                     android:orientation="vertical"
-                    android:background="#E0E0E0"
-                    android:layout_height="wrap_content">
+                    android:padding="4dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="THIS YEAR"
-                        android:layout_marginTop="8dp"
-                        android:fontFamily="@font/bold_oxygen"
-                        android:textSize="16sp"
-                        android:layout_gravity="center_horizontal"/>
+                        android:layout_gravity="center_horizontal"
+                        android:text="RECEIVED"
+                        android:fontFamily="@font/bold_oxygen" />
 
-                    <com.kinitoapps.moneymanager.piechart.PieGraph
-                        android:id="@+id/graph"
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/sum_received"
                         android:layout_width="match_parent"
-                        android:layout_height="200dp"
-                        android:layout_marginTop="16dp" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:weightSum="13">
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="3.5"
-                            android:orientation="vertical"
-                            android:padding="4dp">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center_horizontal"
-                                android:text="RECEIVED"
-                                android:fontFamily="@font/bold_oxygen" />
-
-                            <androidx.appcompat.widget.AppCompatTextView
-                                android:id="@+id/sum_received"
-                                android:layout_width="match_parent"
-                                android:layout_height="32dp"
-                                android:text="100000000"
-                                android:autoSizeMaxTextSize="16sp"
-                                android:autoSizeTextType="uniform"
-                                app:autoSizeTextType="uniform"
-                                app:autoSizeMaxTextSize="16sp"
-                                android:gravity="center_horizontal"
-                                android:textColor="#43C443"
-                                android:fontFamily="@font/bold_oxygen"/>
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="6"
-                            android:orientation="vertical">
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center_horizontal"
-                                android:text="NET TOTAL"
-                                android:layout_marginTop="8dp"
-                                android:fontFamily="@font/bold_oxygen"/>
-
-                            <androidx.appcompat.widget.AppCompatTextView
-                                android:id="@+id/total"
-                                android:layout_width="match_parent"
-                                android:layout_height="36dp"
-                                android:text="100000000"
-                                app:autoSizeTextType="uniform"
-                                android:autoSizeTextType="uniform"
-                                android:textColor="#F9A825"
-                                android:layout_marginBottom="8dp"
-                                android:textSize="24sp"
-                                android:gravity="center_horizontal"
-                                android:fontFamily="@font/bold_oxygen"/>
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="3.5"
-                            android:orientation="vertical"
-                            android:padding="4dp">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center_horizontal"
-                                android:text="SPENT"
-                                android:fontFamily="@font/bold_oxygen"/>
-
-                            <androidx.appcompat.widget.AppCompatTextView
-                                android:id="@+id/sum_spent"
-                                android:layout_width="match_parent"
-                                android:layout_height="32dp"
-                                android:text="10000"
-                                android:autoSizeMaxTextSize="16sp"
-                                android:autoSizeTextType="uniform"
-                                app:autoSizeTextType="uniform"
-                                app:autoSizeMaxTextSize="16sp"
-                                android:gravity="center_horizontal"
-                                android:textColor="#F55454"
-                                android:fontFamily="@font/bold_oxygen"/>
-                        </LinearLayout>
-
-                    </LinearLayout>
+                        android:layout_height="32dp"
+                        android:text="100000000"
+                        android:autoSizeMaxTextSize="16sp"
+                        android:autoSizeTextType="uniform"
+                        app:autoSizeTextType="uniform"
+                        app:autoSizeMaxTextSize="16sp"
+                        android:gravity="center_horizontal"
+                        android:textColor="#43C443"
+                        android:fontFamily="@font/bold_oxygen"/>
                 </LinearLayout>
 
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="6"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:text="NET TOTAL"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="@font/bold_oxygen"/>
 
-                <com.kinitoapps.moneymanager.NonScrollListView
-                    android:id="@+id/list"
-                    android:visibility="gone"
-                    android:layout_width="match_parent"
-                    android:layout_marginBottom="60dp"
-                    android:layout_height="wrap_content"
-                    android:background="#FAFAFA" />
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/total"
+                        android:layout_width="match_parent"
+                        android:layout_height="36dp"
+                        android:text="100000000"
+                        app:autoSizeTextType="uniform"
+                        android:autoSizeTextType="uniform"
+                        android:textColor="#F9A825"
+                        android:layout_marginBottom="8dp"
+                        android:textSize="24sp"
+                        android:gravity="center_horizontal"
+                        android:fontFamily="@font/bold_oxygen"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3.5"
+                    android:orientation="vertical"
+                    android:padding="4dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:text="SPENT"
+                        android:fontFamily="@font/bold_oxygen"/>
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/sum_spent"
+                        android:layout_width="match_parent"
+                        android:layout_height="32dp"
+                        android:text="10000"
+                        android:autoSizeMaxTextSize="16sp"
+                        android:autoSizeTextType="uniform"
+                        app:autoSizeTextType="uniform"
+                        app:autoSizeMaxTextSize="16sp"
+                        android:gravity="center_horizontal"
+                        android:textColor="#F55454"
+                        android:fontFamily="@font/bold_oxygen"/>
+                </LinearLayout>
+
             </LinearLayout>
 
-            <!--<RelativeLayout-->
-            <!--android:id="@+id/empty_view"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_gravity="center"-->
-            <!--android:layout_marginTop="40dp">-->
-            <!--<ImageView-->
-            <!--android:id="@+id/empty_shelter_image"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_centerHorizontal="true"-->
-            <!--android:src="@mipmap/ic_launcher_round" />-->
-            <!--<TextView-->
-            <!--android:id="@+id/empty_title_text"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_below="@+id/empty_shelter_image"-->
-            <!--android:layout_centerHorizontal="true"-->
-            <!--android:fontFamily="sans-serif-medium"-->
-            <!--android:paddingTop="16dp"-->
-            <!--android:text="@string/empty_view_title_text"-->
-            <!--android:textAppearance="?android:textAppearanceMedium" />-->
-            <!--<TextView-->
-            <!--android:id="@+id/empty_subtitle_text"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_below="@+id/empty_title_text"-->
-            <!--android:layout_centerHorizontal="true"-->
-            <!--android:fontFamily="sans-serif"-->
-            <!--android:paddingTop="8dp"-->
-            <!--android:text="@string/empty_view_subtitle_text"-->
-            <!--android:textAppearance="?android:textAppearanceSmall"-->
-            <!--android:textColor="#A2AAB0" />-->
-            <!--</RelativeLayout>-->
+            <com.kinitoapps.moneymanager.NonScrollListView
+                android:id="@+id/list"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/detaillayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#FAFAFA" />
 
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-        </LinearLayout>
-
-
-    </RelativeLayout>
     </androidx.core.widget.NestedScrollView>
-    <!--</android.support.v4.widget.NestedScrollView>-->
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:id="@+id/topbardates"
+        android:background="#E5E5E5"
+        app:layout_constraintTop_toTopOf="parent"
+        android:paddingBottom="4dp"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/imageViewLeft"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+
+            android:padding="12dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_chevron_left_black_24dp" />
+
+        <TextView
+            android:id="@+id/currentDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:paddingTop="8dp"
+            android:paddingLeft="8dp"
+            android:textColor="#222220"
+            android:paddingBottom="8dp"
+            android:text="1998"
+            android:textSize="18sp"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+
+        <ImageView
+            android:id="@+id/imageViewRight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:padding="12dp"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_chevron_right_black_24dp" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
     <LinearLayout
         android:id="@+id/banner_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        app:layout_constraintBottom_toBottomOf="parent"
         android:orientation="vertical"
         />
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -200,7 +200,6 @@ public class OverviewFragment extends Fragment {
         });
 
         CardView card_today = root.findViewById(R.id.card_today);
-        CardView card_yesterday = root.findViewById(R.id.card_yesterday);
         CardView card_this_month = root.findViewById(R.id.card_month);
         CardView card_this_year = root.findViewById(R.id.card_year);
 
@@ -221,13 +220,6 @@ public class OverviewFragment extends Fragment {
             }
         });
 
-        card_yesterday.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ((home)getActivity()).replaceFragmentToYesterday();
-
-            }
-        });
 
         card_today.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -239,10 +231,7 @@ public class OverviewFragment extends Fragment {
         sum_received = root.findViewById(R.id.sum_received1);
         sum_spent.setText("0");
         sum_received.setText("0");
-        sum_spent_yes = root.findViewById(R.id.sum_spent2);
-        sum_received_yes = root.findViewById(R.id.sum_received2);
-        sum_spent_yes.setText("0");
-        sum_received_yes.setText("0");
+
         sum_spent_mon = root.findViewById(R.id.sum_spent3);
         sum_received_mon = root.findViewById(R.id.sum_received3);
         sum_spent_mon.setText("0");
@@ -295,34 +284,7 @@ public class OverviewFragment extends Fragment {
          *
          */
 
-        final ValueAnimator valueAnimator1 = ValueAnimator.ofFloat(0, (float) Double.parseDouble(getSumYesterdaySpent()));
-        valueAnimator1.setDuration(1000);
-        valueAnimator1.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                if(Float.parseFloat(valueAnimator1.getAnimatedValue().toString())>=0&&
-                        Float.parseFloat(valueAnimator1.getAnimatedValue().toString())<1)
-                    sum_spent_yes.setText("0"+new DecimalFormat("#.00").format(valueAnimator.getAnimatedValue()));
-                else
-                    sum_spent_yes.setText(new DecimalFormat("#.00").format(valueAnimator.getAnimatedValue()));
 
-            }
-        });
-        valueAnimator1.start();
-        final ValueAnimator valueAnimator_two1 = ValueAnimator.ofFloat(0, (int)Double.parseDouble(getSumYesterdayReceived()));
-        valueAnimator_two1.setDuration(1000);
-        valueAnimator_two1.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                if(Float.parseFloat(valueAnimator_two1.getAnimatedValue().toString())>=0&&
-                        Float.parseFloat(valueAnimator_two1.getAnimatedValue().toString())<1)
-                    sum_received_yes.setText("0"+new DecimalFormat("#.00").format(valueAnimator.getAnimatedValue()));
-                else
-                    sum_received_yes.setText(new DecimalFormat("#.00").format(valueAnimator.getAnimatedValue()));
-            }
-        });
-
-        valueAnimator_two1.start();
 //        final ValueAnimator valueAnimator_three1 = ValueAnimator.ofFloat(0,(float)
 //                -Double.parseDouble(getSumYesterdaySpent())+(float)Double.parseDouble(getSumYesterdayReceived()));
 //        valueAnimator_three1.setDuration(1000);
@@ -506,7 +468,7 @@ public class OverviewFragment extends Fragment {
                         + MoneyContract.MoneyEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                         + MoneyContract.MoneyEntry.COLUMN_MONEY_VALUE + " DOUBLE NOT NULL, "
                         + MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS + " INTEGER NOT NULL DEFAULT 0, "
-                        + MoneyContract.MoneyEntry.COLUMN_MONEY_DESC + " TEXT, "
+                        + "\""+MoneyContract.MoneyEntry.COLUMN_MONEY_DESC +"\""+ " TEXT, "
                         + MoneyContract.MoneyEntry.COLUMN_MONEY_DATE + " TEXT, "
                         + MoneyContract.MoneyEntry.COLUMN_MONEY_TIME + " TEXT);";
 
@@ -543,247 +505,247 @@ public class OverviewFragment extends Fragment {
         else return false;
     }
 
-    public String getSumYesterdaySpent(){
-        String date;
-        String year;
-        String yesterdayDate;
-        String month;
-        currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
-        if(!currentDate.substring(0,2).equals("01")) {
-            date = String.valueOf(Integer.parseInt(currentDate.substring(0, 2)) - 1);
-            String monthAndYear = currentDate.substring(2);
-            if(Integer.parseInt(date)/10<1)
-                yesterdayDate = "0"+date+monthAndYear;
-            else
-                yesterdayDate = date+monthAndYear;
-            Log.v("lagging","not wali");
-        }
-        else{//new month started
-            Log.v("lagging","new month started");
+//    public String getSumYesterdaySpent(){
+//        String date;
+//        String year;
+//        String yesterdayDate;
+//        String month;
+//        currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
+//        if(!currentDate.substring(0,2).equals("01")) {
+//            date = String.valueOf(Integer.parseInt(currentDate.substring(0, 2)) - 1);
+//            String monthAndYear = currentDate.substring(2);
+//            if(Integer.parseInt(date)/10<1)
+//                yesterdayDate = "0"+date+monthAndYear;
+//            else
+//                yesterdayDate = date+monthAndYear;
+//            Log.v("lagging","not wali");
+//        }
+//        else{//new month started
+//            Log.v("lagging","new month started");
+//
+//            //last month was feb
+//            if(currentDate.substring(3,5).equals("03")){
+//                Log.v("lagging","feb");
+//                //check for leap year
+//                int year_int = Integer.parseInt(currentDate.substring(6));
+//                if(year_int%4==0){
+//                    if(year_int%100==0){
+//                        if(year_int%400==0)
+//                        {
+//                            //leap year
+//                            month = String.valueOf(Integer.parseInt(currentDate.substring(3,5))-1);
+//                            year = currentDate.substring(5);
+//                            yesterdayDate="29-0"+month+year;
+//                        }
+//                        else{
+//                            month = String.valueOf(Integer.parseInt(currentDate.substring(3,5))-1);
+//                            year = currentDate.substring(5);
+//                            yesterdayDate="28-0"+month+year;
+//
+//                            //not leap year
+//                        }
+//                    }
+//                    else{
+//                        //leap year
+//                        month = String.valueOf(Integer.parseInt(currentDate.substring(3,5))-1);
+//                        year = currentDate.substring(5);
+//                        yesterdayDate="29-0"+month+year;
+//
+//                    }
+//                }
+//                else{
+//                    month = String.valueOf(Integer.parseInt(currentDate.substring(3,5))-1);
+//                    year = currentDate.substring(5);
+//                    yesterdayDate="28-0"+month+year;
+//
+//                    //not leap year
+//                }
+//            }
+//            //last month was jan,mar,may,jul,aug,oct,dec
+//            else if(currentDate.substring(3,5).equals("02")||
+//                    currentDate.substring(3,5).equals("04")||
+//                    currentDate.substring(3,5).equals("06")||
+//                    currentDate.substring(3,5).equals("08")||
+//                    currentDate.substring(3,5).equals("09")||
+//                    currentDate.substring(3,5).equals("11")){
+//                Log.v("lagging","jan");
+//                month = String.valueOf(Integer.parseInt(currentDate.substring(3,5))-1);
+//                year = currentDate.substring(5);
+//                if(Integer.parseInt(month)/10<1)
+//                    yesterdayDate = "31-0"+month+year;
+//                else
+//                    yesterdayDate = "31-"+month+year;
+//
+//            }
+//
+//            else{
+//                Log.v("lagging","mar");
+//                month = String.valueOf(Integer.parseInt(currentDate.substring(3,5))-1);
+//                year = currentDate.substring(5);
+//                if(Integer.parseInt(month)/10<1)
+//                    yesterdayDate = "30-0"+month+year;
+//                else
+//                    yesterdayDate = "30-"+month+year;
+//
+//            }
+//        }
+//        String str = "";
+//        MoneyDbHelper mDbHelper = new MoneyDbHelper(getActivity());
+//        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+//        String[] PROJECTION = {
+//                "SUM(value)"
+//        };
+//        String[] ARGS = {yesterdayDate,"1"};
+//
+//        String SELECTION = MoneyContract.MoneyEntry.COLUMN_MONEY_DATE+" =? AND "+ MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS+" =?";
+//        Cursor cur = db.query(MoneyContract.MoneyEntry.TABLE_NAME,
+//                PROJECTION,
+//                SELECTION,
+//                ARGS,
+//                null,null,null);
+//        if(cur.moveToFirst())
+//        {
+//            str = String.valueOf(cur.getDouble(0));
+//            cur.close();
+//        }
+//        return str;
+//    }
 
-            //last month was feb
-            if(currentDate.substring(3,5).equals("03")){
-                Log.v("lagging","feb");
-                //check for leap year
-                int year_int = Integer.parseInt(currentDate.substring(6));
-                if(year_int%4==0){
-                    if(year_int%100==0){
-                        if(year_int%400==0)
-                        {
-                            //leap year
-                            month = String.valueOf(Integer.parseInt(currentDate.substring(3,5))-1);
-                            year = currentDate.substring(5);
-                            yesterdayDate="29-0"+month+year;
-                        }
-                        else{
-                            month = String.valueOf(Integer.parseInt(currentDate.substring(3,5))-1);
-                            year = currentDate.substring(5);
-                            yesterdayDate="28-0"+month+year;
-
-                            //not leap year
-                        }
-                    }
-                    else{
-                        //leap year
-                        month = String.valueOf(Integer.parseInt(currentDate.substring(3,5))-1);
-                        year = currentDate.substring(5);
-                        yesterdayDate="29-0"+month+year;
-
-                    }
-                }
-                else{
-                    month = String.valueOf(Integer.parseInt(currentDate.substring(3,5))-1);
-                    year = currentDate.substring(5);
-                    yesterdayDate="28-0"+month+year;
-
-                    //not leap year
-                }
-            }
-            //last month was jan,mar,may,jul,aug,oct,dec
-            else if(currentDate.substring(3,5).equals("02")||
-                    currentDate.substring(3,5).equals("04")||
-                    currentDate.substring(3,5).equals("06")||
-                    currentDate.substring(3,5).equals("08")||
-                    currentDate.substring(3,5).equals("09")||
-                    currentDate.substring(3,5).equals("11")){
-                Log.v("lagging","jan");
-                month = String.valueOf(Integer.parseInt(currentDate.substring(3,5))-1);
-                year = currentDate.substring(5);
-                if(Integer.parseInt(month)/10<1)
-                    yesterdayDate = "31-0"+month+year;
-                else
-                    yesterdayDate = "31-"+month+year;
-
-            }
-
-            else{
-                Log.v("lagging","mar");
-                month = String.valueOf(Integer.parseInt(currentDate.substring(3,5))-1);
-                year = currentDate.substring(5);
-                if(Integer.parseInt(month)/10<1)
-                    yesterdayDate = "30-0"+month+year;
-                else
-                    yesterdayDate = "30-"+month+year;
-
-            }
-        }
-        String str = "";
-        MoneyDbHelper mDbHelper = new MoneyDbHelper(getActivity());
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
-        String[] PROJECTION = {
-                "SUM(value)"
-        };
-        String[] ARGS = {yesterdayDate,"1"};
-
-        String SELECTION = MoneyContract.MoneyEntry.COLUMN_MONEY_DATE+" =? AND "+ MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS+" =?";
-        Cursor cur = db.query(MoneyContract.MoneyEntry.TABLE_NAME,
-                PROJECTION,
-                SELECTION,
-                ARGS,
-                null,null,null);
-        if(cur.moveToFirst())
-        {
-            str = String.valueOf(cur.getDouble(0));
-            cur.close();
-        }
-        return str;
-    }
-
-    public String getSumYesterdayReceived() {
-        String date;
-        String year;
-        String yesterdayDate;
-        String month;
-        currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
-        if(!currentDate.substring(0,2).equals("01")) {
-            date = String.valueOf(Integer.parseInt(currentDate.substring(0, 2)) - 1);
-            String monthAndYear = currentDate.substring(2);
-            if(Integer.parseInt(date)/10<1)
-                yesterdayDate = "0"+date+monthAndYear;
-            else
-                yesterdayDate = date+monthAndYear;
-            Log.v("lagging","not wali");
-        }
-        else{//new month started
-            Log.v("lagging","new month started");
-
-            //last month was feb
-            if(currentDate.substring(3,5).equals("03")){
-                Log.v("lagging","feb");
-                //check for leap year
-                int year_int = Integer.parseInt(currentDate.substring(6));
-                if(year_int%4==0){
-                    if(year_int%100==0){
-                        if(year_int%400==0)
-                        {
-                            //leap year
-                            month = String.valueOf(Integer.parseInt(currentDate.substring(3,5))-1);
-                            year = currentDate.substring(5);
-                            yesterdayDate="29-0"+month+year;
-                        }
-                        else{
-                            month = String.valueOf(Integer.parseInt(currentDate.substring(3,5))-1);
-                            year = currentDate.substring(5);
-                            yesterdayDate="28-0"+month+year;
-
-                            //not leap year
-                        }
-                    }
-                    else{
-                        //leap year
-                        month = String.valueOf(Integer.parseInt(currentDate.substring(3,5))-1);
-                        year = currentDate.substring(5);
-                        yesterdayDate="29-0"+month+year;
-
-                    }
-                }
-                else{
-                    month = String.valueOf(Integer.parseInt(currentDate.substring(3,5))-1);
-                    year = currentDate.substring(5);
-                    yesterdayDate="28-0"+month+year;
-
-                    //not leap year
-                }
-            }
-            //last month was jan,mar,may,jul,aug,oct,dec
-            else if(currentDate.substring(3,5).equals("02")||
-                    currentDate.substring(3,5).equals("04")||
-                    currentDate.substring(3,5).equals("06")||
-                    currentDate.substring(3,5).equals("08")||
-                    currentDate.substring(3,5).equals("09")||
-                    currentDate.substring(3,5).equals("11")){
-                Log.v("lagging","jan");
-                month = String.valueOf(Integer.parseInt(currentDate.substring(3,5))-1);
-                year = currentDate.substring(5);
-                if(Integer.parseInt(month)/10<1)
-                    yesterdayDate = "31-0"+month+year;
-                else
-                    yesterdayDate = "31-"+month+year;
-
-            }
-
-            else{
-                Log.v("lagging","mar");
-                month = String.valueOf(Integer.parseInt(currentDate.substring(3,5))-1);
-                year = currentDate.substring(5);
-                if(Integer.parseInt(month)/10<1)
-                    yesterdayDate = "30-0"+month+year;
-                else
-                    yesterdayDate = "30-"+month+year;
-
-            }
-        }
-        String sumReceived = "";
-        MoneyDbHelper mDbHelper = new MoneyDbHelper(getActivity());
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
-        String[] PROJECTION = {
-                "SUM(value)"
-        };
-        String[] ARGS = {yesterdayDate,"2"};
-
-        String SELECTION = MoneyContract.MoneyEntry.COLUMN_MONEY_DATE+" =? AND "+ MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS+" =?";
-        Cursor cur=null;
-        try {
-            cur = db.query(MoneyContract.MoneyEntry.TABLE_NAME,
-                    PROJECTION,
-                    SELECTION,
-                    ARGS,
-                    null, null, null);
-        }catch (SQLiteException e){
-            if (e.getMessage().contains("no such table")){
-//                SharedPreferences databaseversion = getActivity().getSharedPreferences("DBVER", Context.MODE_PRIVATE);
-//                int DATABASE_VERSION = databaseversion.getInt("DATABASE_VERSION",0);
-//                ++DATABASE_VERSION;
-//                databaseversion.edit().putInt("DATABASE_VERSION",DATABASE_VERSION).commit();
-//                mDbHelper = new MoneyDbHelper(getActivity());
-//                db = mDbHelper.getReadableDatabase();
-                String SQL_CREATE_PETS_TABLE =  "CREATE TABLE " + MoneyContract.MoneyEntry.TABLE_NAME + " ("
-                        + MoneyContract.MoneyEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                        + MoneyContract.MoneyEntry.COLUMN_MONEY_VALUE + " DOUBLE NOT NULL, "
-                        + MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS + " INTEGER NOT NULL DEFAULT 0, "
-                        + MoneyContract.MoneyEntry.COLUMN_MONEY_DESC + " TEXT, "
-                        + MoneyContract.MoneyEntry.COLUMN_MONEY_DATE + " TEXT, "
-                        + MoneyContract.MoneyEntry.COLUMN_MONEY_TIME + " TEXT);";
-
-                // Execute the SQL statement
-                db.execSQL(SQL_CREATE_PETS_TABLE);
-                cur = db.query(MoneyContract.MoneyEntry.TABLE_NAME,
-                        PROJECTION,
-                        SELECTION,
-                        ARGS,
-                        null, null, null);
-                // create table
-                // re-run query, etc.
-
-            }
-        }
-        if(cur.moveToFirst())
-        {
-            sumReceived = String.valueOf(cur.getDouble(0));
-            cur.close();
-        }
-        return sumReceived;
-    }
+//    public String getSumYesterdayReceived() {
+//        String date;
+//        String year;
+//        String yesterdayDate;
+//        String month;
+//        currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
+//        if(!currentDate.substring(0,2).equals("01")) {
+//            date = String.valueOf(Integer.parseInt(currentDate.substring(0, 2)) - 1);
+//            String monthAndYear = currentDate.substring(2);
+//            if(Integer.parseInt(date)/10<1)
+//                yesterdayDate = "0"+date+monthAndYear;
+//            else
+//                yesterdayDate = date+monthAndYear;
+//            Log.v("lagging","not wali");
+//        }
+//        else{//new month started
+//            Log.v("lagging","new month started");
+//
+//            //last month was feb
+//            if(currentDate.substring(3,5).equals("03")){
+//                Log.v("lagging","feb");
+//                //check for leap year
+//                int year_int = Integer.parseInt(currentDate.substring(6));
+//                if(year_int%4==0){
+//                    if(year_int%100==0){
+//                        if(year_int%400==0)
+//                        {
+//                            //leap year
+//                            month = String.valueOf(Integer.parseInt(currentDate.substring(3,5))-1);
+//                            year = currentDate.substring(5);
+//                            yesterdayDate="29-0"+month+year;
+//                        }
+//                        else{
+//                            month = String.valueOf(Integer.parseInt(currentDate.substring(3,5))-1);
+//                            year = currentDate.substring(5);
+//                            yesterdayDate="28-0"+month+year;
+//
+//                            //not leap year
+//                        }
+//                    }
+//                    else{
+//                        //leap year
+//                        month = String.valueOf(Integer.parseInt(currentDate.substring(3,5))-1);
+//                        year = currentDate.substring(5);
+//                        yesterdayDate="29-0"+month+year;
+//
+//                    }
+//                }
+//                else{
+//                    month = String.valueOf(Integer.parseInt(currentDate.substring(3,5))-1);
+//                    year = currentDate.substring(5);
+//                    yesterdayDate="28-0"+month+year;
+//
+//                    //not leap year
+//                }
+//            }
+//            //last month was jan,mar,may,jul,aug,oct,dec
+//            else if(currentDate.substring(3,5).equals("02")||
+//                    currentDate.substring(3,5).equals("04")||
+//                    currentDate.substring(3,5).equals("06")||
+//                    currentDate.substring(3,5).equals("08")||
+//                    currentDate.substring(3,5).equals("09")||
+//                    currentDate.substring(3,5).equals("11")){
+//                Log.v("lagging","jan");
+//                month = String.valueOf(Integer.parseInt(currentDate.substring(3,5))-1);
+//                year = currentDate.substring(5);
+//                if(Integer.parseInt(month)/10<1)
+//                    yesterdayDate = "31-0"+month+year;
+//                else
+//                    yesterdayDate = "31-"+month+year;
+//
+//            }
+//
+//            else{
+//                Log.v("lagging","mar");
+//                month = String.valueOf(Integer.parseInt(currentDate.substring(3,5))-1);
+//                year = currentDate.substring(5);
+//                if(Integer.parseInt(month)/10<1)
+//                    yesterdayDate = "30-0"+month+year;
+//                else
+//                    yesterdayDate = "30-"+month+year;
+//
+//            }
+//        }
+//        String sumReceived = "";
+//        MoneyDbHelper mDbHelper = new MoneyDbHelper(getActivity());
+//        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+//        String[] PROJECTION = {
+//                "SUM(value)"
+//        };
+//        String[] ARGS = {yesterdayDate,"2"};
+//
+//        String SELECTION = MoneyContract.MoneyEntry.COLUMN_MONEY_DATE+" =? AND "+ MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS+" =?";
+//        Cursor cur=null;
+//        try {
+//            cur = db.query(MoneyContract.MoneyEntry.TABLE_NAME,
+//                    PROJECTION,
+//                    SELECTION,
+//                    ARGS,
+//                    null, null, null);
+//        }catch (SQLiteException e){
+//            if (e.getMessage().contains("no such table")){
+////                SharedPreferences databaseversion = getActivity().getSharedPreferences("DBVER", Context.MODE_PRIVATE);
+////                int DATABASE_VERSION = databaseversion.getInt("DATABASE_VERSION",0);
+////                ++DATABASE_VERSION;
+////                databaseversion.edit().putInt("DATABASE_VERSION",DATABASE_VERSION).commit();
+////                mDbHelper = new MoneyDbHelper(getActivity());
+////                db = mDbHelper.getReadableDatabase();
+//                String SQL_CREATE_PETS_TABLE =  "CREATE TABLE " + MoneyContract.MoneyEntry.TABLE_NAME + " ("
+//                        + MoneyContract.MoneyEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+//                        + MoneyContract.MoneyEntry.COLUMN_MONEY_VALUE + " DOUBLE NOT NULL, "
+//                        + MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS + " INTEGER NOT NULL DEFAULT 0, "
+//                        + MoneyContract.MoneyEntry.COLUMN_MONEY_DESC + " TEXT, "
+//                        + MoneyContract.MoneyEntry.COLUMN_MONEY_DATE + " TEXT, "
+//                        + MoneyContract.MoneyEntry.COLUMN_MONEY_TIME + " TEXT);";
+//
+//                // Execute the SQL statement
+//                db.execSQL(SQL_CREATE_PETS_TABLE);
+//                cur = db.query(MoneyContract.MoneyEntry.TABLE_NAME,
+//                        PROJECTION,
+//                        SELECTION,
+//                        ARGS,
+//                        null, null, null);
+//                // create table
+//                // re-run query, etc.
+//
+//            }
+//        }
+//        if(cur.moveToFirst())
+//        {
+//            sumReceived = String.valueOf(cur.getDouble(0));
+//            cur.close();
+//        }
+//        return sumReceived;
+//    }
 
     public String getSumMonthlySpent(){
         currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
@@ -842,7 +804,7 @@ public class OverviewFragment extends Fragment {
                         + MoneyContract.MoneyEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                         + MoneyContract.MoneyEntry.COLUMN_MONEY_VALUE + " DOUBLE NOT NULL, "
                         + MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS + " INTEGER NOT NULL DEFAULT 0, "
-                        + MoneyContract.MoneyEntry.COLUMN_MONEY_DESC + " TEXT, "
+                        + "\""+MoneyContract.MoneyEntry.COLUMN_MONEY_DESC +"\""+ " TEXT, "
                         + MoneyContract.MoneyEntry.COLUMN_MONEY_DATE + " TEXT, "
                         + MoneyContract.MoneyEntry.COLUMN_MONEY_TIME + " TEXT);";
 
@@ -1032,7 +994,7 @@ public class OverviewFragment extends Fragment {
                         + MoneyContract.MoneyEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                         + MoneyContract.MoneyEntry.COLUMN_MONEY_VALUE + " DOUBLE NOT NULL, "
                         + MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS + " INTEGER NOT NULL DEFAULT 0, "
-                        + MoneyContract.MoneyEntry.COLUMN_MONEY_DESC + " TEXT, "
+                        + "\""+MoneyContract.MoneyEntry.COLUMN_MONEY_DESC +"\""+ " TEXT, "
                         + MoneyContract.MoneyEntry.COLUMN_MONEY_DATE + " TEXT, "
                         + MoneyContract.MoneyEntry.COLUMN_MONEY_TIME + " TEXT);";
 

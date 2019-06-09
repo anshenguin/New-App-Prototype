@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.content.ContentUris;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,6 +12,11 @@ import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteException;
 import android.graphics.Color;
 import android.os.Handler;
+
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.view.ViewCompat;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.FragmentManager;
 import androidx.loader.app.LoaderManager;
 import android.content.Context;
@@ -32,7 +38,13 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.CursorAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.NumberPicker;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.ads.AdSize;
@@ -73,6 +85,16 @@ public class ThisMonthFragment extends Fragment implements LoaderManager.LoaderC
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    TextView curDate,monthyear;
+    AppCompatTextView sum_spent,sum_received, sum_total;
+    NestedScrollView pieChart;
+    Animation slide;
+    ImageView nextDate,previousDate;
+    PieGraph pg;
+    Boolean toEnd;
+    int currentYear;
+    View emptyView;
+    String currentMonth;
     private String currentDate;
 
     private OnFragmentInteractionListener mListener;
@@ -112,163 +134,194 @@ public class ThisMonthFragment extends Fragment implements LoaderManager.LoaderC
 
     }
 
-//
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//        Toast.makeText(getActivity(),"onResume",Toast.LENGTH_LONG).show();
-//
-//    }
-//
-//    @Override
-//    public void onPause() {
-//        super.onPause();
-//        Toast.makeText(getActivity(),"onPause",Toast.LENGTH_LONG).show();
-//
-//    }
-//    @Override
-//    public void onStart(){
-//        super.onStart();
-//        Toast.makeText(getActivity(),"onStart",Toast.LENGTH_LONG).show();
-//
-//    }
-//
-//    @Override
-//    public void onStop(){
-//        super.onStop();
-//        Toast.makeText(getActivity(),"onStop",Toast.LENGTH_LONG).show();
-//    }
-//
-//    @Override
-//    public void onDestroyView(){
-//        super.onDestroyView();
-//        Toast.makeText(getActivity(),"onDestroyView",Toast.LENGTH_LONG).show();
-//
-//    }
-
-
-    //        // Inflate the layout for this fragment
-//        MoneyDbHelper mDbHelper = new MoneyDbHelper(getActivity());
-//
-//        // Create and/or open a database to read from it
-//
-//        // Perform this raw SQL query "SELECT * FROM pets"
-//        // to get a Cursor that contains all rows from the pets table.
-////        Cursor cursor = db.rawQuery("SELECT * FROM " + MoneyContract.MoneyEntry.TABLE_NAME, null);
-//
-////        String[] projection = {
-////                MoneyContract.MoneyEntry._ID,
-////                MoneyContract.MoneyEntry.COLUMN_MONEY_VALUE,
-////                MoneyContract.MoneyEntry.COLUMN_MONEY_DESC,
-////                MoneyContract.MoneyEntry.COLUMN_MONEY_DATE,
-////                MoneyContract.MoneyEntry.COLUMN_MONEY_TIME,
-////                MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS
-////        };
-////
-////        Cursor cursor = db.query(
-////                MoneyContract.MoneyEntry.TABLE_NAME,
-////                projection,
-////                null,
-////                null,
-////                null,
-////                null,
-////                null
-////        );
-//        Toast.makeText(getActivity(),"onResume",Toast.LENGTH_LONG).show();
-//        ListView moneyListView = getView().findViewById(R.id.list);
-//        View emptyView = getView().findViewById(R.id.empty_view);
-//        moneyListView.setEmptyView(emptyView);
-////        MoneyCursorAdapter adapter = new MoneyCursorAdapter(getActivity(), cursor);
-////        moneyListView.setAdapter(adapter);
-//////        TextView displayView = root.findViewById(R.id.root);
-//////
-//////        try {
-//////            // Create a header in the Text View that looks like this:
-//////            //
-//////            // The pets table contains <number of rows in Cursor> pets.
-//////            // _id - name - breed - gender - weight
-//////            //
-//////            // In the while loop below, iterate through the rows of the cursor and display
-//////            // the information from each column in this order.
-//////            displayView.setText("The pets table contains " + cursor.getCount() + " pets.\n\n");
-//////            displayView.append(MoneyContract.MoneyEntry._ID + " - " +
-//////                                        MoneyContract.MoneyEntry.COLUMN_MONEY_VALUE + " - " +
-//////                                        MoneyContract.MoneyEntry.COLUMN_MONEY_DESC + " - " +
-//////                                        MoneyContract.MoneyEntry.COLUMN_MONEY_DATE + " - " +
-//////                                        MoneyContract.MoneyEntry.COLUMN_MONEY_TIME + " - " +
-//////                                        MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS + "\n");
-//////
-//////            // Figure out the index of each column
-//////            int idColumnIndex = cursor.getColumnIndex(MoneyContract.MoneyEntry._ID);
-//////                        int valueColumnIndex = cursor.getColumnIndex(MoneyContract.MoneyEntry.COLUMN_MONEY_VALUE);
-//////                        int descColumnIndex = cursor.getColumnIndex(MoneyContract.MoneyEntry.COLUMN_MONEY_DESC);
-//////                        int dateColumnIndex = cursor.getColumnIndex(MoneyContract.MoneyEntry.COLUMN_MONEY_DATE);
-//////                        int timeColumnIndex = cursor.getColumnIndex(MoneyContract.MoneyEntry.COLUMN_MONEY_TIME);
-//////                        int statusColumnIndex = cursor.getColumnIndex(MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS);
-//////
-//////
-//////            // Iterate through all the returned rows in the cursor
-//////            while (cursor.moveToNext()) {
-//////                                // Use that index to extract the String or Int value of the word
-//////                               // at the current row the cursor is on.
-//////                               int currentID = cursor.getInt(idColumnIndex);
-//////                                int currentValue = cursor.getInt(valueColumnIndex);
-//////                                String currentDesc = cursor.getString(descColumnIndex);
-//////                                String currentDate = cursor.getString(dateColumnIndex);
-//////                                String currentTime = cursor.getString(timeColumnIndex);
-//////                                String currentStatus = cursor.getString(statusColumnIndex);
-//////
-//////                // Display the values from each column of the current row in the cursor in the TextView
-//////                                displayView.append(("\n" + currentID + " - " +
-//////                              currentValue + " - " +
-//////                                        currentDesc + " - " +
-//////                                        currentDate + " - " +
-//////                                        currentTime + " - " +
-//////                                        currentStatus));
-//////                            }
-//////        } finally {
-//////            // Always close the cursor when you're done reading from it. This releases all its
-//////            // resources and makes it invalid.0
-//////            cursor.close();
-//////        }
-//        mCursorAdapter = new MoneyCursorAdapter(getActivity(),null);
-//        moneyListView.setAdapter(mCursorAdapter);
-//        getLoaderManager().initLoader(MONEY_LOADER,null,this);
-//
-//    }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final View root = inflater.inflate(R.layout.fragment_this_month, container, false);
-        // Inflate the layout for this fragment
-        // Create and/or open a database to read from it
-
-        // Perform this raw SQL query "SELECT * FROM pets"
-        // to get a Cursor that contains all rows from the pets table.
-//        Cursor cursor = db.rawQuery("SELECT * FROM " + MoneyContract.MoneyEntry.TABLE_NAME, null);
-
-//        String[] projection = {
-//                MoneyContract.MoneyEntry._ID,
-//                MoneyContract.MoneyEntry.COLUMN_MONEY_VALUE,
-//                MoneyContract.MoneyEntry.COLUMN_MONEY_DESC,
-//                MoneyContract.MoneyEntry.COLUMN_MONEY_DATE,
-//                MoneyContract.MoneyEntry.COLUMN_MONEY_TIME,
-//                MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS
-//        };
-//
-//        Cursor cursor = db.query(
-//                MoneyContract.MoneyEntry.TABLE_NAME,
-//                projection,
-//                null,
-//                null,
-//                null,
-//                null,
-//                null
-//        );
-        moneyListView = root.findViewById(R.id.list);
-        final PieGraph pg = root.findViewById(R.id.graph);
+        currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
+        currentMonth = currentDate.substring(3,5);
+        currentYear = Integer.parseInt(currentDate.substring(6));
+        curDate = root.findViewById(R.id.currentDate);
+        curDate.setText(getMonthName(currentMonth));
         mSelectedItemIds = new ArrayList<>();
+        pieChart = root.findViewById(R.id.pie_graph);
+        moneyListView = root.findViewById(R.id.list);
+        nextDate = root.findViewById(R.id.imageViewRight);
+        previousDate = root.findViewById(R.id.imageViewLeft);
+        //        Toolbar toolbar = root.findViewById(R.id.toolbar);
+        pg = root.findViewById(R.id.graph);
+        sum_total = root.findViewById(R.id.total);
+        emptyView = root.findViewById(R.id.empty_view);
+        sum_spent = root.findViewById(R.id.sum_spent);
+        sum_received = root.findViewById(R.id.sum_received);
+        monthyear = root.findViewById(R.id.monthyear);
+        ConstraintLayout coordinatorLayout = root.findViewById(R.id.topbardates);
+        ViewCompat.setElevation(coordinatorLayout,2);
+        try {
+            startMainThread();
+        }finally {
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                public void run() {
+                    try {
+                        if (getActivity() != null) {
+                            adView = new AdView(getActivity(), "174139459886109_174180053215383", AdSize.BANNER_HEIGHT_50);
+                            // Find the Ad Container
+                            // Add the ad view to your activity layout
+                            LinearLayout adContainer = root.findViewById(R.id.banner_container);
+                            adContainer.addView(adView);
+
+                            // Request an ad
+                            adView.loadAd();
+                        }
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+            }, 1500);
+
+
+
+        }
+        nextDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                incDecMonth(1);
+            }
+        });
+
+        previousDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                incDecMonth(-1);
+            }
+        });
+
+
+
+
+
+        curDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("Select Month");
+
+                String[] monthList= {"January","February","March","April","May","June","July","August","September","October","November","December"};
+                View v = inflater.inflate(R.layout.number_picker,null);
+                builder.setView(v);
+                final NumberPicker picker = v.findViewById(R.id.pickpick);
+
+                picker.setMinValue(1);
+                picker.setMaxValue(12);
+                picker.setDisplayedValues(monthList);
+                picker.setValue(Integer.parseInt(currentMonth));
+                picker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        if(picker.getValue()<=9)
+                            currentMonth = "0"+picker.getValue();
+                        else
+                            currentMonth = String.valueOf(picker.getValue());
+                        startMainThread();
+                    }
+                });
+                builder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
+                builder.setCancelable(true);
+                builder.show();
+            }
+        });
+
+        monthyear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("Select Year");
+                View v = inflater.inflate(R.layout.number_picker,null);
+                builder.setView(v);
+                final NumberPicker picker = v.findViewById(R.id.pickpick);
+
+                picker.setMinValue(1970);
+                picker.setMaxValue(2200);
+                picker.setValue(currentYear);
+                picker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        currentYear = picker.getValue();
+                        startMainThread();
+                    }
+                });
+                builder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
+                builder.setCancelable(true);
+                builder.show();
+
+            }
+        });
+        emptyView = root.findViewById(R.id.empty_view);
+        if(noEntriesExist()) {
+            pieChart.setVisibility(View.GONE);
+            emptyView.setVisibility(View.VISIBLE);
+        }
+        else {
+            pieChart.setVisibility(View.VISIBLE);
+            emptyView.setVisibility(View.GONE);
+        }
+
+        return root;
+
+    }
+
+    private void incDecMonth(int i) {
+        pg.cancelAnimating();
+        pg.setDuration(0);
+        moneyListView.setVisibility(View.INVISIBLE);
+
+        int tempmonth = Integer.parseInt(currentMonth);
+        if(i<0){
+            if(tempmonth==1) {
+                if(currentYear>1970)
+                currentYear--;
+                currentMonth = "12";
+            }
+            else if(tempmonth<=10)
+                currentMonth="0"+(tempmonth-1);
+            else
+                currentMonth = String.valueOf(tempmonth-1);
+        }
+        else{
+            if(tempmonth==12) {
+                if(currentYear<2200)
+                currentYear++;
+                currentMonth = "01";
+            }
+            else if(tempmonth>=9)
+                currentMonth = String.valueOf(tempmonth+1);
+            else
+                currentMonth="0"+(tempmonth+1);
+        }
+
+        startMainThread();
+
+    }
+
+    private void startMainThread() {
+        moneyListView.setVisibility(View.GONE);
+        curDate.setText(getMonthName(currentMonth));
+        monthyear.setText(String.valueOf(currentYear));
+        pg.removeSlices();
         pg.setInnerCircleRatio(160);
         boolean purpleValueGreater = false;
         PieSlice slice;
@@ -284,55 +337,45 @@ public class ThisMonthFragment extends Fragment implements LoaderManager.LoaderC
         slice.setValue(purpleValueGreater? (float) (Double.parseDouble(getSumReceived()) + Double.parseDouble(getSumSpent())) :0);
         slice.setGoalValue((float) Double.parseDouble(getSumReceived()));
         pg.addSlice(slice);
-        final AppCompatTextView sum_spent = root.findViewById(R.id.sum_spent);
         sum_spent.setText("0");
-        final AppCompatTextView sum_received = root.findViewById(R.id.sum_received);
         sum_received.setText("0");
-        final AppCompatTextView sum_total = root.findViewById(R.id.total);
         sum_total.setText("0");
 //        pg.setInterpolator(new DecelerateInterpolator());
         pg.setDuration(1000);//default if unspecified is 300 ms
-        final Animation slide = AnimationUtils.loadAnimation(getActivity(), R.anim.enter_from_left);
+        slide = AnimationUtils.loadAnimation(getActivity(), R.anim.enter_from_left);
         slide.setDuration(700);
-
+        toEnd = true;
+        pg.animateToGoalValues();
         pg.setAnimationListener(new AnimatorListenerAdapter() {
+
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    public void run() {
-                        moneyListView.setVisibility(View.VISIBLE);
-                        moneyListView.startAnimation(slide);
-                    }
-                }, 50);
-
-                handler.postDelayed(new Runnable() {
-                    public void run() {
-                        try {
-                            if(getActivity()!=null) {
-                                adView = new AdView(getActivity(), "174139459886109_174180053215383", AdSize.BANNER_HEIGHT_50);
-                                // Find the Ad Container
-                                LinearLayout adContainer = root.findViewById(R.id.banner_container);
-
-                                // Add the ad view to your activity layout
-                                adContainer.addView(adView);
-
-                                // Request an ad
-                                adView.loadAd();
-                            }
-                        }catch (Exception e) {
-                            e.printStackTrace();
+                if(toEnd) {
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        public void run() {
+                            moneyListView.setVisibility(View.VISIBLE);
+                            moneyListView.startAnimation(slide);
                         }
-                    }
-                }, 200);
+                    }, 50);
+                }
+
+
+
+
+
 
             }
 
+            @Override
+            public void onAnimationCancel(Animator animation) {
+                super.onAnimationCancel(animation);
+                toEnd = false;
+            }
 
         });
 
-        pg.animateToGoalValues();
         ValueAnimator valueAnimator = ValueAnimator.ofFloat(0, (float) Double.parseDouble(getSumSpent()));
         valueAnimator.setDuration(1000);
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -376,9 +419,8 @@ public class ThisMonthFragment extends Fragment implements LoaderManager.LoaderC
             }
         });
         valueAnimator_three.start();
-        View emptyView = root.findViewById(R.id.empty_view);
+
 //        moneyListView.setEmptyView(emptyView);
-        LinearLayout pieChart = root.findViewById(R.id.pie_chart);
         if(noEntriesExist()) {
             pieChart.setVisibility(View.GONE);
             emptyView.setVisibility(View.VISIBLE);
@@ -390,61 +432,9 @@ public class ThisMonthFragment extends Fragment implements LoaderManager.LoaderC
 
 
 
-//        MoneyCursorAdapter adapter = new MoneyCursorAdapter(getActivity(), cursor);
-//        moneyListView.setAdapter(adapter);
-////        TextView displayView = root.findViewById(R.id.root);
-////
-////        try {
-////            // Create a header in the Text View that looks like this:
-////            //
-////            // The pets table contains <number of rows in Cursor> pets.
-////            // _id - name - breed - gender - weight
-////            //
-////            // In the while loop below, iterate through the rows of the cursor and display
-////            // the information from each column in this order.
-////            displayView.setText("The pets table contains " + cursor.getCount() + " pets.\n\n");
-////            displayView.append(MoneyContract.MoneyEntry._ID + " - " +
-////                                        MoneyContract.MoneyEntry.COLUMN_MONEY_VALUE + " - " +
-////                                        MoneyContract.MoneyEntry.COLUMN_MONEY_DESC + " - " +
-////                                        MoneyContract.MoneyEntry.COLUMN_MONEY_DATE + " - " +
-////                                        MoneyContract.MoneyEntry.COLUMN_MONEY_TIME + " - " +
-////                                        MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS + "\n");
-////
-////            // Figure out the index of each column
-////            int idColumnIndex = cursor.getColumnIndex(MoneyContract.MoneyEntry._ID);
-////                        int valueColumnIndex = cursor.getColumnIndex(MoneyContract.MoneyEntry.COLUMN_MONEY_VALUE);
-////                        int descColumnIndex = cursor.getColumnIndex(MoneyContract.MoneyEntry.COLUMN_MONEY_DESC);
-////                        int dateColumnIndex = cursor.getColumnIndex(MoneyContract.MoneyEntry.COLUMN_MONEY_DATE);
-////                        int timeColumnIndex = cursor.getColumnIndex(MoneyContract.MoneyEntry.COLUMN_MONEY_TIME);
-////                        int statusColumnIndex = cursor.getColumnIndex(MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS);
-////
-////
-////            // Iterate through all the returned rows in the cursor
-////            while (cursor.moveToNext()) {
-////                                // Use that index to extract the String or Int value of the word
-////                               // at the current row the cursor is on.
-////                               int currentID = cursor.getInt(idColumnIndex);
-////                                int currentValue = cursor.getInt(valueColumnIndex);
-////                                String currentDesc = cursor.getString(descColumnIndex);
-////                                String currentDate = cursor.getString(dateColumnIndex);
-////                                String currentTime = cursor.getString(timeColumnIndex);
-////                                String currentStatus = cursor.getString(statusColumnIndex);
-////
-////                // Display the values from each column of the current row in the cursor in the TextView
-////                                displayView.append(("\n" + currentID + " - " +
-////                              currentValue + " - " +
-////                                        currentDesc + " - " +
-////                                        currentDate + " - " +
-////                                        currentTime + " - " +
-////                                        currentStatus));
-////                            }
-////        } finally {
-////            // Always close the cursor when you're done reading from it. This releases all its
-////            // resources and makes it invalid.0
-////            cursor.close();
-////        }
         mCursorAdapter = new MoneyCursorAdapter(getActivity(),null);
         moneyListView.setAdapter(mCursorAdapter);
+        mCursorAdapter.notifyDataSetChanged();
         moneyListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
@@ -501,39 +491,9 @@ public class ThisMonthFragment extends Fragment implements LoaderManager.LoaderC
             }
         });
 //        setListViewHeightBasedOnChildren(moneyListView);
-        getLoaderManager().initLoader(MONEY_LOADER,null,this);
-
-        return root;
+        getLoaderManager().restartLoader(MONEY_LOADER,null,this);
 
     }
-
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//
-//        if(getView() == null){
-//            return;
-//        }
-//
-//        getView().setFocusableInTouchMode(true);
-//        getView().requestFocus();
-//        getView().setOnKeyListener(new View.OnKeyListener() {
-//            @Override
-//            public boolean onKey(View v, int keyCode, KeyEvent event) {
-//                if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK && mSelectedItemIds.size()!=0){
-//                    // handle back button's click listener
-//                    for(int i = 0 ; i < moneyListView.getCount() ; i++){
-//                        moneyListView.getChildAt(i).setBackgroundColor(Color.TRANSPARENT);
-//                    }
-//                    mSelectedItemIds.clear();
-//                    mActionMode.finish();
-//
-//                    return true;
-//                }
-//                return false;
-//            }
-//        });
-//    }
 
     @Override
     public void onDestroy() {
@@ -552,6 +512,31 @@ public class ThisMonthFragment extends Fragment implements LoaderManager.LoaderC
         return false;
     }
 
+    private String getMonthName(String month){
+        if(month.equals("01"))
+            return "January";
+        else if(month.equals("02"))
+            return "February";
+        else if(month.equals("03"))
+            return "March";
+        else if(month.equals("04"))
+            return "April";
+        else if(month.equals("05"))
+            return "May";
+        else if(month.equals("06"))
+            return "June";
+        else if(month.equals("07"))
+            return "July";
+        else if(month.equals("08"))
+            return "August";
+        else if(month.equals("09"))
+            return "September";
+        else if(month.equals("10"))
+            return "October";
+        else if(month.equals("11"))
+            return "November";
+        return "December";
+    }
 
 
 
@@ -581,29 +566,27 @@ public class ThisMonthFragment extends Fragment implements LoaderManager.LoaderC
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
-//        String date = String.valueOf(Integer.parseInt(currentDate.substring(0,2))-1);
-        String monthAndYear = currentDate.substring(2);
-
         String SELECTION = MoneyContract.MoneyEntry.COLUMN_MONEY_DATE+" LIKE?";
-        String[] ARGS = {"%"+monthAndYear};
-        Log.v("date",MoneyContract.MoneyEntry.COLUMN_MONEY_DATE);
-        Log.v("date",monthAndYear);
+        String[] ARGS = {"%-"+currentMonth+"-"+currentYear};
+
         String[] projection = {
                 MoneyContract.MoneyEntry._ID,
                 MoneyContract.MoneyEntry.COLUMN_MONEY_VALUE,
                 MoneyContract.MoneyEntry.COLUMN_MONEY_DESC,
                 MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS,
                 MoneyContract.MoneyEntry.COLUMN_MONEY_TIME,
-                MoneyContract.MoneyEntry.COLUMN_MONEY_DATE
+                MoneyContract.MoneyEntry.COLUMN_MONEY_DATE,
+                "CASE WHEN LENGTH(time)=8 THEN time ELSE '0'||time END AS TWELVEHR",
+                "substr(date,7,4)||'-'||substr(date,4,2)||'-'||substr(date,1,2) AS sortabledate"
         };
 
+        String sortorder = "sortabledate desc, case when substr(TWELVEHR,1,2)='12' then substr(TWELVEHR,7)||'00'||substr(TWELVEHR,3) else substr(TWELVEHR,7)||substr(TWELVEHR, 1, 5) end DESC";
         return new CursorLoader(getActivity(),
                 MoneyContract.MoneyEntry.CONTENT_URI,
                 projection,
                 SELECTION,
                 ARGS,
-                "_id DESC");
+                sortorder);
     }
 
     @Override
@@ -637,9 +620,9 @@ public class ThisMonthFragment extends Fragment implements LoaderManager.LoaderC
     public String getSumSpent(){
         currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
 //        String date = String.valueOf(Integer.parseInt(currentDate.substring(0,2))-1);
-        String monthAndYear = currentDate.substring(2);
         String SELECTION = MoneyContract.MoneyEntry.COLUMN_MONEY_DATE+" LIKE? AND "+ MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS+" =?";
-        String[] ARGS = {"%"+monthAndYear,"1"};
+        String[] ARGS = {"%-"+currentMonth+"-"+currentYear,"1"};
+
         String str = "";
         MoneyDbHelper mDbHelper = new MoneyDbHelper(getActivity());
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
@@ -663,9 +646,8 @@ public class ThisMonthFragment extends Fragment implements LoaderManager.LoaderC
     public String getSumReceived() {
         currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
 //        String date = String.valueOf(Integer.parseInt(currentDate.substring(0,2))-1);
-        String monthAndYear = currentDate.substring(2);
         String SELECTION = MoneyContract.MoneyEntry.COLUMN_MONEY_DATE+" LIKE? AND "+ MoneyContract.MoneyEntry.COLUMN_MONEY_STATUS+" =?";
-        String[] ARGS = {"%"+monthAndYear,"2"};
+        String[] ARGS = {"%-"+currentMonth+"-"+currentYear,"2"};
         String sumReceived = "";
         MoneyDbHelper mDbHelper = new MoneyDbHelper(getActivity());
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
@@ -721,7 +703,7 @@ public class ThisMonthFragment extends Fragment implements LoaderManager.LoaderC
 //        String date = String.valueOf(Integer.parseInt(currentDate.substring(0,2))-1);
         String monthAndYear = currentDate.substring(2);
         String SELECTION = MoneyContract.MoneyEntry.COLUMN_MONEY_DATE+" LIKE?";
-        String[] ARGS = {"%"+monthAndYear};
+        String[] ARGS = {"%-"+currentMonth+"-"+currentYear};
         MoneyDbHelper mDbHelper = new MoneyDbHelper(getActivity());
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         int numRows = (int)DatabaseUtils.queryNumEntries(db, MoneyContract.MoneyEntry.TABLE_NAME,SELECTION,ARGS);
@@ -849,5 +831,10 @@ public class ThisMonthFragment extends Fragment implements LoaderManager.LoaderC
         super.onPause();
         if(isActionModeOn)
             mActionMode.finish();
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        startMainThread();
     }
 }
